@@ -4,8 +4,8 @@
             z-index: 1000;
         }
         .topo .menu {
-            height: 75px;
-            background-color: rgb(85, 85, 85);
+            height: 80px;
+            background-color: #78C1F3;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -21,8 +21,13 @@
             color: transparent;
         }
 
+        .Logo {
+            height: 120px;
+        }
+
         .topo .menu li {
             list-style-type: none;
+            margin-left: 20px;
         }
 
         .search-box {
@@ -31,7 +36,7 @@
             border-radius: 5px;
             border: none;
             font-size: 16px;
-            margin-left: 10px;
+            margin-left: 20px;
         }
 
         .create-account, .sign-in {
@@ -47,6 +52,7 @@
 
         .shopping-cart {
             height: 30px;
+            margin-right: 20px;
             padding: 5px 10px;
             border-radius: 5px;
             border: none;
