@@ -1,0 +1,57 @@
+.cabecalho {
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+        .topo .menu {
+            height: 75px;
+            background-color: rgb(85, 85, 85);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            
+        }
+       
+        .menu {
+            margin: 0;
+        }
+        .spacer {
+            margin-left: auto;
+            flex-grow: 1;
+            color: transparent;
+        }
+
+        .topo .menu li {
+            list-style-type: none;
+        }
+
+        .search-box {
+            height: 30px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .create-account, .sign-in {
+            height: 30px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin-left: 10px;
+            color: black;
+            text-decoration: none;
+        }
+
+        .shopping-cart {
+            height: 30px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin-left: 10px;
+            color: black;
+            text-decoration: none;
+        }
