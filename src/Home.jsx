@@ -1,6 +1,6 @@
 import './Home.css'
 import { Link } from 'react-router-dom'
-import shoppingCartIcon from './assets/shopping-cart.svg'
+import shoppingCartIcon from './assets/shoppingcart.png'
 
 const Home = () => {
     return (
