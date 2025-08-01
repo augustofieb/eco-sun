@@ -14,6 +14,9 @@ import CasaIcon from './assets/background-casa.png'
 const Home = () => {
   return (
     <>
+
+    <title>ECO SUN</title>
+    <link rel="icon" href="" type="image/png"></link>
       <header className="cabecalho">
         <nav className="topo">
           <ul className="menu">
@@ -23,10 +26,10 @@ const Home = () => {
             </ul>
             <li className="spacer"> </li>
             <li>
-              <Link to="/create-account" className="create-account">Crie sua conta</Link>
+              <Link to="./Login.jsx" className="create-account">Crie sua conta</Link>
             </li>
             <li>
-              <Link to="/sign-in" className="sign-in">Entre</Link>
+              <Link to="/login" className="sign-in">Entre</Link>
             </li>
             <li>
               <Link to="/cart" className="shopping-cart">

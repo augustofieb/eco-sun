@@ -1,0 +1,82 @@
+@import './Home.css';
+
+.login-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  width: 100%;
+}
+
+.login-container {
+  background-color: #dbe9f4;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-container h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: #1a202c;
+  text-align: center;
+  font-weight: 700;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.form-group input {
+  height: 45px;
+  padding: 0 15px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 3px rgb(43 108 176 / 0.1);
+}
+
+.login-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.forgot-password,
+.create-account-link {
+  color: #2b6cb0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover,
+.create-account-link:hover {
+  color: #2c5282;
+  text-decoration: underline;
+}
