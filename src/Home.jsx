@@ -17,10 +17,10 @@ const Home = () => {
       <header className="cabecalho">
         <nav className="topo">
           <ul className="menu">
-            <li><img className='Logo' src={Logo} alt="Logo" /></li>
-            <li>
+            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
+            <ul>
               <input type="search" className="search-box" placeholder="Pesquisar..." />
-            </li>
+            </ul>
             <li className="spacer"> </li>
             <li>
               <Link to="/create-account" className="create-account">Crie sua conta</Link>

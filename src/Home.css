@@ -52,16 +52,23 @@
   border-radius: 5px;
   border: none;
   font-size: 16px;
-  margin-left: 10px;
+  margin-left:0;
   color: black;
   text-decoration: none;
   background: transparent;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.menu li:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
 .shopping-cart {
   height: 30px;
-  margin-right: 20px;
+  margin-right: 50px;
   padding: 5px 10px;
   border-radius: 5px;
   border: none;
