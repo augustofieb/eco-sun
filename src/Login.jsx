@@ -1,9 +1,35 @@
 import './Login.css'
-import { Link } from 'react-router-dom'
-import shoppingCartIcon from './assets/shoppingcart.png'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import Logo from './assets/Logo.png'
 
 const Login = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!formData.email || !formData.password) {
+      setError('Por favor, preencha todos os campos')
+      return
+    }
+    
+    try {
+      const { loginUser } = require('../utils/auth')
+      const user = loginUser(formData.email, formData.password)
+      alert(`Bem-vindo, ${user.name}!`)
+      navigate('/')
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+    setError('')
+  }
+
   return (
     <>
       <title>ECO SUN - Login</title>
@@ -30,14 +56,29 @@ const Login = () => {
         <section className="login-section">
           <div className="login-container">
             <h1>Entre na sua conta</h1>
-            <form className="login-form">
+            <form className="login-form" onSubmit={handleSubmit}>
+              {error && <div className="error-message">{error}</div>}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" required />
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="password">Senha</label>
-                <input type="password" id="password" name="password" required />
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  value={formData.password}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <button type="submit" className="btn-primary">Entrar</button>
               <div className="login-links">

@@ -84,3 +84,13 @@ body {
   color: #2c5282;
   text-decoration: underline;
 }
+
+.error-message {
+  background-color: #fed7d7;
+  color: #c53030;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+}
