@@ -1,6 +1,5 @@
 import './Register.css'
 import { Link } from 'react-router-dom'
-import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
 
 const Register = () => {
@@ -16,16 +15,12 @@ const Register = () => {
             </ul>
             <li className="spacer"> </li>
             <li>
-              <Link to="/login" className="create-account">Entre</Link>
+              <Link to="/login" className="create-account" style={{marginRight: '20px'}}>Entre</Link>
             </li>
             <li>
-              <Link to="/" className="sign-in">Home</Link>
+              <Link to="/" className="sign-in" style={{marginRight: '70px'}}>Home</Link>
             </li>
-            <li>
-              <Link to="/cart" className="shopping-cart">
-                <img src={shoppingCartIcon} alt="Shopping Cart" width="24" height="24" />
-              </Link>
-            </li>
+
           </ul>
         </nav>
       </header>

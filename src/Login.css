@@ -1,5 +1,9 @@
 @import './Home.css';
 
+body {
+  background-color: #f9fafb;
+}
+
 .login-section {
   display: flex;
   justify-content: center;

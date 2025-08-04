@@ -1,5 +1,9 @@
 @import './Home.css';
 
+body {
+  background-color: #f9fafb;
+}
+
 .register-section {
   display: flex;
   justify-content: center;
@@ -15,6 +19,7 @@
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
   width: 100%;
   max-width: 400px;
+  margin-top: 90px;
 }
 
 .register-container h1 {
