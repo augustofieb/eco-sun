@@ -11,9 +11,7 @@ const Login = () => {
         <nav className="topo">
           <ul className="menu">
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
-            <ul>
-              <input type="search" className="search-box" placeholder="Pesquisar..." />
-            </ul>
+
             <li className="spacer"> </li>
             <li>
               <Link to="/create-account" className="create-account" style={{marginRight: '20px'}}>Crie sua conta</Link>

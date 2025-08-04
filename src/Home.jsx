@@ -88,7 +88,13 @@ const Home = () => {
           <div className="hero-text">
             <h1>Energia Solar<br />para a Sua Casa</h1>
             <p>Economize na conta de luz<br />com energia sustentável</p>
-            <button className="btn-primary">Peça um orçamento</button>
+           
+           {/* <button className="btn-primary">Peça um orçamento</button> 
+           
+           aaaaaaaaaaaaaaaaaaaaaaaaaaa
+           
+           */} 
+
           </div>
           <div className="hero-image"></div>
         </section>
@@ -132,7 +138,7 @@ const Home = () => {
           <div className="info-card">
             <img src={garantiaIcon} alt="Garantia" />
             <h3>Garantia</h3>
-            <p>Garantia de 10 anos</p>
+            <p>Garantia de 2 anos</p>
           </div>
           <div className="info-card">
             <img src={suporteIcon} alt="Suporte Técnico" />
@@ -142,7 +148,6 @@ const Home = () => {
         </section>
       </main>
 
-      {/* Shopping Cart Sidebar */}
       <div className={`cart-sidebar ${isCartOpen ? 'cart-open' : ''}`}>
         <div className="cart-header">
           <h2>Carrinho de Compras</h2>
@@ -177,7 +182,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Overlay */}
       {isCartOpen && <div className="cart-overlay" onClick={() => setIsCartOpen(false)}></div>}
     </>
   )
