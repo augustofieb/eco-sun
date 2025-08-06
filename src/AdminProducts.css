@@ -1,0 +1,119 @@
+.admin-h1 {
+  text-align: center;
+  color: #2c5530;
+  margin: 2rem auto;
+  margin-top: 120px;
+  width: 100%;
+}
+
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn-add {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.product-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.product-form input,
+.product-form select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.product-form div {
+  display: flex;
+  gap: 1rem;
+}
+
+.products-table {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c5530;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.btn-edit {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-save {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.actions input,
+.actions select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}

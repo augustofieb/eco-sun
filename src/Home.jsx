@@ -2,6 +2,7 @@ import './Home.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail } from './utils/auth'
+import { getProducts, getProductsByCategory } from './utils/products'
 import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
@@ -18,14 +19,22 @@ const Home = () => {
   const [cartItems, setCartItems] = useState([])
   const [user, setUser] = useState(null)
   const [userIsAdmin, setUserIsAdmin] = useState(false)
+  const [products, setProducts] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   useEffect(() => {
     setUser(getCurrentUser())
     setUserIsAdmin(isAdmin())
+    setProducts(getProducts())
     
     // Grant admin to guto if user exists
     grantAdminByEmail('augustinho@gmail.com')
   }, [])
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category)
+    setProducts(getProductsByCategory(category))
+  }
 
   const handleLogout = () => {
     logoutUser()
@@ -85,9 +94,14 @@ const Home = () => {
             {user ? (
               <>
                 {userIsAdmin && (
-                  <li>
-                    <Link to="/admin" className="admin-link">Usuários</Link>
-                  </li>
+                  <>
+                    <li>
+                      <Link to="/admin" className="admin-link">Usuários</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin-products" className="admin-link">Produtos</Link>
+                    </li>
+                  </>
                 )}
                 <li>
                   <span className="user-welcome">Olá, {user.name}</span>
@@ -134,33 +148,53 @@ const Home = () => {
           <div className="hero-image"></div>
         </section>
 
-        <section className="featured-products">
-          <h2>Produtos em Destaque</h2>
+        <section className="products-section">
+          <h2>Nossos Produtos</h2>
+          <div className="category-filter">
+            <button 
+              className={selectedCategory === 'all' ? 'active' : ''}
+              onClick={() => handleCategoryChange('all')}
+            >
+              Todos
+            </button>
+            <button 
+              className={selectedCategory === 'paineis' ? 'active' : ''}
+              onClick={() => handleCategoryChange('paineis')}
+            >
+              Painéis
+            </button>
+            <button 
+              className={selectedCategory === 'inversores' ? 'active' : ''}
+              onClick={() => handleCategoryChange('inversores')}
+            >
+              Inversores
+            </button>
+            <button 
+              className={selectedCategory === 'baterias' ? 'active' : ''}
+              onClick={() => handleCategoryChange('baterias')}
+            >
+              Baterias
+            </button>
+            <button 
+              className={selectedCategory === 'acessorios' ? 'active' : ''}
+              onClick={() => handleCategoryChange('acessorios')}
+            >
+              Acessórios
+            </button>
+          </div>
           <div className="products-grid">
-            <div className="product-card">
-              <img src={placaSolar} alt="Placa Solar" />
-              <h3>Placa Solar</h3>
-              <p>R$750,00</p>
-              <button className="btn-secondary" onClick={() => addToCart({name: 'Placa Solar', price: 750, image: placaSolar})}>Adicionar ao carrinho</button>
-            </div>
-            <div className="product-card">
-              <img src={microinversor} alt="Microinversor" />
-              <h3>Microinversor</h3>
-              <p>R$1200,00</p>
-              <button className="btn-secondary" onClick={() => addToCart({name: 'Microinversor', price: 1200, image: microinversor})}>Adicionar ao carrinho</button>
-            </div>
-            <div className="product-card">
-              <img src={controlador} alt="Controlador" />
-              <h3>Controlador</h3>
-              <p>R$900,00</p>
-              <button className="btn-secondary" onClick={() => addToCart({name: 'Controlador', price: 900, image: controlador})}>Adicionar ao carrinho</button>
-            </div>
-            <div className="product-card">
-              <img src={bateriaSolar} alt="Bateria Solar" />
-              <h3>Bateria Solar</h3>
-              <p>R$1800,00</p>
-              <button className="btn-secondary" onClick={() => addToCart({name: 'Bateria Solar', price: 1800, image: bateriaSolar})}>Adicionar ao carrinho</button>
-            </div>
+            {products.length === 0 ? (
+              <p className="no-products">Nenhum produto encontrado nesta categoria.</p>
+            ) : (
+              products.map(product => (
+                <div key={product.id} className="product-card">
+                  <img src={product.image} alt={product.name} />
+                  <h3>{product.name}</h3>
+                  <p>R${product.price.toFixed(2)}</p>
+                  <button className="btn-secondary" onClick={() => addToCart(product)}>Adicionar ao carrinho</button>
+                </div>
+              ))
+            )}
           </div>
         </section>
 
