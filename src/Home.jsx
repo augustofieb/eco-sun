@@ -232,9 +232,6 @@ const Home = () => {
                 <li>
                   <span className="user-welcome">Olá, {user.name}</span>
                 </li>
-                <li>
-                  <button onClick={handleLogout} className="logout-btn">Sair</button>
-                </li>
               </>
             ) : (
               <>
@@ -246,6 +243,12 @@ const Home = () => {
                 </li>
               </>
             )}
+            <li>
+              <button onClick={() => setIsCartOpen(true)} className="shopping-cart">
+                <img src={shoppingCartIcon} alt="Shopping Cart" width="24" height="24" />
+                {cartItems.length > 0 && <span className="cart-count">{cartItems.length}</span>}
+              </button>
+            </li>
             {user && (
               <li>
                 <button onClick={() => setIsSettingsOpen(true)} className="settings-btn">
@@ -253,12 +256,6 @@ const Home = () => {
                 </button>
               </li>
             )}
-            <li>
-              <button onClick={() => setIsCartOpen(true)} className="shopping-cart">
-                <img src={shoppingCartIcon} alt="Shopping Cart" width="24" height="24" />
-                {cartItems.length > 0 && <span className="cart-count">{cartItems.length}</span>}
-              </button>
-            </li>
           </ul>
         </nav>
       </header>
@@ -415,6 +412,9 @@ const Home = () => {
             onClick={() => setActiveSettingsTab('faq')}
           >
             Perguntas Frequentes
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            Sair
           </button>
         </div>
         <div className="settings-content">
