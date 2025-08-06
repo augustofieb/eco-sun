@@ -91,3 +91,20 @@ export const grantAdminByEmail = (email) => {
   }
   return false
 }
+
+export const updateUserProfile = (userId, profileData) => {
+  const users = getAllUsers()
+  const userIndex = users.findIndex(user => user.id === userId)
+  if (userIndex !== -1) {
+    users[userIndex] = { ...users[userIndex], ...profileData }
+    localStorage.setItem('users', JSON.stringify(users))
+    
+    // Update current user session if it's the same user
+    const currentUser = getCurrentUser()
+    if (currentUser && currentUser.id === userId) {
+      localStorage.setItem('currentUser', JSON.stringify(users[userIndex]))
+    }
+    return users[userIndex]
+  }
+  return null
+}

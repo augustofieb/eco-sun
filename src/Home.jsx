@@ -1,7 +1,7 @@
 import './Home.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail } from './utils/auth'
+import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail, updateUserProfile } from './utils/auth'
 import { getProducts, getProductsByCategory } from './utils/products'
 import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
@@ -21,11 +21,29 @@ const Home = () => {
   const [userIsAdmin, setUserIsAdmin] = useState(false)
   const [products, setProducts] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
+  const [profileForm, setProfileForm] = useState({
+    name: '', email: '', nickname: '', pfp: '', address: '', number: '', password: ''
+  })
 
   useEffect(() => {
-    setUser(getCurrentUser())
+    const currentUser = getCurrentUser()
+    setUser(currentUser)
     setUserIsAdmin(isAdmin())
     setProducts(getProducts())
+    
+    if (currentUser) {
+      setProfileForm({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        nickname: currentUser.nickname || '',
+        pfp: currentUser.pfp || '',
+        address: currentUser.address || '',
+        number: currentUser.number || '',
+        password: ''
+      })
+    }
     
     // Grant admin to guto if user exists
     grantAdminByEmail('augustinho@gmail.com')
@@ -78,6 +96,114 @@ const Home = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
 
+  const handleProfileUpdate = (e) => {
+    e.preventDefault()
+    if (user) {
+      const updatedUser = updateUserProfile(user.id, profileForm)
+      if (updatedUser) {
+        setUser(updatedUser)
+        alert('Perfil atualizado com sucesso!')
+      }
+    }
+  }
+
+  const renderSettingsContent = () => {
+    switch (activeSettingsTab) {
+      case 'conta':
+        return (
+          <form onSubmit={handleProfileUpdate} className="profile-form">
+            <div className="profile-pic-section">
+              <img src={profileForm.pfp || 'https://via.placeholder.com/80'} alt="Profile" className="profile-pic" />
+              <input 
+                type="url" 
+                placeholder="URL da foto de perfil"
+                value={profileForm.pfp}
+                onChange={(e) => setProfileForm({...profileForm, pfp: e.target.value})}
+              />
+            </div>
+            <input 
+              type="text" 
+              placeholder="Nome completo"
+              value={profileForm.name}
+              onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+            />
+            <input 
+              type="text" 
+              placeholder="Apelido"
+              value={profileForm.nickname}
+              onChange={(e) => setProfileForm({...profileForm, nickname: e.target.value})}
+            />
+            <input 
+              type="email" 
+              placeholder="Email"
+              value={profileForm.email}
+              onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
+            />
+            <input 
+              type="password" 
+              placeholder="Nova senha (deixe vazio para manter)"
+              value={profileForm.password}
+              onChange={(e) => setProfileForm({...profileForm, password: e.target.value})}
+            />
+            <input 
+              type="text" 
+              placeholder="Endereço"
+              value={profileForm.address}
+              onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
+            />
+            <input 
+              type="tel" 
+              placeholder="Telefone"
+              value={profileForm.number}
+              onChange={(e) => setProfileForm({...profileForm, number: e.target.value})}
+            />
+            <button type="submit" className="btn-primary">Salvar Alterações</button>
+          </form>
+        )
+      case 'sobre':
+        return (
+          <div className="info-content">
+            <h3>Sobre Nós</h3>
+            <p>A ECO SUN é uma empresa dedicada a fornecer soluções sustentáveis de energia solar para residências e empresas. Nossa missão é tornar a energia limpa acessível a todos.</p>
+            <p>Fundada em 2020, já ajudamos centenas de famílias a reduzirem sua pegada de carbono e economizarem na conta de luz.</p>
+          </div>
+        )
+      case 'renovavel':
+        return (
+          <div className="info-content">
+            <h3>Por que usar energia renovável?</h3>
+            <ul>
+              <li><strong>Economia:</strong> Reduza até 95% da sua conta de luz</li>
+              <li><strong>Sustentabilidade:</strong> Energia limpa e renovável</li>
+              <li><strong>Valorização:</strong> Aumenta o valor do seu imóvel</li>
+              <li><strong>Independência:</strong> Menos dependência da rede elétrica</li>
+              <li><strong>Durabilidade:</strong> Painéis com vida útil de 25+ anos</li>
+            </ul>
+          </div>
+        )
+      case 'faq':
+        return (
+          <div className="info-content">
+            <h3>Perguntas Frequentes</h3>
+            <div className="faq-item">
+              <h4>Quanto tempo dura a instalação?</h4>
+              <p>A instalação residencial típica leva de 1 a 3 dias.</p>
+            </div>
+            <div className="faq-item">
+              <h4>Funciona em dias nublados?</h4>
+              <p>Sim, os painéis geram energia mesmo com pouca luz solar.</p>
+            </div>
+            <div className="faq-item">
+              <h4>Qual a garantia dos equipamentos?</h4>
+              <p>Oferecemos 2 anos de garantia em todos os equipamentos.</p>
+            </div>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+
   return (
     <>
 
@@ -119,6 +245,13 @@ const Home = () => {
                   <Link to="/login" className="sign-in">Entre</Link>
                 </li>
               </>
+            )}
+            {user && (
+              <li>
+                <button onClick={() => setIsSettingsOpen(true)} className="settings-btn">
+                  ⚙️
+                </button>
+              </li>
             )}
             <li>
               <button onClick={() => setIsCartOpen(true)} className="shopping-cart">
@@ -252,6 +385,44 @@ const Home = () => {
       </div>
 
       {isCartOpen && <div className="cart-overlay" onClick={() => setIsCartOpen(false)}></div>}
+
+      <div className={`settings-sidebar ${isSettingsOpen ? 'settings-open' : ''}`}>
+        <div className="settings-header">
+          <h2>Configurações</h2>
+          <button onClick={() => setIsSettingsOpen(false)} className="close-settings">×</button>
+        </div>
+        <div className="settings-nav">
+          <button 
+            className={activeSettingsTab === 'conta' ? 'active' : ''}
+            onClick={() => setActiveSettingsTab('conta')}
+          >
+            Conta
+          </button>
+          <button 
+            className={activeSettingsTab === 'sobre' ? 'active' : ''}
+            onClick={() => setActiveSettingsTab('sobre')}
+          >
+            Sobre Nós
+          </button>
+          <button 
+            className={activeSettingsTab === 'renovavel' ? 'active' : ''}
+            onClick={() => setActiveSettingsTab('renovavel')}
+          >
+            Por que usar energia renovável?
+          </button>
+          <button 
+            className={activeSettingsTab === 'faq' ? 'active' : ''}
+            onClick={() => setActiveSettingsTab('faq')}
+          >
+            Perguntas Frequentes
+          </button>
+        </div>
+        <div className="settings-content">
+          {renderSettingsContent()}
+        </div>
+      </div>
+
+      {isSettingsOpen && <div className="settings-overlay" onClick={() => setIsSettingsOpen(false)}></div>}
     </>
   )
 }
