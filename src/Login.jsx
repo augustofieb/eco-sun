@@ -2,6 +2,7 @@ import './Login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
+import { loginUser } from './utils/auth'
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' })
@@ -16,7 +17,6 @@ const Login = () => {
     }
     
     try {
-      const { loginUser } = require('../utils/auth')
       const user = loginUser(formData.email, formData.password)
       alert(`Bem-vindo, ${user.name}!`)
       navigate('/')

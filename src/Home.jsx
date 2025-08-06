@@ -1,6 +1,7 @@
 import './Home.css'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail } from './utils/auth'
 import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
@@ -15,6 +16,22 @@ import CasaIcon from './assets/background-casa.png'
 const Home = () => {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
+  const [user, setUser] = useState(null)
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
+
+  useEffect(() => {
+    setUser(getCurrentUser())
+    setUserIsAdmin(isAdmin())
+    
+    // Grant admin to guto if user exists
+    grantAdminByEmail('augustinho@gmail.com')
+  }, [])
+
+  const handleLogout = () => {
+    logoutUser()
+    setUser(null)
+    setUserIsAdmin(false)
+  }
 
   const addToCart = (product) => {
     setCartItems(prev => {
@@ -65,12 +82,30 @@ const Home = () => {
               <input type="search" className="search-box" placeholder="Pesquisar..." />
             </ul>
             <li className="spacer"> </li>
-            <li>
-              <Link to="/create-account" className="create-account">Crie sua conta</Link>
-            </li>
-            <li>
-              <Link to="/login" className="sign-in">Entre</Link>
-            </li>
+            {user ? (
+              <>
+                {userIsAdmin && (
+                  <li>
+                    <Link to="/admin" className="admin-link">Usuários</Link>
+                  </li>
+                )}
+                <li>
+                  <span className="user-welcome">Olá, {user.name}</span>
+                </li>
+                <li>
+                  <button onClick={handleLogout} className="logout-btn">Sair</button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/create-account" className="create-account">Crie sua conta</Link>
+                </li>
+                <li>
+                  <Link to="/login" className="sign-in">Entre</Link>
+                </li>
+              </>
+            )}
             <li>
               <button onClick={() => setIsCartOpen(true)} className="shopping-cart">
                 <img src={shoppingCartIcon} alt="Shopping Cart" width="24" height="24" />

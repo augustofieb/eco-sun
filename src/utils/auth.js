@@ -14,6 +14,7 @@ export const registerUser = (userData) => {
     name: userData.name,
     email: userData.email,
     password: userData.password, // In real app, this should be hashed
+    isAdmin: users.length === 0, // First user is admin
     createdAt: new Date().toISOString()
   }
   
@@ -45,4 +46,48 @@ export const logoutUser = () => {
 
 export const isLoggedIn = () => {
   return getCurrentUser() !== null
+}
+
+export const isAdmin = () => {
+  const user = getCurrentUser()
+  return user && user.isAdmin
+}
+
+export const getAllUsers = () => {
+  return JSON.parse(localStorage.getItem('users') || '[]')
+}
+
+export const deleteUser = (userId) => {
+  const users = getAllUsers()
+  const filteredUsers = users.filter(user => user.id !== userId)
+  localStorage.setItem('users', JSON.stringify(filteredUsers))
+}
+
+export const updateUser = (userId, updates) => {
+  const users = getAllUsers()
+  const userIndex = users.findIndex(user => user.id === userId)
+  if (userIndex !== -1) {
+    users[userIndex] = { ...users[userIndex], ...updates }
+    localStorage.setItem('users', JSON.stringify(users))
+  }
+}
+
+export const toggleAdmin = (userId) => {
+  const users = getAllUsers()
+  const userIndex = users.findIndex(user => user.id === userId)
+  if (userIndex !== -1) {
+    users[userIndex].isAdmin = !users[userIndex].isAdmin
+    localStorage.setItem('users', JSON.stringify(users))
+  }
+}
+
+export const grantAdminByEmail = (email) => {
+  const users = getAllUsers()
+  const userIndex = users.findIndex(user => user.email === email)
+  if (userIndex !== -1) {
+    users[userIndex].isAdmin = true
+    localStorage.setItem('users', JSON.stringify(users))
+    return true
+  }
+  return false
 }

@@ -2,6 +2,7 @@ import './Register.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
+import { registerUser } from './utils/auth'
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' })
@@ -24,7 +25,6 @@ const Register = () => {
     }
     
     try {
-      const { registerUser } = require('../utils/auth')
       registerUser(formData)
       alert('Conta criada com sucesso!')
       navigate('/login')

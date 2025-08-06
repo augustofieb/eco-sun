@@ -56,7 +56,8 @@
 }
 
 .create-account,
-.sign-in {
+.sign-in,
+.admin-link {
   height: 30px;
   padding: 5px 10px;
   border-radius: 5px;
@@ -68,6 +69,38 @@
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+}
+
+.user-welcome {
+  font-size: 16px;
+  color: #2c5530;
+  font-weight: 500;
+}
+
+.logout-btn {
+  height: 30px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #dc3545;
+  font-size: 16px;
+  color: #dc3545;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.logout-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.admin-link {
+  color: #2c5530;
+  font-weight: 600;
+}
+
+.admin-link:hover {
+  color: #1a3a1e;
 }
 
 .menu li:hover {
