@@ -1,4 +1,8 @@
-.admin-h1 {
+.content {
+  width: 100vw;
+}
+
+.admin-content h1 {
   text-align: center;
   color: #2c5530;
   margin: 2rem auto;

@@ -59,6 +59,9 @@ const Admin = () => {
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
             <li className="spacer"></li>
             <li>
+              <Link to="/admin-products" className="admin-link">Produtos</Link>
+            </li>
+            <li>
               <Link to="/" className="sign-in">Home</Link>
             </li>
           </ul>

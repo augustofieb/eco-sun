@@ -80,6 +80,7 @@
 .logout-btn {
   height: 30px;
   padding: 5px 10px;
+  margin-bottom: 10px;
   border-radius: 5px;
   border: 1px solid #dc3545;
   font-size: 16px;
@@ -111,8 +112,8 @@
 
 .shopping-cart {
   height: 30px;
-  margin-right: 50px;
-  padding: 5px 10px;
+  
+  padding: 5px ;
   border-radius: 5px;
   border: none;
   font-size: 16px;
@@ -489,9 +490,9 @@ body, html {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 5px ;
   border-radius: 5px;
-  margin-right: 10px;
+  margin-right: 30px;
 }
 
 .settings-sidebar {

@@ -2,14 +2,18 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/auth'
 import { getProducts, addProduct, updateProduct, deleteProduct } from './utils/products'
+import { getCategories, addCategory } from './utils/categories'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [editingProduct, setEditingProduct] = useState(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showCategoryForm, setShowCategoryForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '' })
+  const [newCategory, setNewCategory] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -18,6 +22,7 @@ const AdminProducts = () => {
       return
     }
     loadProducts()
+    setCategories(getCategories())
   }, [navigate])
 
   const loadProducts = () => {
@@ -51,6 +56,17 @@ const AdminProducts = () => {
     }
   }
 
+  const handleAddCategory = (e) => {
+    e.preventDefault()
+    if (newCategory.trim() && addCategory(newCategory.trim())) {
+      setCategories(getCategories())
+      setNewCategory('')
+      setShowCategoryForm(false)
+    } else {
+      alert('Categoria já existe ou nome inválido')
+    }
+  }
+
   if (!isAdmin()) {
     return <div>Acesso negado</div>
   }
@@ -74,9 +90,13 @@ const AdminProducts = () => {
 
       <div className='division'></div>
 
-      <h1 className='admin-h1'>Gerenciar Produtos</h1>
-      <main className="admin-content">
-        <button onClick={() => setShowAddForm(true)} className="btn-add">Adicionar Produto</button>
+      <div className='content'>
+        <main className="admin-content">
+          <h1>Gerenciar Produtos</h1>
+        <div style={{display: 'flex', gap: '10px', marginBottom: '20px'}}>
+          <button onClick={() => setShowAddForm(true)} className="btn-add">Adicionar Produto</button>
+          <button onClick={() => setShowCategoryForm(true)} className="btn-add">Adicionar Categoria</button>
+        </div>
         
         {showAddForm && (
           <form onSubmit={handleAdd} className="product-form">
@@ -100,10 +120,9 @@ const AdminProducts = () => {
               required
             >
               <option value="">Selecione categoria</option>
-              <option value="paineis">Painéis</option>
-              <option value="inversores">Inversores</option>
-              <option value="baterias">Baterias</option>
-              <option value="acessorios">Acessórios</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+              ))}
             </select>
             <input 
               type="text" 
@@ -115,6 +134,22 @@ const AdminProducts = () => {
             <div>
               <button type="submit" className="btn-save">Salvar</button>
               <button type="button" onClick={() => setShowAddForm(false)} className="btn-cancel">Cancelar</button>
+            </div>
+          </form>
+        )}
+
+        {showCategoryForm && (
+          <form onSubmit={handleAddCategory} className="product-form">
+            <input 
+              type="text" 
+              placeholder="Nome da categoria" 
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              required 
+            />
+            <div>
+              <button type="submit" className="btn-save">Adicionar</button>
+              <button type="button" onClick={() => setShowCategoryForm(false)} className="btn-cancel">Cancelar</button>
             </div>
           </form>
         )}
@@ -155,10 +190,9 @@ const AdminProducts = () => {
                         value={formData.category}
                         onChange={(e) => setFormData({...formData, category: e.target.value})}
                       >
-                        <option value="paineis">Painéis</option>
-                        <option value="inversores">Inversores</option>
-                        <option value="baterias">Baterias</option>
-                        <option value="acessorios">Acessórios</option>
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                        ))}
                       </select>
                     ) : product.category}
                   </td>
@@ -180,7 +214,8 @@ const AdminProducts = () => {
             </tbody>
           </table>
         </div>
-      </main>
+        </main>
+      </div>
     </>
   )
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail, updateUserProfile } from './utils/auth'
 import { getProducts, getProductsByCategory } from './utils/products'
+import { getCategories } from './utils/categories'
 import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
@@ -20,6 +21,7 @@ const Home = () => {
   const [user, setUser] = useState(null)
   const [userIsAdmin, setUserIsAdmin] = useState(false)
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
@@ -32,6 +34,7 @@ const Home = () => {
     setUser(currentUser)
     setUserIsAdmin(isAdmin())
     setProducts(getProducts())
+    setCategories(getCategories())
     
     if (currentUser) {
       setProfileForm({
@@ -287,30 +290,15 @@ const Home = () => {
             >
               Todos
             </button>
-            <button 
-              className={selectedCategory === 'paineis' ? 'active' : ''}
-              onClick={() => handleCategoryChange('paineis')}
-            >
-              Painéis
-            </button>
-            <button 
-              className={selectedCategory === 'inversores' ? 'active' : ''}
-              onClick={() => handleCategoryChange('inversores')}
-            >
-              Inversores
-            </button>
-            <button 
-              className={selectedCategory === 'baterias' ? 'active' : ''}
-              onClick={() => handleCategoryChange('baterias')}
-            >
-              Baterias
-            </button>
-            <button 
-              className={selectedCategory === 'acessorios' ? 'active' : ''}
-              onClick={() => handleCategoryChange('acessorios')}
-            >
-              Acessórios
-            </button>
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                className={selectedCategory === cat ? 'active' : ''}
+                onClick={() => handleCategoryChange(cat)}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
           </div>
           <div className="products-grid">
             {products.length === 0 ? (
