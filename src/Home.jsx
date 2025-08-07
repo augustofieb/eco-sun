@@ -348,9 +348,11 @@ const Home = () => {
             ) : (
               products.map(product => (
                 <div key={product.id} className="product-card">
-                  <img src={product.image} alt={product.name} />
-                  <h3>{product.name}</h3>
-                  <p>R${product.price.toFixed(2)}</p>
+                  <Link to={`/product/${product.id}`} className="product-link">
+                    <img src={product.image} alt={product.name} />
+                    <h3>{product.name}</h3>
+                    <p>R${product.price.toFixed(2)}</p>
+                  </Link>
                   <button className="btn-secondary" onClick={() => addToCart(product)}>Adicionar ao carrinho</button>
                 </div>
               ))

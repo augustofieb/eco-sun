@@ -13,7 +13,7 @@ const AdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [showCategoryForm, setShowCategoryForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '' })
+  const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '' })
   const [newCategory, setNewCategory] = useState('')
   const navigate = useNavigate()
 
@@ -33,20 +33,20 @@ const AdminProducts = () => {
   const handleAdd = (e) => {
     e.preventDefault()
     addProduct({ ...formData, price: parseFloat(formData.price) })
-    setFormData({ name: '', price: '', category: '', image: '' })
+    setFormData({ name: '', price: '', category: '', image: '', description: '' })
     setShowAddForm(false)
     loadProducts()
   }
 
   const handleEdit = (product) => {
     setEditingProduct(product.id)
-    setFormData({ name: product.name, price: product.price, category: product.category, image: product.image })
+    setFormData({ name: product.name, price: product.price, category: product.category, image: product.image, description: product.description || '' })
   }
 
   const handleUpdate = (productId) => {
     updateProduct(productId, { ...formData, price: parseFloat(formData.price) })
     setEditingProduct(null)
-    setFormData({ name: '', price: '', category: '', image: '' })
+    setFormData({ name: '', price: '', category: '', image: '', description: '' })
     loadProducts()
   }
 
@@ -148,6 +148,12 @@ const AdminProducts = () => {
               accept="image/*"
               onChange={handleImageChange}
             />
+            <textarea 
+              placeholder="Descrição do produto" 
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              rows="4"
+            />
             <div>
               <button type="submit" className="btn-save">Salvar</button>
               <button type="button" onClick={() => setShowAddForm(false)} className="btn-cancel">Cancelar</button>
@@ -178,6 +184,7 @@ const AdminProducts = () => {
                 <th>Nome</th>
                 <th>Preço</th>
                 <th>Categoria</th>
+                <th>Descrição</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -212,6 +219,15 @@ const AdminProducts = () => {
                         ))}
                       </select>
                     ) : product.category}
+                  </td>
+                  <td>
+                    {editingProduct === product.id ? (
+                      <textarea 
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        rows="2"
+                      />
+                    ) : (product.description ? product.description.substring(0, 50) + '...' : 'Sem descrição')}
                   </td>
                   <td className="actions">
                     {editingProduct === product.id ? (

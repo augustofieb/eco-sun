@@ -5,6 +5,7 @@ import Register from './Register.jsx'
 import Admin from './Admin.jsx'
 import AdminProducts from './AdminProducts.jsx'
 import Checkout from './Checkout.jsx'
+import ProductDetails from './ProductDetails.jsx'
 
 const App = () => {
   
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/admin" element={<Admin /> } />
         <Route path="/admin-products" element={<AdminProducts /> } />
         <Route path="/checkout" element={<Checkout /> } />
+        <Route path="/product/:id" element={<ProductDetails /> } />
       </Routes>
   )
 }

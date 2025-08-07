@@ -1,7 +1,25 @@
+/* CSS Variables for Light Mode */
+:root {
+  --primary-color: #2b6cb0;
+  --primary-hover: #2c5282;
+  --text-color: #1a202c;
+  --text-secondary: #718096;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
 /* Dark Mode Styles */
 .dark-mode {
   background-color: #1a1a1a;
   color: #e0e0e0;
+  --primary-color: #4299e1;
+  --primary-hover: #3182ce;
+  --text-color: #e0e0e0;
+  --text-secondary: #a0aec0;
+  --card-bg: #2d2d2d;
+  --input-bg: #4a4a4a;
+  --border-color: #4a5568;
 }
 
 .dark-mode .topo .menu {
@@ -120,4 +138,55 @@
   background-color: #4a4a4a;
   color: #ffffff;
   border-color: #666;
+}
+
+.dark-mode .product-details-container {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.dark-mode .product-info h1 {
+  color: #e0e0e0;
+}
+
+.dark-mode .product-description {
+  background-color: #2d2d2d;
+  border-left-color: #4299e1;
+}
+
+.dark-mode .product-description h3 {
+  color: #4299e1;
+}
+
+.dark-mode .review-form {
+  background-color: #2d2d2d;
+  border-color: #4a5568;
+}
+
+.dark-mode .review-form h3 {
+  color: #4299e1;
+}
+
+.dark-mode .review-form select,
+.dark-mode .review-form textarea {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+  border-color: #4a5568;
+}
+
+.dark-mode .review-item {
+  background-color: #2d2d2d;
+  border-color: #4a5568;
+}
+
+.dark-mode .reviewer-name {
+  color: #e0e0e0;
+}
+
+.dark-mode .review-comment {
+  color: #e0e0e0;
+}
+
+.dark-mode .reviews-section h2 {
+  color: #e0e0e0;
 }
