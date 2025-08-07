@@ -239,7 +239,7 @@ const Home = () => {
             <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px'}}>
               <label>Modo Escuro:</label>
               <label className="switch">
-                <input type="checkbox" checked={isDarkMode} onChange={toggleDarkMode} />
+                <input type="checkbox" className="toggle" checked={isDarkMode} onChange={toggleDarkMode} />
                 <span className="slider"></span>
               </label>
             </div>
@@ -276,7 +276,7 @@ const Home = () => {
                   </>
                 )}
                 <li>
-                  <span className="user-welcome">Olá, {user.name}</span>
+                  <span className="user-welcome">Olá, {user.nickname || user.name}</span>
                 </li>
               </>
             ) : (
