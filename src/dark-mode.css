@@ -190,3 +190,34 @@
 .dark-mode .reviews-section h2 {
   color: #e0e0e0;
 }
+
+.dark-mode .cart-sidebar {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .cart-header {
+  background-color: #3d3d3d;
+}
+
+.dark-mode .cart-header h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .cart-item-details h4,
+.dark-mode .cart-item-details p {
+  color: #e0e0e0;
+}
+
+.dark-mode .cart-total h3 {
+  color: #e0e0e0;
+}
+
+.dark-mode .quantity-controls button {
+  background-color: #4a4a4a;
+  border-color: #666;
+  color: #e0e0e0;
+}
+
+.dark-mode .empty-cart {
+  color: #a0aec0;
+}
