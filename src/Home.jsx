@@ -1,9 +1,13 @@
 import './Home.css'
+import './dark-mode.css'
+import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail, updateUserProfile } from './utils/auth'
 import { getProducts, getProductsByCategory } from './utils/products'
 import { getCategories } from './utils/categories'
+import { getTheme, setTheme, initTheme } from './utils/theme'
+import { handleImageUpload } from './utils/imageUpload'
 import shoppingCartIcon from './assets/shoppingcart.png'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
@@ -25,6 +29,7 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [profileForm, setProfileForm] = useState({
     name: '', email: '', nickname: '', pfp: '', address: '', number: '', password: ''
   })
@@ -35,6 +40,8 @@ const Home = () => {
     setUserIsAdmin(isAdmin())
     setProducts(getProducts())
     setCategories(getCategories())
+    setIsDarkMode(getTheme() === 'dark')
+    initTheme()
     
     if (currentUser) {
       setProfileForm({
@@ -110,6 +117,24 @@ const Home = () => {
     }
   }
 
+  const toggleDarkMode = () => {
+    const newTheme = isDarkMode ? 'light' : 'dark'
+    setTheme(newTheme)
+    setIsDarkMode(!isDarkMode)
+  }
+
+  const handlePfpChange = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      try {
+        const imageUrl = await handleImageUpload(file)
+        setProfileForm({...profileForm, pfp: imageUrl})
+      } catch (error) {
+        alert(error)
+      }
+    }
+  }
+
   const renderSettingsContent = () => {
     switch (activeSettingsTab) {
       case 'conta':
@@ -122,6 +147,11 @@ const Home = () => {
                 placeholder="URL da foto de perfil"
                 value={profileForm.pfp}
                 onChange={(e) => setProfileForm({...profileForm, pfp: e.target.value})}
+              />
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handlePfpChange}
               />
             </div>
             <input 
@@ -199,6 +229,19 @@ const Home = () => {
             <div className="faq-item">
               <h4>Qual a garantia dos equipamentos?</h4>
               <p>Oferecemos 2 anos de garantia em todos os equipamentos.</p>
+            </div>
+          </div>
+        )
+      case 'tema':
+        return (
+          <div className="info-content">
+            <h3>Configurações de Tema</h3>
+            <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px'}}>
+              <label>Modo Escuro:</label>
+              <label className="switch">
+                <input type="checkbox" checked={isDarkMode} onChange={toggleDarkMode} />
+                <span className="slider"></span>
+              </label>
             </div>
           </div>
         )
@@ -362,7 +405,15 @@ const Home = () => {
               ))}
               <div className="cart-total">
                 <h3>Total: R${getTotalPrice().toFixed(2)}</h3>
-                <button className="btn-primary checkout-btn">Finalizar Compra</button>
+                <button 
+                  className="btn-primary checkout-btn"
+                  onClick={() => {
+                    sessionStorage.setItem('checkoutItems', JSON.stringify(cartItems))
+                    window.location.href = '/checkout'
+                  }}
+                >
+                  Finalizar Compra
+                </button>
               </div>
             </>
           )}
@@ -400,6 +451,12 @@ const Home = () => {
             onClick={() => setActiveSettingsTab('faq')}
           >
             Perguntas Frequentes
+          </button>
+          <button 
+            className={activeSettingsTab === 'tema' ? 'active' : ''}
+            onClick={() => setActiveSettingsTab('tema')}
+          >
+            Tema
           </button>
           <button onClick={handleLogout} className="logout-btn">
             Sair

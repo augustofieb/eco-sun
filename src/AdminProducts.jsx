@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/auth'
 import { getProducts, addProduct, updateProduct, deleteProduct } from './utils/products'
 import { getCategories, addCategory } from './utils/categories'
+import { handleImageUpload } from './utils/imageUpload'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
 
@@ -64,6 +65,18 @@ const AdminProducts = () => {
       setShowCategoryForm(false)
     } else {
       alert('Categoria já existe ou nome inválido')
+    }
+  }
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      try {
+        const imageUrl = await handleImageUpload(file)
+        setFormData({...formData, image: imageUrl})
+      } catch (error) {
+        alert(error)
+      }
     }
   }
 
@@ -129,7 +142,11 @@ const AdminProducts = () => {
               placeholder="URL da imagem" 
               value={formData.image}
               onChange={(e) => setFormData({...formData, image: e.target.value})}
-              required 
+            />
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={handleImageChange}
             />
             <div>
               <button type="submit" className="btn-save">Salvar</button>

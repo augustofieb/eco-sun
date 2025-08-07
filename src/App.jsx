@@ -4,6 +4,7 @@ import Login from './Login.jsx'
 import Register from './Register.jsx'
 import Admin from './Admin.jsx'
 import AdminProducts from './AdminProducts.jsx'
+import Checkout from './Checkout.jsx'
 
 const App = () => {
   
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/create-account" element={<Register /> } />
         <Route path="/admin" element={<Admin /> } />
         <Route path="/admin-products" element={<AdminProducts /> } />
+        <Route path="/checkout" element={<Checkout /> } />
       </Routes>
   )
 }

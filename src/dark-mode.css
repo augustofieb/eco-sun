@@ -1,0 +1,123 @@
+/* Dark Mode Styles */
+.dark-mode {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.dark-mode .topo .menu {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .main-content {
+  background-color: #1a1a1a;
+}
+
+.dark-mode .product-card {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.dark-mode .product-card h3,
+.dark-mode .product-card p {
+  color: #e0e0e0;
+}
+
+.dark-mode .info-card {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.dark-mode .info-card h3,
+.dark-mode .info-card p {
+  color: #e0e0e0;
+}
+
+.dark-mode .cart-sidebar,
+.dark-mode .settings-sidebar {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .cart-header,
+.dark-mode .settings-header {
+  background-color: #3d3d3d;
+}
+
+.dark-mode .cart-header h2,
+.dark-mode .settings-header h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .featured-products h2,
+.dark-mode .products-section h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .category-filter button {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #4a4a4a;
+}
+
+.dark-mode .no-products {
+  color: #b0b0b0;
+}
+
+.dark-mode .products-table {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .products-table h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode table {
+  background-color: #2d2d2d;
+}
+
+.dark-mode th {
+  background-color: #3d3d3d;
+  color: #e0e0e0;
+}
+
+.dark-mode td {
+  color: #ffffff;
+  background-color: #4a4a4a;
+}
+
+.dark-mode .admin-content h1 {
+  color: #e0e0e0;
+}
+
+.dark-mode .product-form {
+  background-color: #4a4a4a;
+}
+
+.dark-mode .product-form input,
+.dark-mode .product-form select {
+  background-color: #4a4a4a;
+  color: #ffffff;
+  border-color: #666;
+}
+
+.dark-mode .checkout-content {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.dark-mode .order-summary,
+.dark-mode .payment-form {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .checkout-content h1,
+.dark-mode .order-summary h2,
+.dark-mode .payment-form h2,
+.dark-mode .total h3 {
+  color: #e0e0e0;
+}
+
+.dark-mode .payment-form input {
+  background-color: #4a4a4a;
+  color: #ffffff;
+  border-color: #666;
+}
