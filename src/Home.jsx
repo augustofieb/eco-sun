@@ -253,8 +253,7 @@ const Home = () => {
   return (
     <>
 
-    <title>ECO SUN</title>
-    <link rel="icon" href="" type="image/png"></link>
+
       <header className="cabecalho">
         <nav className="topo">
           <ul className="menu">
