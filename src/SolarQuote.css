@@ -1,0 +1,176 @@
+.quote-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.quote-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.quote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.quote-header h2 {
+  margin: 0;
+  color: #2c5530;
+}
+
+.close-quote {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.quote-content {
+  padding: 20px;
+}
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.quote-result {
+  text-align: center;
+}
+
+.quote-result h3 {
+  color: #2c5530;
+  margin-bottom: 20px;
+}
+
+.quote-details {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.quote-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.quote-item:last-child {
+  border-bottom: none;
+}
+
+.quote-item .label {
+  font-weight: 600;
+  color: #666;
+}
+
+.quote-item .value {
+  font-weight: 700;
+  color: #2c5530;
+}
+
+.quote-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: #2c5530;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #1e3a21;
+}
+
+.btn-secondary:hover {
+  background: #545b62;
+}
+
+/* Dark mode */
+[data-theme="dark"] .quote-modal {
+  background: #2d3748;
+  color: white;
+}
+
+[data-theme="dark"] .quote-header {
+  border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .quote-header h2 {
+  color: #68d391;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select {
+  background: #4a5568;
+  border-color: #718096;
+  color: white;
+}
+
+[data-theme="dark"] .quote-details {
+  background: #4a5568;
+}
+
+[data-theme="dark"] .quote-item {
+  border-bottom-color: #718096;
+}
+
+[data-theme="dark"] .quote-item .value {
+  color: #68d391;
+}

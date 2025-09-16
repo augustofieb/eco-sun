@@ -8,7 +8,7 @@ import { getProducts, getProductsByCategory } from './utils/products'
 import { getCategories } from './utils/categories'
 import { getTheme, setTheme, initTheme } from './utils/theme'
 import { handleImageUpload } from './utils/imageUpload'
-import shoppingCartIcon from './assets/shoppingcart.png'
+import SolarQuote from './SolarQuote'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
 import microinversor from './assets/microinversor.png'
@@ -20,8 +20,7 @@ import suporteIcon from './assets/Suporte_tecnico.png'
 import CasaIcon from './assets/background-casa.png'
 
 const Home = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([])
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false)
   const [user, setUser] = useState(null)
   const [userIsAdmin, setUserIsAdmin] = useState(false)
   const [products, setProducts] = useState([])
@@ -70,41 +69,7 @@ const Home = () => {
     setUserIsAdmin(false)
   }
 
-  const addToCart = (product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.name === product.name)
-      if (existing) {
-        return prev.map(item => 
-          item.name === product.name 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-  }
 
-  const removeFromCart = (productName) => {
-    setCartItems(prev => prev.filter(item => item.name !== productName))
-  }
-
-  const updateQuantity = (productName, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productName)
-      return
-    }
-    setCartItems(prev => 
-      prev.map(item => 
-        item.name === productName 
-          ? { ...item, quantity }
-          : item
-      )
-    )
-  }
-
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
-  }
 
   const handleProfileUpdate = (e) => {
     e.preventDefault()
@@ -289,9 +254,8 @@ const Home = () => {
               </>
             )}
             <li>
-              <button onClick={() => setIsCartOpen(true)} className="shopping-cart">
-                <img src={shoppingCartIcon} alt="Shopping Cart" width="24" height="24" />
-                {cartItems.length > 0 && <span className="cart-count">{cartItems.length}</span>}
+              <button onClick={() => setIsQuoteOpen(true)} className="quote-btn">
+                💡 Orçamento
               </button>
             </li>
             {user && (
@@ -312,12 +276,7 @@ const Home = () => {
           <div className="hero-text">
             <h1>Energia Solar<br />para a Sua Casa</h1>
             <p>Economize na conta de luz<br />com energia sustentável</p>
-           
-           {/* <button className="btn-primary">Peça um orçamento</button> 
-           
-           aaaaaaaaaaaaaaaaaaaaaaaaaaa
-           
-           */} 
+            <button className="btn-primary" onClick={() => setIsQuoteOpen(true)}>Peça um orçamento</button> 
 
           </div>
           <div className="hero-image"></div>
@@ -353,7 +312,7 @@ const Home = () => {
                     <h3>{product.name}</h3>
                     <p>R${product.price.toFixed(2)}</p>
                   </Link>
-                  <button className="btn-secondary" onClick={() => addToCart(product)}>Adicionar ao carrinho</button>
+                  <button className="btn-secondary" onClick={() => setIsQuoteOpen(true)}>Solicitar orçamento</button>
                 </div>
               ))
             )}
@@ -379,49 +338,7 @@ const Home = () => {
         </section>
       </main>
 
-      <div className={`cart-sidebar ${isCartOpen ? 'cart-open' : ''}`}>
-        <div className="cart-header">
-          <h2>Carrinho de Compras</h2>
-          <button onClick={() => setIsCartOpen(false)} className="close-cart">×</button>
-        </div>
-        <div className="cart-content">
-          {cartItems.length === 0 ? (
-            <p className="empty-cart">Seu carrinho está vazio</p>
-          ) : (
-            <>
-              {cartItems.map(item => (
-                <div key={item.name} className="cart-item">
-                  <img src={item.image} alt={item.name} className="cart-item-image" />
-                  <div className="cart-item-details">
-                    <h4>{item.name}</h4>
-                    <p>R${item.price.toFixed(2)}</p>
-                    <div className="quantity-controls">
-                      <button onClick={() => updateQuantity(item.name, item.quantity - 1)}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.name, item.quantity + 1)}>+</button>
-                    </div>
-                  </div>
-                  <button onClick={() => removeFromCart(item.name)} className="remove-item">×</button>
-                </div>
-              ))}
-              <div className="cart-total">
-                <h3>Total: R${getTotalPrice().toFixed(2)}</h3>
-                <button 
-                  className="btn-primary checkout-btn"
-                  onClick={() => {
-                    sessionStorage.setItem('checkoutItems', JSON.stringify(cartItems))
-                    window.location.href = '/checkout'
-                  }}
-                >
-                  Finalizar Compra
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {isCartOpen && <div className="cart-overlay" onClick={() => setIsCartOpen(false)}></div>}
+      <SolarQuote isOpen={isQuoteOpen} onClose={() => setIsQuoteOpen(false)} />
 
       <div className={`settings-sidebar ${isSettingsOpen ? 'settings-open' : ''}`}>
         <div className="settings-header">
