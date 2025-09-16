@@ -163,6 +163,17 @@
   color: white;
 }
 
+.form-group input[readonly] {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .form-group input[readonly] {
+  background-color: #2d3748;
+  color: #a0aec0;
+}
+
 [data-theme="dark"] .quote-details {
   background: #4a5568;
 }

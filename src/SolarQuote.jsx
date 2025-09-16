@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getCurrentUser } from './utils/auth'
 import './SolarQuote.css'
 
 const SolarQuote = ({ isOpen, onClose }) => {
@@ -12,6 +13,19 @@ const SolarQuote = ({ isOpen, onClose }) => {
     roofType: 'ceramica',
     energyGoal: 'reducao'
   })
+
+  useEffect(() => {
+    const user = getCurrentUser()
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.number || '',
+        address: user.address || ''
+      }))
+    }
+  }, [isOpen])
 
   const [quote, setQuote] = useState(null)
 
@@ -67,6 +81,7 @@ const SolarQuote = ({ isOpen, onClose }) => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
+                  readOnly={!!getCurrentUser()}
                 />
               </div>
 
@@ -78,6 +93,7 @@ const SolarQuote = ({ isOpen, onClose }) => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
+                  readOnly={!!getCurrentUser()}
                 />
               </div>
 

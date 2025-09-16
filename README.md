@@ -1,12 +1,46 @@
-# React + Vite
+# ECO SUN - Sistema de Orçamento de Energia Solar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site para solicitação de orçamentos personalizados de sistemas de energia solar residencial.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Calculadora de Orçamento**: Sistema inteligente que calcula a potência necessária, número de painéis e investimento total
+- **Catálogo de Produtos**: Visualização de equipamentos de energia solar (painéis, inversores, baterias, controladores)
+- **Sistema de Avaliações**: Usuários podem avaliar e comentar sobre os produtos
+- **Integração WhatsApp**: Envio direto do orçamento via WhatsApp
+- **Modo Escuro**: Interface adaptável com tema claro e escuro
+- **Sistema de Usuários**: Cadastro, login e gerenciamento de perfil
+- **Painel Administrativo**: Gestão de usuários e produtos
 
-## Expanding the ESLint configuration
+## Tecnologias Utilizadas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React 19** - Framework frontend
+- **Vite** - Build tool e servidor de desenvolvimento
+- **React Router** - Roteamento
+- **CSS3** - Estilização com suporte a modo escuro
+- **LocalStorage** - Persistência de dados local
+
+## Como Executar
+
+1. Clone o repositório
+2. Instale as dependências: `npm install`
+3. Execute o servidor de desenvolvimento: `npm run dev`
+4. Acesse `http://localhost:5173`
+
+## Estrutura do Projeto
+
+- `/src/Home.jsx` - Página principal com catálogo e hero section
+- `/src/SolarQuote.jsx` - Componente de orçamento de energia solar
+- `/src/ProductDetails.jsx` - Detalhes dos produtos com sistema de avaliações
+- `/src/utils/` - Utilitários para autenticação, produtos, categorias e temas
+- `/src/assets/` - Imagens e recursos estáticos
+
+## Funcionalidades do Orçamento
+
+O sistema calcula automaticamente:
+- Potência do sistema necessária (kWp)
+- Número de painéis solares
+- Investimento total estimado
+- Economia mensal na conta de luz
+- Tempo de retorno do investimento
+- Redução de CO₂ anual

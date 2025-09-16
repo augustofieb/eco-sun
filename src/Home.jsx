@@ -7,7 +7,7 @@ import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail, upd
 import { getProducts, getProductsByCategory } from './utils/products'
 import { getCategories } from './utils/categories'
 import { getTheme, setTheme, initTheme } from './utils/theme'
-import { handleImageUpload } from './utils/imageUpload'
+
 import SolarQuote from './SolarQuote'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
@@ -30,7 +30,7 @@ const Home = () => {
   const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [profileForm, setProfileForm] = useState({
-    name: '', email: '', nickname: '', pfp: '', address: '', number: '', password: ''
+    name: '', email: '', nickname: '', address: '', number: '', password: ''
   })
 
   useEffect(() => {
@@ -47,7 +47,6 @@ const Home = () => {
         name: currentUser.name || '',
         email: currentUser.email || '',
         nickname: currentUser.nickname || '',
-        pfp: currentUser.pfp || '',
         address: currentUser.address || '',
         number: currentUser.number || '',
         password: ''
@@ -88,37 +87,14 @@ const Home = () => {
     setIsDarkMode(!isDarkMode)
   }
 
-  const handlePfpChange = async (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      try {
-        const imageUrl = await handleImageUpload(file)
-        setProfileForm({...profileForm, pfp: imageUrl})
-      } catch (error) {
-        alert(error)
-      }
-    }
-  }
+
 
   const renderSettingsContent = () => {
     switch (activeSettingsTab) {
       case 'conta':
         return (
           <form onSubmit={handleProfileUpdate} className="profile-form">
-            <div className="profile-pic-section">
-              <img src={profileForm.pfp || 'https://via.placeholder.com/80'} alt="Profile" className="profile-pic" />
-              <input 
-                type="url" 
-                placeholder="URL da foto de perfil"
-                value={profileForm.pfp}
-                onChange={(e) => setProfileForm({...profileForm, pfp: e.target.value})}
-              />
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handlePfpChange}
-              />
-            </div>
+
             <input 
               type="text" 
               placeholder="Nome completo"
