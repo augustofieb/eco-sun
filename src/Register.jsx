@@ -2,6 +2,7 @@ import './Register.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
+import { authAPI } from './services/api'
 import { registerUser } from './utils/auth'
 
 const Register = () => {
@@ -9,7 +10,7 @@ const Register = () => {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Por favor, preencha todos os campos')
@@ -25,11 +26,19 @@ const Register = () => {
     }
     
     try {
-      registerUser(formData)
+      // Tentar API primeiro
+      await authAPI.register(formData.name, formData.email, formData.password)
       alert('Conta criada com sucesso!')
       navigate('/login')
     } catch (err) {
-      setError(err.message)
+      // Fallback para localStorage
+      try {
+        registerUser(formData)
+        alert('Conta criada com sucesso!')
+        navigate('/login')
+      } catch (localErr) {
+        setError(localErr.message)
+      }
     }
   }
 

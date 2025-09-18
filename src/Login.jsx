@@ -2,14 +2,15 @@ import './Login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
-import { loginUser } from './utils/auth'
+import { authAPI } from './services/api'
+import { registerUser, loginUser } from './utils/auth'
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.email || !formData.password) {
       setError('Por favor, preencha todos os campos')
@@ -17,11 +18,21 @@ const Login = () => {
     }
     
     try {
-      const user = loginUser(formData.email, formData.password)
-      alert(`Bem-vindo, ${user.name}!`)
+      // Tentar API primeiro
+      const response = await authAPI.login(formData.email, formData.password)
+      localStorage.setItem('token', response.data.token)
+      localStorage.setItem('user', JSON.stringify(response.data.user))
+      alert(`Bem-vindo, ${response.data.user.nome}!`)
       navigate('/')
     } catch (err) {
-      setError(err.message)
+      // Fallback para localStorage
+      try {
+        const user = loginUser(formData.email, formData.password)
+        alert(`Bem-vindo, ${user.name}!`)
+        navigate('/')
+      } catch (localErr) {
+        setError('Email ou senha incorretos')
+      }
     }
   }
 

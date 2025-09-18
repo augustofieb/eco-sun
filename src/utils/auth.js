@@ -1,20 +1,17 @@
-// Simple authentication utilities using localStorage
-
+// Auth utilities with localStorage fallback
 export const registerUser = (userData) => {
   const users = JSON.parse(localStorage.getItem('users') || '[]')
   
-  // Check if user already exists
   if (users.find(user => user.email === userData.email)) {
     throw new Error('Usuário já existe com este email')
   }
   
-  // Add new user
   const newUser = {
     id: Date.now(),
     name: userData.name,
     email: userData.email,
-    password: userData.password, // In real app, this should be hashed
-    isAdmin: users.length === 0, // First user is admin
+    password: userData.password,
+    isAdmin: users.length === 0,
     createdAt: new Date().toISOString()
   }
   
@@ -31,80 +28,22 @@ export const loginUser = (email, password) => {
     throw new Error('Email ou senha incorretos')
   }
   
-  // Store current user session
   localStorage.setItem('currentUser', JSON.stringify(user))
   return user
 }
 
 export const getCurrentUser = () => {
+  const userData = localStorage.getItem('user')
+  if (userData) return JSON.parse(userData)
+  
   return JSON.parse(localStorage.getItem('currentUser') || 'null')
 }
 
-export const logoutUser = () => {
-  localStorage.removeItem('currentUser')
-}
-
 export const isLoggedIn = () => {
-  return getCurrentUser() !== null
+  return localStorage.getItem('token') !== null || getCurrentUser() !== null
 }
 
 export const isAdmin = () => {
   const user = getCurrentUser()
-  return user && user.isAdmin
-}
-
-export const getAllUsers = () => {
-  return JSON.parse(localStorage.getItem('users') || '[]')
-}
-
-export const deleteUser = (userId) => {
-  const users = getAllUsers()
-  const filteredUsers = users.filter(user => user.id !== userId)
-  localStorage.setItem('users', JSON.stringify(filteredUsers))
-}
-
-export const updateUser = (userId, updates) => {
-  const users = getAllUsers()
-  const userIndex = users.findIndex(user => user.id === userId)
-  if (userIndex !== -1) {
-    users[userIndex] = { ...users[userIndex], ...updates }
-    localStorage.setItem('users', JSON.stringify(users))
-  }
-}
-
-export const toggleAdmin = (userId) => {
-  const users = getAllUsers()
-  const userIndex = users.findIndex(user => user.id === userId)
-  if (userIndex !== -1) {
-    users[userIndex].isAdmin = !users[userIndex].isAdmin
-    localStorage.setItem('users', JSON.stringify(users))
-  }
-}
-
-export const grantAdminByEmail = (email) => {
-  const users = getAllUsers()
-  const userIndex = users.findIndex(user => user.email === email)
-  if (userIndex !== -1) {
-    users[userIndex].isAdmin = true
-    localStorage.setItem('users', JSON.stringify(users))
-    return true
-  }
-  return false
-}
-
-export const updateUserProfile = (userId, profileData) => {
-  const users = getAllUsers()
-  const userIndex = users.findIndex(user => user.id === userId)
-  if (userIndex !== -1) {
-    users[userIndex] = { ...users[userIndex], ...profileData }
-    localStorage.setItem('users', JSON.stringify(users))
-    
-    // Update current user session if it's the same user
-    const currentUser = getCurrentUser()
-    if (currentUser && currentUser.id === userId) {
-      localStorage.setItem('currentUser', JSON.stringify(users[userIndex]))
-    }
-    return users[userIndex]
-  }
-  return null
+  return user && (user.nivelAcesso === 'ADMIN' || user.isAdmin)
 }

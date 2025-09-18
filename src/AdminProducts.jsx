@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/auth'
-import { getProducts, addProduct, updateProduct, deleteProduct } from './utils/products'
-import { getCategories, addCategory } from './utils/categories'
+import { productsAPI, categoriesAPI } from './services/api'
 
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
@@ -23,48 +22,94 @@ const AdminProducts = () => {
       return
     }
     loadProducts()
-    setCategories(getCategories())
+    loadCategories()
   }, [navigate])
 
-  const loadProducts = () => {
-    setProducts(getProducts())
+  const loadProducts = async () => {
+    try {
+      const response = await productsAPI.getAll()
+      setProducts(response.data)
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error)
+    }
+  }
+  
+  const loadCategories = async () => {
+    try {
+      const response = await categoriesAPI.getAll()
+      setCategories(response.data)
+    } catch (error) {
+      console.error('Erro ao carregar categorias:', error)
+    }
   }
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault()
-    addProduct({ ...formData, price: parseFloat(formData.price) })
-    setFormData({ name: '', price: '', category: '', image: '', description: '' })
-    setShowAddForm(false)
-    loadProducts()
+    try {
+      await productsAPI.create({ 
+        nome: formData.name, 
+        preco: parseFloat(formData.price),
+        categoria_id: categories.find(c => c.nome === formData.category)?.id,
+        descricao: formData.description
+      })
+      setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setShowAddForm(false)
+      loadProducts()
+    } catch (error) {
+      alert('Erro ao adicionar produto')
+    }
   }
 
   const handleEdit = (product) => {
     setEditingProduct(product.id)
-    setFormData({ name: product.name, price: product.price, category: product.category, image: product.image, description: product.description || '' })
+    setFormData({ name: product.nome, price: product.preco, category: product.categoria_nome, image: product.image || '', description: product.descricao || '' })
   }
 
-  const handleUpdate = (productId) => {
-    updateProduct(productId, { ...formData, price: parseFloat(formData.price) })
-    setEditingProduct(null)
-    setFormData({ name: '', price: '', category: '', image: '', description: '' })
-    loadProducts()
-  }
-
-  const handleDelete = (productId) => {
-    if (confirm('Tem certeza que deseja deletar este produto?')) {
-      deleteProduct(productId)
+  const handleUpdate = async (productId) => {
+    try {
+      await productsAPI.update(productId, {
+        nome: formData.name,
+        preco: parseFloat(formData.price),
+        categoria_id: categories.find(c => c.nome === formData.category)?.id,
+        descricao: formData.description
+      })
+      setEditingProduct(null)
+      setFormData({ name: '', price: '', category: '', image: '', description: '' })
       loadProducts()
+    } catch (error) {
+      alert('Erro ao atualizar produto')
     }
   }
 
-  const handleAddCategory = (e) => {
+  const handleDelete = async (productId) => {
+    if (confirm('Tem certeza que deseja deletar este produto?')) {
+      try {
+        await productsAPI.delete(productId)
+        loadProducts()
+      } catch (error) {
+        alert('Erro ao deletar produto')
+      }
+    }
+  }
+
+  const handleAddCategory = async (e) => {
     e.preventDefault()
-    if (newCategory.trim() && addCategory(newCategory.trim())) {
-      setCategories(getCategories())
+    if (!newCategory.trim()) {
+      alert('Nome da categoria é obrigatório')
+      return
+    }
+    
+    try {
+      console.log('Tentando criar categoria:', newCategory)
+      const response = await categoriesAPI.create({ nome: newCategory.trim() })
+      console.log('Resposta:', response)
       setNewCategory('')
       setShowCategoryForm(false)
-    } else {
-      alert('Categoria já existe ou nome inválido')
+      loadCategories()
+      alert('Categoria criada com sucesso!')
+    } catch (error) {
+      console.error('Erro detalhado:', error)
+      alert('Erro ao criar categoria: ' + (error.response?.data?.message || error.message))
     }
   }
 
@@ -124,7 +169,7 @@ const AdminProducts = () => {
             >
               <option value="">Selecione categoria</option>
               {categories.map(cat => (
-                <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                <option key={cat.id} value={cat.nome}>{cat.nome}</option>
               ))}
             </select>
             <input 
@@ -192,7 +237,7 @@ const AdminProducts = () => {
                         value={formData.price}
                         onChange={(e) => setFormData({...formData, price: e.target.value})}
                       />
-                    ) : `R$${product.price.toFixed(2)}`}
+                    ) : `R$${product.preco.toFixed(2)}`}
                   </td>
                   <td>
                     {editingProduct === product.id ? (
@@ -201,10 +246,10 @@ const AdminProducts = () => {
                         onChange={(e) => setFormData({...formData, category: e.target.value})}
                       >
                         {categories.map(cat => (
-                          <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                          <option key={cat.id} value={cat.nome}>{cat.nome}</option>
                         ))}
                       </select>
-                    ) : product.category}
+                    ) : product.categoria_nome}
                   </td>
                   <td>
                     {editingProduct === product.id ? (
@@ -213,7 +258,7 @@ const AdminProducts = () => {
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
                         rows="2"
                       />
-                    ) : (product.description ? product.description.substring(0, 50) + '...' : 'Sem descrição')}
+                    ) : (product.descricao ? product.descricao.substring(0, 50) + '...' : 'Sem descrição')}
                   </td>
                   <td className="actions">
                     {editingProduct === product.id ? (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getProducts } from './utils/products'
+import { productsAPI } from './services/api'
 import { getCurrentUser } from './utils/auth'
 import './ProductDetails.css'
 import Logo from './assets/Logo.png'
@@ -15,15 +15,20 @@ const ProductDetails = () => {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
 
   useEffect(() => {
-    const products = getProducts()
-    const foundProduct = products.find(p => p.id === parseInt(id))
-    setProduct(foundProduct)
+    const loadProduct = async () => {
+      try {
+        const response = await productsAPI.getById(id)
+        setProduct(response.data)
+      } catch (error) {
+        console.error('Erro ao carregar produto:', error)
+      }
+    }
+    
+    loadProduct()
     
     // Load reviews from localStorage
     const savedReviews = JSON.parse(localStorage.getItem(`reviews_${id}`) || '[]')
     setReviews(savedReviews)
-    
-
   }, [id])
 
   const handleAddReview = (e) => {
@@ -88,22 +93,22 @@ const ProductDetails = () => {
       <div className="product-details-container">
         <div className="product-main">
           <div className="product-image">
-            <img src={product.image || 'https://via.placeholder.com/400'} alt={product.name} />
+            <img src={product.image || 'https://via.placeholder.com/400'} alt={product.nome} />
           </div>
           
           <div className="product-info">
-            <h1>{product.name}</h1>
+            <h1>{product.nome}</h1>
             <div className="product-rating">
               <span className="stars">{renderStars(Math.round(getAverageRating()))}</span>
               <span className="rating-text">({getAverageRating()}) - {reviews.length} avaliações</span>
             </div>
-            <div className="product-price">R$ {product.price.toFixed(2)}</div>
-            <div className="product-category">Categoria: {product.category}</div>
+            <div className="product-price">R$ {product.preco.toFixed(2)}</div>
+            <div className="product-category">Categoria: {product.categoria_nome}</div>
             
-            {product.description && (
+            {product.descricao && (
               <div className="product-description">
                 <h3>Descrição</h3>
-                <p>{product.description}</p>
+                <p>{product.descricao}</p>
               </div>
             )}
             

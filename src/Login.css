@@ -94,3 +94,13 @@ body {
   font-size: 0.9rem;
   text-align: center;
 }
+
+.success-message {
+  background-color: #c6f6d5;
+  color: #22543d;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+}
