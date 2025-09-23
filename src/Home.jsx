@@ -3,8 +3,8 @@ import './dark-mode.css'
 import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, grantAdminByEmail, updateUserProfile } from './utils/auth'
-import { getProducts, getProductsByCategory } from './utils/products'
+import { isLoggedIn, isAdmin, getCurrentUser, logoutUser } from './utils/authAPI'
+import { getProducts, getProductsByCategory } from './utils/productsAPI'
 import { getCategories } from './utils/categories'
 import { getTheme, setTheme, initTheme } from './utils/theme'
 
@@ -37,7 +37,6 @@ const Home = () => {
     const currentUser = getCurrentUser()
     setUser(currentUser)
     setUserIsAdmin(isAdmin())
-    setProducts(getProducts())
     setCategories(getCategories())
     setIsDarkMode(getTheme() === 'dark')
     initTheme()
@@ -53,13 +52,19 @@ const Home = () => {
       })
     }
     
-    // Grant admin to guto if user exists
-    grantAdminByEmail('augustinho@gmail.com')
+    // Load products from API
+    loadProducts()
   }, [])
 
-  const handleCategoryChange = (category) => {
+  const loadProducts = async () => {
+    const productsData = await getProducts()
+    setProducts(productsData)
+  }
+
+  const handleCategoryChange = async (category) => {
     setSelectedCategory(category)
-    setProducts(getProductsByCategory(category))
+    const productsData = await getProductsByCategory(category)
+    setProducts(productsData)
   }
 
   const handleLogout = () => {
@@ -284,9 +289,9 @@ const Home = () => {
               products.map(product => (
                 <div key={product.id} className="product-card">
                   <Link to={`/product/${product.id}`} className="product-link">
-                    <img src={product.image} alt={product.name} />
-                    <h3>{product.name}</h3>
-                    <p>R${product.price.toFixed(2)}</p>
+                    <img src={product.foto || placaSolar} alt={product.nome} />
+                    <h3>{product.nome}</h3>
+                    <p>R${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
                   </Link>
                   <button className="btn-secondary" onClick={() => setIsQuoteOpen(true)}>Solicitar orçamento</button>
                 </div>
