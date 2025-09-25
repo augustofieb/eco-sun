@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { isAdmin, getAllUsers, deleteUser, updateUser, toggleAdmin } from './utils/auth'
+import { isAdmin } from './utils/authAPI'
+import { getAllUsers, deleteUser, updateUser, toggleAdmin } from './utils/usersAPI'
 import './Admin.css'
 import Logo from './assets/Logo.png'
 
@@ -18,33 +19,45 @@ const Admin = () => {
     loadUsers()
   }, [navigate])
 
-  const loadUsers = () => {
-    const allUsers = getAllUsers()
+  const loadUsers = async () => {
+    const allUsers = await getAllUsers()
     setUsers(allUsers)
     console.log('Registered users:', allUsers)
   }
 
-  const handleDelete = (userId) => {
+  const handleDelete = async (userId) => {
     if (confirm('Tem certeza que deseja deletar este usuário?')) {
-      deleteUser(userId)
-      loadUsers()
+      try {
+        await deleteUser(userId)
+        loadUsers()
+      } catch (error) {
+        alert('Erro ao deletar usuário')
+      }
     }
   }
 
   const handleEdit = (user) => {
     setEditingUser(user.id)
-    setEditForm({ name: user.name, email: user.email })
+    setEditForm({ name: user.nome, email: user.email })
   }
 
-  const handleUpdate = (userId) => {
-    updateUser(userId, editForm)
-    setEditingUser(null)
-    loadUsers()
+  const handleUpdate = async (userId) => {
+    try {
+      await updateUser(userId, editForm)
+      setEditingUser(null)
+      loadUsers()
+    } catch (error) {
+      alert('Erro ao atualizar usuário')
+    }
   }
 
-  const handleToggleAdmin = (userId) => {
-    toggleAdmin(userId)
-    loadUsers()
+  const handleToggleAdmin = async (userId) => {
+    try {
+      await toggleAdmin(userId)
+      loadUsers()
+    } catch (error) {
+      alert('Erro ao alterar nível de acesso')
+    }
   }
 
   if (!isAdmin()) {
@@ -100,7 +113,7 @@ const Admin = () => {
                         value={editForm.name}
                         onChange={(e) => setEditForm({...editForm, name: e.target.value})}
                       />
-                    ) : user.name}
+                    ) : user.nome}
                   </td>
                   <td>
                     {editingUser === user.id ? (
@@ -110,7 +123,7 @@ const Admin = () => {
                       />
                     ) : user.email}
                   </td>
-                  <td>{user.isAdmin ? 'Sim' : 'Não'}</td>
+                  <td>{user.nivelAcesso === 'ADMIN' ? 'Sim' : 'Não'}</td>
                   <td className="actions">
                     {editingUser === user.id ? (
                       <>
@@ -121,7 +134,7 @@ const Admin = () => {
                       <>
                         <button onClick={() => handleEdit(user)} className="btn-edit">Editar</button>
                         <button onClick={() => handleToggleAdmin(user.id)} className="btn-admin">
-                          {user.isAdmin ? 'Remover Admin' : 'Tornar Admin'}
+                          {user.nivelAcesso === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin'}
                         </button>
                         <button onClick={() => handleDelete(user.id)} className="btn-delete">Deletar</button>
                       </>

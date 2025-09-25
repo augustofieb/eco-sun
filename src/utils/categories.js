@@ -1,23 +1,12 @@
-// Category management utilities using localStorage
+// Categories utility - now using hardcoded categories
+// In the future, this could be replaced with API calls
 
 export const getCategories = () => {
-  const defaultCategories = ['paineis', 'inversores', 'baterias', 'acessorios']
-  const stored = localStorage.getItem('categories')
-  return stored ? JSON.parse(stored) : defaultCategories
-}
+  return ['painéis', 'inversores', 'baterias', 'controladores'];
+};
 
 export const addCategory = (categoryName) => {
-  const categories = getCategories()
-  if (!categories.includes(categoryName.toLowerCase())) {
-    categories.push(categoryName.toLowerCase())
-    localStorage.setItem('categories', JSON.stringify(categories))
-    return true
-  }
-  return false
-}
-
-export const deleteCategory = (categoryName) => {
-  const categories = getCategories()
-  const filtered = categories.filter(cat => cat !== categoryName)
-  localStorage.setItem('categories', JSON.stringify(filtered))
-}
+  // This would be implemented with API in the future
+  console.log('Add category functionality not implemented yet');
+  return false;
+};

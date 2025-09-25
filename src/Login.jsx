@@ -2,7 +2,7 @@ import './Login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
-import { authAPI } from './services/api'
+import { loginUser } from './utils/authAPI'
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' })
@@ -17,21 +17,16 @@ const Login = () => {
     }
     
     try {
-      const response = await authAPI.login(formData.email, formData.password)
-      const { token, nome, email, nivelAcesso } = response.data
-      
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify({ nome, email, nivelAcesso }))
-      
-      alert(`Bem-vindo, ${nome}!`)
-      navigate('/')
+      const result = await loginUser(formData.email, formData.password)
+      if (result.success) {
+        alert(`Bem-vindo, ${result.user.name}!`)
+        navigate('/')
+      } else {
+        setError(result.error)
+      }
     } catch (error) {
       console.error('Erro de login:', error)
-      if (error.code === 'ERR_NETWORK') {
-        setError('Erro de conexão. Verifique se o backend está rodando.')
-      } else {
-        setError(error.response?.data || 'Email ou senha inválidos')
-      }
+      setError('Erro de conexão. Verifique se o backend está rodando.')
     }
   }
 

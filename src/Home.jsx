@@ -43,7 +43,7 @@ const Home = () => {
     
     if (currentUser) {
       setProfileForm({
-        name: currentUser.name || '',
+        name: currentUser.nome || currentUser.name || '',
         email: currentUser.email || '',
         nickname: currentUser.nickname || '',
         address: currentUser.address || '',
@@ -77,13 +77,8 @@ const Home = () => {
 
   const handleProfileUpdate = (e) => {
     e.preventDefault()
-    if (user) {
-      const updatedUser = updateUserProfile(user.id, profileForm)
-      if (updatedUser) {
-        setUser(updatedUser)
-        alert('Perfil atualizado com sucesso!')
-      }
-    }
+    // Funcionalidade de atualização de perfil pode ser implementada futuramente
+    alert('Funcionalidade em desenvolvimento')
   }
 
   const toggleDarkMode = () => {
@@ -221,7 +216,7 @@ const Home = () => {
                   </>
                 )}
                 <li>
-                  <span className="user-welcome">Olá, {user.nickname || user.name}</span>
+                  <span className="user-welcome">Olá, {user.nome || user.name}</span>
                 </li>
               </>
             ) : (
@@ -289,7 +284,7 @@ const Home = () => {
               products.map(product => (
                 <div key={product.id} className="product-card">
                   <Link to={`/product/${product.id}`} className="product-link">
-                    <img src={product.foto || placaSolar} alt={product.nome} />
+                    <img src={product.fotoUrl || placaSolar} alt={product.nome} />
                     <h3>{product.nome}</h3>
                     <p>R${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
                   </Link>

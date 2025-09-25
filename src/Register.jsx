@@ -2,14 +2,14 @@ import './Register.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
-import { registerUser } from './utils/auth'
+import { registerUser } from './utils/authAPI'
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Por favor, preencha todos os campos')
@@ -25,11 +25,15 @@ const Register = () => {
     }
     
     try {
-      registerUser(formData)
-      alert('Conta criada com sucesso!')
-      navigate('/login')
+      const result = await registerUser(formData.name, formData.email, formData.password)
+      if (result.success) {
+        alert('Conta criada com sucesso!')
+        navigate('/')
+      } else {
+        setError(result.error)
+      }
     } catch (err) {
-      setError(err.message)
+      setError('Erro ao criar conta')
     }
   }
 

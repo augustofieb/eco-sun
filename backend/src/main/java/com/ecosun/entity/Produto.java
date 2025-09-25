@@ -22,6 +22,9 @@ public class Produto {
     @Lob
     private byte[] foto;
 
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
+
     @Column(name = "categoria_id", nullable = false)
     private Integer categoriaId;
 
@@ -48,6 +51,9 @@ public class Produto {
 
     public byte[] getFoto() { return foto; }
     public void setFoto(byte[] foto) { this.foto = foto; }
+
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
     public Integer getCategoriaId() { return categoriaId; }
     public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }

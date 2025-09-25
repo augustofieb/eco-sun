@@ -6,11 +6,12 @@ Site para solicitação de orçamentos personalizados de sistemas de energia sol
 
 - **Calculadora de Orçamento**: Sistema inteligente que calcula a potência necessária, número de painéis e investimento total
 - **Catálogo de Produtos**: Visualização de equipamentos de energia solar (painéis, inversores, baterias, controladores)
-- **Sistema de Avaliações**: Usuários podem avaliar e comentar sobre os produtos
+- **Sistema de Avaliações**: Usuários podem avaliar e comentar sobre os produtos (via API)
 - **Integração WhatsApp**: Envio direto do orçamento via WhatsApp
 - **Modo Escuro**: Interface adaptável com tema claro e escuro
-- **Sistema de Usuários**: Cadastro, login e gerenciamento de perfil
-- **Painel Administrativo**: Gestão de usuários e produtos
+- **Sistema de Usuários**: Cadastro, login e gerenciamento via API REST
+- **Painel Administrativo**: Gestão completa de usuários e produtos via API
+- **Autenticação JWT**: Sistema seguro de autenticação com tokens
 
 ## Tecnologias Utilizadas
 
@@ -18,7 +19,9 @@ Site para solicitação de orçamentos personalizados de sistemas de energia sol
 - **Vite** - Build tool e servidor de desenvolvimento
 - **React Router** - Roteamento
 - **CSS3** - Estilização com suporte a modo escuro
-- **LocalStorage** - Persistência de dados local
+- **Spring Boot** - Backend API REST
+- **SQL Server** - Banco de dados
+- **JWT** - Autenticação segura
 
 ## Como Executar
 
@@ -31,7 +34,7 @@ Site para solicitação de orçamentos personalizados de sistemas de energia sol
 ### GitHub Codespaces
 1. Execute o script de inicialização: `./start-project.sh`
 2. Acesse a URL fornecida pelo script
-3. **Login de teste**: `admin@ecosun.com` / `admin123`
+3. **Login de teste**: `admin@ecosun.com` / `password`
 
 **Ou execute manualmente:**
 ```bash
@@ -41,13 +44,27 @@ cd backend && mvn spring-boot:run &
 cd .. && npm run dev
 ```
 
+### Testar Migração
+Para verificar se a migração do localStorage para API foi bem-sucedida:
+```bash
+./test-migration.sh
+```
+
 ## Estrutura do Projeto
 
+### Frontend
 - `/src/Home.jsx` - Página principal com catálogo e hero section
 - `/src/SolarQuote.jsx` - Componente de orçamento de energia solar
 - `/src/ProductDetails.jsx` - Detalhes dos produtos com sistema de avaliações
-- `/src/utils/` - Utilitários para autenticação, produtos, categorias e temas
+- `/src/utils/` - Utilitários para autenticação, produtos, usuários e avaliações via API
+- `/src/services/api.js` - Configuração e endpoints da API
 - `/src/assets/` - Imagens e recursos estáticos
+
+### Backend
+- `/backend/src/main/java/com/ecosun/controller/` - Controllers REST
+- `/backend/src/main/java/com/ecosun/entity/` - Entidades JPA
+- `/backend/src/main/java/com/ecosun/service/` - Lógica de negócio
+- `/backend/src/main/java/com/ecosun/repository/` - Repositórios de dados
 
 ## Funcionalidades do Orçamento
 

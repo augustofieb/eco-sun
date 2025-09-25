@@ -1,5 +1,6 @@
 package com.ecosun.controller;
 
+import com.ecosun.dto.ProdutoRequest;
 import com.ecosun.entity.Produto;
 import com.ecosun.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +32,27 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public Produto createProduto(@RequestBody Produto produto) {
+    public Produto createProduto(@RequestBody ProdutoRequest request) {
+        Produto produto = new Produto();
+        produto.setNome(request.getNome());
+        produto.setDescricao(request.getDescricao());
+        produto.setPreco(request.getPreco());
+        produto.setFotoUrl(request.getFoto());
+        produto.setCategoriaId(request.getCategoriaId());
         produto.setStatusProduto("ATIVO");
         return produtoService.saveProduto(produto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> updateProduto(@PathVariable Integer id, @RequestBody Produto produto) {
+    public ResponseEntity<Produto> updateProduto(@PathVariable Integer id, @RequestBody ProdutoRequest request) {
         return produtoService.getProdutoById(id)
                 .map(existing -> {
-                    produto.setId(id);
-                    return ResponseEntity.ok(produtoService.saveProduto(produto));
+                    existing.setNome(request.getNome());
+                    existing.setDescricao(request.getDescricao());
+                    existing.setPreco(request.getPreco());
+                    existing.setFotoUrl(request.getFoto());
+                    existing.setCategoriaId(request.getCategoriaId());
+                    return ResponseEntity.ok(produtoService.saveProduto(existing));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

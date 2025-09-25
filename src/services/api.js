@@ -35,4 +35,20 @@ export const productsAPI = {
   delete: (id) => api.delete(`/produtos/${id}`),
 };
 
+// Users API
+export const usersAPI = {
+  getAll: () => api.get('/usuarios'),
+  getById: (id) => api.get(`/usuarios/${id}`),
+  update: (id, usuario) => api.put(`/usuarios/${id}`, usuario),
+  toggleAdmin: (id) => api.put(`/usuarios/${id}/toggle-admin`),
+  delete: (id) => api.delete(`/usuarios/${id}`),
+};
+
+// Reviews API
+export const reviewsAPI = {
+  getByProduct: (produtoId) => api.get(`/avaliacoes/produto/${produtoId}`),
+  create: (avaliacao) => api.post('/avaliacoes', avaliacao),
+  delete: (id) => api.delete(`/avaliacoes/${id}`),
+};
+
 export default api;

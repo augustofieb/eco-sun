@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { isAdmin } from './utils/auth'
-import { getProducts, addProduct, updateProduct, deleteProduct } from './utils/products'
-import { getCategories, addCategory } from './utils/categories'
-
+import { isAdmin } from './utils/authAPI'
+import { getProducts, createProduct, updateProduct, deleteProduct } from './utils/productsAPI'
+import { getCategories } from './utils/categories'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
 
@@ -23,49 +22,78 @@ const AdminProducts = () => {
       return
     }
     loadProducts()
-    setCategories(getCategories())
+    const categoriesData = getCategories()
+    setCategories(categoriesData.map((cat, index) => ({ id: index + 1, nome: cat.charAt(0).toUpperCase() + cat.slice(1) })))
   }, [navigate])
 
-  const loadProducts = () => {
-    setProducts(getProducts())
+  const loadProducts = async () => {
+    const productsData = await getProducts()
+    setProducts(productsData)
   }
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault()
-    addProduct({ ...formData, price: parseFloat(formData.price) })
-    setFormData({ name: '', price: '', category: '', image: '', description: '' })
-    setShowAddForm(false)
-    loadProducts()
+    try {
+      await createProduct({
+        nome: formData.name,
+        preco: parseFloat(formData.price),
+        categoriaId: parseInt(formData.category),
+        descricao: formData.description,
+        foto: formData.image
+      })
+      setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setShowAddForm(false)
+      loadProducts()
+    } catch (error) {
+      console.error('Erro ao adicionar produto:', error)
+      alert('Erro ao adicionar produto')
+    }
   }
 
   const handleEdit = (product) => {
     setEditingProduct(product.id)
-    setFormData({ name: product.name, price: product.price, category: product.category, image: product.image, description: product.description || '' })
+    setFormData({ 
+      name: product.nome, 
+      price: product.preco, 
+      category: product.categoriaId, 
+      image: product.fotoUrl || '', 
+      description: product.descricao || '' 
+    })
   }
 
-  const handleUpdate = (productId) => {
-    updateProduct(productId, { ...formData, price: parseFloat(formData.price) })
-    setEditingProduct(null)
-    setFormData({ name: '', price: '', category: '', image: '', description: '' })
-    loadProducts()
-  }
-
-  const handleDelete = (productId) => {
-    if (confirm('Tem certeza que deseja deletar este produto?')) {
-      deleteProduct(productId)
+  const handleUpdate = async (productId) => {
+    try {
+      await updateProduct(productId, {
+        nome: formData.name,
+        preco: parseFloat(formData.price),
+        categoriaId: parseInt(formData.category),
+        descricao: formData.description,
+        foto: formData.image
+      })
+      setEditingProduct(null)
+      setFormData({ name: '', price: '', category: '', image: '', description: '' })
       loadProducts()
+    } catch (error) {
+      alert('Erro ao atualizar produto')
+    }
+  }
+
+  const handleDelete = async (productId) => {
+    if (confirm('Tem certeza que deseja deletar este produto?')) {
+      try {
+        await deleteProduct(productId)
+        loadProducts()
+      } catch (error) {
+        alert('Erro ao deletar produto')
+      }
     }
   }
 
   const handleAddCategory = (e) => {
     e.preventDefault()
-    if (newCategory.trim() && addCategory(newCategory.trim())) {
-      setCategories(getCategories())
-      setNewCategory('')
-      setShowCategoryForm(false)
-    } else {
-      alert('Categoria já existe ou nome inválido')
-    }
+    // Funcionalidade de adicionar categoria pode ser implementada futuramente
+    alert('Funcionalidade em desenvolvimento')
+    setShowCategoryForm(false)
   }
 
 
@@ -124,7 +152,7 @@ const AdminProducts = () => {
             >
               <option value="">Selecione categoria</option>
               {categories.map(cat => (
-                <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                <option key={cat.id} value={cat.id}>{cat.nome}</option>
               ))}
             </select>
             <input 
@@ -183,7 +211,7 @@ const AdminProducts = () => {
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                       />
-                    ) : product.name}
+                    ) : product.nome}
                   </td>
                   <td>
                     {editingProduct === product.id ? (
@@ -192,7 +220,7 @@ const AdminProducts = () => {
                         value={formData.price}
                         onChange={(e) => setFormData({...formData, price: e.target.value})}
                       />
-                    ) : `R$${product.price.toFixed(2)}`}
+                    ) : `R$${(product.preco || 0).toFixed(2)}`}
                   </td>
                   <td>
                     {editingProduct === product.id ? (
@@ -201,10 +229,10 @@ const AdminProducts = () => {
                         onChange={(e) => setFormData({...formData, category: e.target.value})}
                       >
                         {categories.map(cat => (
-                          <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                          <option key={cat.id} value={cat.id}>{cat.nome}</option>
                         ))}
                       </select>
-                    ) : product.category}
+                    ) : (categories.find(cat => cat.id === product.categoriaId)?.nome || 'N/A')}
                   </td>
                   <td>
                     {editingProduct === product.id ? (
@@ -213,7 +241,7 @@ const AdminProducts = () => {
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
                         rows="2"
                       />
-                    ) : (product.description ? product.description.substring(0, 50) + '...' : 'Sem descrição')}
+                    ) : (product.descricao ? product.descricao.substring(0, 50) + '...' : 'Sem descrição')}
                   </td>
                   <td className="actions">
                     {editingProduct === product.id ? (

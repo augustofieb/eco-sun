@@ -51,11 +51,11 @@ export const addUser = (userData) => {
 
 export const isAdmin = () => {
   const user = getCurrentUser();
-  return user && user.isAdmin;
+  return user && user.nivelAcesso === 'ADMIN';
 };
 
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('currentUser');
+  const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
 };
 
