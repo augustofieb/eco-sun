@@ -33,20 +33,27 @@ const AdminProducts = () => {
 
   const handleAdd = async (e) => {
     e.preventDefault()
+    const price = parseFloat(formData.price)
+    if (price > 999999.99) {
+      alert('Preço muito alto. Máximo: R$ 999.999,99')
+      return
+    }
+    const productData = {
+      nome: formData.name,
+      preco: price,
+      categoriaId: parseInt(formData.category),
+      descricao: formData.description,
+      foto: formData.image
+    }
+    console.log('Enviando produto:', productData)
     try {
-      await createProduct({
-        nome: formData.name,
-        preco: parseFloat(formData.price),
-        categoriaId: parseInt(formData.category),
-        descricao: formData.description,
-        foto: formData.image
-      })
+      await createProduct(productData)
       setFormData({ name: '', price: '', category: '', image: '', description: '' })
       setShowAddForm(false)
       loadProducts()
     } catch (error) {
-      console.error('Erro ao adicionar produto:', error)
-      alert('Erro ao adicionar produto')
+      console.error('Erro ao adicionar produto:', error.response?.data || error.message)
+      alert('Erro ao adicionar produto: ' + (error.response?.data || error.message))
     }
   }
 
@@ -143,6 +150,8 @@ const AdminProducts = () => {
               placeholder="Preço" 
               value={formData.price}
               onChange={(e) => setFormData({...formData, price: e.target.value})}
+              max="999999.99"
+              step="0.01"
               required 
             />
             <select 

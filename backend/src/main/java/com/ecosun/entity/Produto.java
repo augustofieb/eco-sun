@@ -22,17 +22,17 @@ public class Produto {
     @Lob
     private byte[] foto;
 
-    @Column(name = "foto_url", length = 500)
+    @Column(name = "FotoUrl", length = 500)
     private String fotoUrl;
 
-    @Column(name = "categoria_id", nullable = false)
+    @Column(name = "CategoriaId", nullable = false)
     private Integer categoriaId;
 
-    @Column(name = "status_produto", nullable = false, length = 10)
+    @Column(name = "StatusProduto", nullable = false, length = 10)
     private String statusProduto;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
+    @JoinColumn(name = "CategoriaId", insertable = false, updatable = false)
     private Categoria categoria;
 
     public Produto() {}
