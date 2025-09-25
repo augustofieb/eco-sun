@@ -1,6 +1,6 @@
 package com.ecosun.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity

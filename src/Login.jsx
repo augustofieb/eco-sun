@@ -2,14 +2,14 @@ import './Login.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
-import { loginUser } from './utils/auth'
+import { authAPI } from './services/api'
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!formData.email || !formData.password) {
       setError('Por favor, preencha todos os campos')
@@ -17,11 +17,21 @@ const Login = () => {
     }
     
     try {
-      const user = loginUser(formData.email, formData.password)
-      alert(`Bem-vindo, ${user.name}!`)
+      const response = await authAPI.login(formData.email, formData.password)
+      const { token, nome, email, nivelAcesso } = response.data
+      
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify({ nome, email, nivelAcesso }))
+      
+      alert(`Bem-vindo, ${nome}!`)
       navigate('/')
-    } catch (err) {
-      setError(err.message)
+    } catch (error) {
+      console.error('Erro de login:', error)
+      if (error.code === 'ERR_NETWORK') {
+        setError('Erro de conexão. Verifique se o backend está rodando.')
+      } else {
+        setError(error.response?.data || 'Email ou senha inválidos')
+      }
     }
   }
 

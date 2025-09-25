@@ -1,4 +1,4 @@
-npmpackage com.ecosun.controller;
+package com.ecosun.controller;
 
 import com.ecosun.entity.Produto;
 import com.ecosun.service.ProdutoService;

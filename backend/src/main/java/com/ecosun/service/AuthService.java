@@ -78,4 +78,14 @@ public class AuthService {
             emailService.sendPasswordResetEmail(email, tempPassword);
         }
     }
+
+    public void makeAdmin(Integer userId) {
+        Optional<Usuario> usuario = usuarioRepository.findById(userId);
+        if (usuario.isPresent()) {
+            usuario.get().setNivelAcesso("ADMIN");
+            usuarioRepository.save(usuario.get());
+        } else {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+    }
 }

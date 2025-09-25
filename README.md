@@ -22,10 +22,24 @@ Site para solicitação de orçamentos personalizados de sistemas de energia sol
 
 ## Como Executar
 
+### Ambiente Local
 1. Clone o repositório
 2. Instale as dependências: `npm install`
 3. Execute o servidor de desenvolvimento: `npm run dev`
 4. Acesse `http://localhost:5173`
+
+### GitHub Codespaces
+1. Execute o script de inicialização: `./start-project.sh`
+2. Acesse a URL fornecida pelo script
+3. **Login de teste**: `admin@ecosun.com` / `admin123`
+
+**Ou execute manualmente:**
+```bash
+# Backend
+cd backend && mvn spring-boot:run &
+# Frontend  
+cd .. && npm run dev
+```
 
 ## Estrutura do Projeto
 
