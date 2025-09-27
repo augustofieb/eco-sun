@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
-import { getAllUsers, deleteUser, updateUser, toggleAdmin } from './utils/usersAPI'
+import { getUsers, searchUsers, updateUser, deleteUser } from './utils/usersAPI'
 import './Admin.css'
 import Logo from './assets/Logo.png'
 
 const Admin = () => {
   const [users, setUsers] = useState([])
+  const [filteredUsers, setFilteredUsers] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [editingUser, setEditingUser] = useState(null)
-  const [editForm, setEditForm] = useState({ name: '', email: '' })
+  const [editForm, setEditForm] = useState({ nome: '', email: '', nivelAcesso: '', statusUsuario: '' })
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,25 +22,29 @@ const Admin = () => {
   }, [navigate])
 
   const loadUsers = async () => {
-    const allUsers = await getAllUsers()
+    const allUsers = await getUsers()
     setUsers(allUsers)
-    console.log('Registered users:', allUsers)
+    setFilteredUsers(allUsers)
   }
 
-  const handleDelete = async (userId) => {
-    if (confirm('Tem certeza que deseja deletar este usuário?')) {
-      try {
-        await deleteUser(userId)
-        loadUsers()
-      } catch (error) {
-        alert('Erro ao deletar usuário')
-      }
+  const handleSearch = async (query) => {
+    setSearchQuery(query)
+    if (query.trim() === '') {
+      setFilteredUsers(users)
+    } else {
+      const searchResults = await searchUsers(query)
+      setFilteredUsers(searchResults)
     }
   }
 
   const handleEdit = (user) => {
     setEditingUser(user.id)
-    setEditForm({ name: user.nome, email: user.email })
+    setEditForm({ 
+      nome: user.nome, 
+      email: user.email, 
+      nivelAcesso: user.nivelAcesso,
+      statusUsuario: user.statusUsuario
+    })
   }
 
   const handleUpdate = async (userId) => {
@@ -47,16 +53,18 @@ const Admin = () => {
       setEditingUser(null)
       loadUsers()
     } catch (error) {
-      alert('Erro ao atualizar usuário')
+      alert('Erro ao atualizar usuário: ' + (error.response?.data || error.message))
     }
   }
 
-  const handleToggleAdmin = async (userId) => {
-    try {
-      await toggleAdmin(userId)
-      loadUsers()
-    } catch (error) {
-      alert('Erro ao alterar nível de acesso')
+  const handleDelete = async (userId) => {
+    if (confirm('Tem certeza que deseja deletar este usuário?')) {
+      try {
+        await deleteUser(userId)
+        loadUsers()
+      } catch (error) {
+        alert('Erro ao deletar usuário: ' + (error.response?.data || error.message))
+      }
     }
   }
 
@@ -88,30 +96,42 @@ const Admin = () => {
       <main className="admin-content">
         <h1> Painel Administrativo</h1>
         <div className="users-table">
-          <h2>Gerenciar Usuários ({users.length} usuários)</h2>
+          <h2>Gerenciar Usuários ({filteredUsers.length} usuários)</h2>
+        <div className="search-container">
+          <input 
+            type="text" 
+            placeholder="Pesquisar por nome, email ou ID..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="search-input"
+          />
+        </div>
           <table>
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Nome</th>
                 <th>Email</th>
-                <th>Admin</th>
+                <th>Nível</th>
+                <th>Status</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {users.length === 0 ? (
+              {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="4" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
-                    Nenhum usuário registrado
+                  <td colSpan="6" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                    {searchQuery ? 'Nenhum usuário encontrado' : 'Nenhum usuário registrado'}
                   </td>
                 </tr>
-              ) : users.map(user => (
+              ) : filteredUsers.map(user => (
                 <tr key={user.id}>
+                  <td>{user.id}</td>
                   <td>
                     {editingUser === user.id ? (
                       <input 
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                        value={editForm.nome}
+                        onChange={(e) => setEditForm({...editForm, nome: e.target.value})}
                       />
                     ) : user.nome}
                   </td>
@@ -123,7 +143,28 @@ const Admin = () => {
                       />
                     ) : user.email}
                   </td>
-                  <td>{user.nivelAcesso === 'ADMIN' ? 'Sim' : 'Não'}</td>
+                  <td>
+                    {editingUser === user.id ? (
+                      <select 
+                        value={editForm.nivelAcesso}
+                        onChange={(e) => setEditForm({...editForm, nivelAcesso: e.target.value})}
+                      >
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                      </select>
+                    ) : user.nivelAcesso}
+                  </td>
+                  <td>
+                    {editingUser === user.id ? (
+                      <select 
+                        value={editForm.statusUsuario}
+                        onChange={(e) => setEditForm({...editForm, statusUsuario: e.target.value})}
+                      >
+                        <option value="ATIVO">ATIVO</option>
+                        <option value="INATIVO">INATIVO</option>
+                      </select>
+                    ) : user.statusUsuario}
+                  </td>
                   <td className="actions">
                     {editingUser === user.id ? (
                       <>
@@ -133,9 +174,6 @@ const Admin = () => {
                     ) : (
                       <>
                         <button onClick={() => handleEdit(user)} className="btn-edit">Editar</button>
-                        <button onClick={() => handleToggleAdmin(user.id)} className="btn-admin">
-                          {user.nivelAcesso === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin'}
-                        </button>
                         <button onClick={() => handleDelete(user.id)} className="btn-delete">Deletar</button>
                       </>
                     )}

@@ -23,6 +23,16 @@ export const getProductsByCategory = async (categoryId) => {
   }
 };
 
+export const searchProducts = async (query) => {
+  try {
+    const response = await productsAPI.search(query);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching products:', error);
+    return [];
+  }
+};
+
 export const getProductById = async (id) => {
   try {
     const response = await productsAPI.getById(id);

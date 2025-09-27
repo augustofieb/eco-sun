@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/produtos/**").permitAll()
                 .antMatchers("/categorias/**").permitAll()
+                .antMatchers("/usuarios/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .anyRequest().authenticated();
         

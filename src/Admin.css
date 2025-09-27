@@ -36,6 +36,19 @@
   margin-bottom: 1rem;
 }
 
+.search-container {
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

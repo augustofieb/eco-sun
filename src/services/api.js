@@ -28,6 +28,7 @@ export const authAPI = {
 // Products API
 export const productsAPI = {
   getAll: () => api.get('/produtos'),
+  search: (query) => api.get(`/produtos/search?query=${encodeURIComponent(query)}`),
   getByCategory: (categoriaId) => api.get(`/produtos/categoria/${categoriaId}`),
   getById: (id) => api.get(`/produtos/${id}`),
   create: (produto) => api.post('/produtos', produto),
@@ -38,6 +39,7 @@ export const productsAPI = {
 // Users API
 export const usersAPI = {
   getAll: () => api.get('/usuarios'),
+  search: (query) => api.get(`/usuarios/search?query=${encodeURIComponent(query)}`),
   getById: (id) => api.get(`/usuarios/${id}`),
   update: (id, usuario) => api.put(`/usuarios/${id}`, usuario),
   toggleAdmin: (id) => api.put(`/usuarios/${id}/toggle-admin`),
@@ -60,6 +62,7 @@ export const preferencesAPI = {
 // Categories API
 export const categoriesAPI = {
   getAll: () => api.get('/categorias'),
+  search: (query) => api.get(`/categorias/search?query=${encodeURIComponent(query)}`),
   create: (categoria) => api.post('/categorias', categoria),
 };
 

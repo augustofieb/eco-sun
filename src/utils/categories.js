@@ -25,3 +25,13 @@ export const addCategory = async (nome, descricao = '') => {
     throw error;
   }
 };
+
+export const searchCategories = async (query) => {
+  try {
+    const response = await categoriesAPI.search(query);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching categories:', error);
+    return [];
+  }
+};

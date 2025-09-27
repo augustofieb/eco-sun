@@ -1,6 +1,6 @@
 import { usersAPI } from '../services/api';
 
-export const getAllUsers = async () => {
+export const getUsers = async () => {
   try {
     const response = await usersAPI.getAll();
     return response.data;
@@ -10,32 +10,22 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getUserById = async (id) => {
+export const searchUsers = async (query) => {
   try {
-    const response = await usersAPI.getById(id);
+    const response = await usersAPI.search(query);
     return response.data;
   } catch (error) {
-    console.error('Error fetching user:', error);
-    return null;
+    console.error('Error searching users:', error);
+    return [];
   }
 };
 
-export const updateUser = async (id, userData) => {
+export const updateUser = async (id, user) => {
   try {
-    const response = await usersAPI.update(id, userData);
+    const response = await usersAPI.update(id, user);
     return response.data;
   } catch (error) {
     console.error('Error updating user:', error);
-    throw error;
-  }
-};
-
-export const toggleAdmin = async (id) => {
-  try {
-    const response = await usersAPI.toggleAdmin(id);
-    return response.data;
-  } catch (error) {
-    console.error('Error toggling admin:', error);
     throw error;
   }
 };

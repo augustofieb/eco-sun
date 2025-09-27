@@ -4,7 +4,7 @@ import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser } from './utils/authAPI'
-import { getProducts, getProductsByCategory } from './utils/productsAPI'
+import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
 import { getCategories } from './utils/categories'
 import { getTheme, setTheme, initTheme } from './utils/theme'
 
@@ -32,14 +32,13 @@ const Home = () => {
   const [profileForm, setProfileForm] = useState({
     name: '', email: '', nickname: '', address: '', number: '', password: ''
   })
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const currentUser = getCurrentUser()
+    console.log('Current user:', currentUser)
     setUser(currentUser)
     setUserIsAdmin(isAdmin())
-    loadCategories()
-    setIsDarkMode(getTheme() === 'dark')
-    initTheme()
     
     if (currentUser) {
       setProfileForm({
@@ -51,6 +50,9 @@ const Home = () => {
         password: ''
       })
     }
+    loadCategories()
+    setIsDarkMode(getTheme() === 'dark')
+    initTheme()
     
     // Load products from API
     loadProducts()
@@ -68,6 +70,7 @@ const Home = () => {
 
   const handleCategoryChange = async (category) => {
     setSelectedCategory(category)
+    setSearchQuery('')
     const productsData = await getProductsByCategory(category)
     setProducts(productsData)
   }
@@ -76,6 +79,18 @@ const Home = () => {
     logoutUser()
     setUser(null)
     setUserIsAdmin(false)
+  }
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query)
+    if (query.trim() === '') {
+      loadProducts()
+      setSelectedCategory('all')
+    } else {
+      const searchResults = await searchProducts(query)
+      setProducts(searchResults)
+      setSelectedCategory('search')
+    }
   }
 
 
@@ -205,7 +220,13 @@ const Home = () => {
           <ul className="menu">
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
             <ul>
-              <input type="search" className="search-box" placeholder="Pesquisar..." />
+              <input 
+                type="search" 
+                className="search-box" 
+                placeholder="Pesquisar produtos..." 
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
             </ul>
             <li className="spacer"> </li>
             {user ? (

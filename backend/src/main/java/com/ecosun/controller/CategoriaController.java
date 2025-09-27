@@ -25,6 +25,18 @@ public class CategoriaController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchCategorias(@RequestParam String query) {
+        try {
+            String sql = "SELECT id, nome, descricao FROM Categoria WHERE nome LIKE ? OR descricao LIKE ? OR CAST(id AS VARCHAR) LIKE ?";
+            String searchPattern = "%" + query + "%";
+            List<Map<String, Object>> categorias = jdbcTemplate.queryForList(sql, searchPattern, searchPattern, searchPattern);
+            return ResponseEntity.ok(categorias);
+        } catch (Exception e) {
+            return ResponseEntity.ok("[]");
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> createCategoria(@RequestBody Map<String, Object> request) {
         try {
