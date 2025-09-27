@@ -37,7 +37,7 @@ const Home = () => {
     const currentUser = getCurrentUser()
     setUser(currentUser)
     setUserIsAdmin(isAdmin())
-    setCategories(getCategories())
+    loadCategories()
     setIsDarkMode(getTheme() === 'dark')
     initTheme()
     
@@ -55,6 +55,11 @@ const Home = () => {
     // Load products from API
     loadProducts()
   }, [])
+
+  const loadCategories = async () => {
+    const categoriesData = await getCategories()
+    setCategories(categoriesData)
+  }
 
   const loadProducts = async () => {
     const productsData = await getProducts()
@@ -269,11 +274,11 @@ const Home = () => {
             </button>
             {categories.map(cat => (
               <button 
-                key={cat}
-                className={selectedCategory === cat ? 'active' : ''}
-                onClick={() => handleCategoryChange(cat)}
+                key={cat.id}
+                className={selectedCategory === cat.id ? 'active' : ''}
+                onClick={() => handleCategoryChange(cat.id)}
               >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
               </button>
             ))}
           </div>

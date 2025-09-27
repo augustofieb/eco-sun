@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8081/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -11,7 +11,7 @@ const api = axios.create({
 
 // Add token to requests if available
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -49,6 +49,18 @@ export const reviewsAPI = {
   getByProduct: (produtoId) => api.get(`/avaliacoes/produto/${produtoId}`),
   create: (avaliacao) => api.post('/avaliacoes', avaliacao),
   delete: (id) => api.delete(`/avaliacoes/${id}`),
+};
+
+// User Preferences API
+export const preferencesAPI = {
+  get: () => api.get('/usuarios/preferencias'),
+  update: (preferencias) => api.put('/usuarios/preferencias', preferencias),
+};
+
+// Categories API
+export const categoriesAPI = {
+  getAll: () => api.get('/categorias'),
+  create: (categoria) => api.post('/categorias', categoria),
 };
 
 export default api;

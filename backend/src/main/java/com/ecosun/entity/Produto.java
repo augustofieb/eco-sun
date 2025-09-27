@@ -22,18 +22,11 @@ public class Produto {
     @Lob
     private byte[] foto;
 
-    @Column(name = "FotoUrl", length = 500)
-    private String fotoUrl;
-
-    @Column(name = "CategoriaId", nullable = false)
+    @Column(name = "categoria_id", nullable = false)
     private Integer categoriaId;
 
-    @Column(name = "StatusProduto", nullable = false, length = 10)
+    @Column(name = "status_produto", nullable = false, length = 10)
     private String statusProduto;
-
-    @ManyToOne
-    @JoinColumn(name = "CategoriaId", insertable = false, updatable = false)
-    private Categoria categoria;
 
     public Produto() {}
 
@@ -52,15 +45,9 @@ public class Produto {
     public byte[] getFoto() { return foto; }
     public void setFoto(byte[] foto) { this.foto = foto; }
 
-    public String getFotoUrl() { return fotoUrl; }
-    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
-
     public Integer getCategoriaId() { return categoriaId; }
     public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
 
     public String getStatusProduto() { return statusProduto; }
     public void setStatusProduto(String statusProduto) { this.statusProduto = statusProduto; }
-
-    public Categoria getCategoria() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 }

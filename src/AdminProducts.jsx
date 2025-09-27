@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
 import { getProducts, createProduct, updateProduct, deleteProduct } from './utils/productsAPI'
-import { getCategories } from './utils/categories'
+import { getCategories, addCategory } from './utils/categories'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
 
@@ -22,9 +22,13 @@ const AdminProducts = () => {
       return
     }
     loadProducts()
-    const categoriesData = getCategories()
-    setCategories(categoriesData.map((cat, index) => ({ id: index + 1, nome: cat.charAt(0).toUpperCase() + cat.slice(1) })))
+    loadCategories()
   }, [navigate])
+
+  const loadCategories = async () => {
+    const categoriesData = await getCategories()
+    setCategories(categoriesData.map(cat => ({ id: cat.id, nome: cat.name.charAt(0).toUpperCase() + cat.name.slice(1) })))
+  }
 
   const loadProducts = async () => {
     const productsData = await getProducts()
@@ -96,11 +100,17 @@ const AdminProducts = () => {
     }
   }
 
-  const handleAddCategory = (e) => {
+  const handleAddCategory = async (e) => {
     e.preventDefault()
-    // Funcionalidade de adicionar categoria pode ser implementada futuramente
-    alert('Funcionalidade em desenvolvimento')
-    setShowCategoryForm(false)
+    try {
+      await addCategory(newCategory)
+      setNewCategory('')
+      setShowCategoryForm(false)
+      loadCategories()
+      alert('Categoria adicionada com sucesso!')
+    } catch (error) {
+      alert('Erro ao adicionar categoria: ' + (error.response?.data || error.message))
+    }
   }
 
 

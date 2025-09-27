@@ -13,7 +13,7 @@ public class ProdutoService {
     private ProdutoRepository produtoRepository;
 
     public List<Produto> getAllProdutos() {
-        return produtoRepository.findByStatusProduto("ATIVO");
+        return produtoRepository.findAll();
     }
 
     public List<Produto> getProdutosByCategoria(Integer categoriaId) {

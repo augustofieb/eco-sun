@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI } from '../services/api';
+import { registerUser } from '../utils/authAPI';
 import './Auth.css';
 
 const Register = () => {
@@ -14,28 +14,15 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    try {
-      const response = await authAPI.register(formData.nome, formData.email, formData.senha);
-      const { token, nome, email, nivelAcesso } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify({ nome, email, nivelAcesso }));
-      
+    const result = await registerUser(formData.nome, formData.email, formData.senha);
+    
+    if (result.success) {
       navigate('/');
-    } catch (error) {
-      console.error('Erro completo:', error);
-      let errorMessage = 'Erro ao criar conta';
-      
-      if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Erro de conexão. Verifique se o backend está rodando.';
-      } else if (error.response?.data) {
-        errorMessage = error.response.data;
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error);
     }
+    
+    setLoading(false);
   };
 
   return (

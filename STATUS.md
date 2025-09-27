@@ -1,61 +1,101 @@
 # ECO SUN - Status do Projeto
 
-## ✅ Serviços Ativos
+## ✅ Migração Completa para API
 
-### Backend (Spring Boot)
-- **URL**: http://localhost:8081/api
-- **Status**: ✅ Funcionando
-- **Porta**: 8081
-- **Banco de dados**: SQL Server (conectado)
-- **Autenticação**: JWT implementado
+**Todas as funcionalidades foram migradas do localStorage para API REST com banco SQL Server.**
 
-### Frontend (React + Vite)
-- **URL**: http://localhost:5173
-- **Status**: ✅ Funcionando  
-- **Porta**: 5173
-- **Framework**: React 19 + Vite
+### Funcionalidades Implementadas
 
-## 🔧 Configurações Realizadas
+#### 🔐 Autenticação
+- ✅ Login via API com JWT
+- ✅ Registro de usuários
+- ✅ Autenticação segura com tokens
+- ✅ Sessão gerenciada via sessionStorage (apenas token)
 
-### Backend
-- ✅ Corrigido para Java 11 (compatível com ambiente)
-- ✅ Spring Boot 2.7.18 configurado
-- ✅ Entidades JPA corrigidas (javax.persistence)
-- ✅ CORS configurado para GitHub Codespaces
-- ✅ Endpoints de autenticação funcionando
-
-### Frontend
-- ✅ API configurada com detecção automática de ambiente
-- ✅ Integração com backend funcionando
-- ✅ Sistema de login implementado
-
-## 👤 Usuário de Teste Criado
-
-- **Email**: admin@ecosun.com
-- **Senha**: admin123
-- **Nível**: CLIENTE
-
-## 🚀 Como Usar
-
-1. **Acessar o sistema**: https://obscure-lamp-r49r99gvqr9cp9gq-5173.app.github.dev
-2. **Fazer login** com as credenciais acima
-3. **Navegar** pelas funcionalidades do sistema
-
-## 📋 Funcionalidades Disponíveis
-
-- ✅ Sistema de autenticação (login/registro)
-- ✅ Catálogo de produtos de energia solar
-- ✅ Calculadora de orçamento
-- ✅ Sistema de avaliações
-- ✅ Modo escuro/claro
-- ✅ Integração WhatsApp
+#### 👥 Usuários
+- ✅ CRUD completo via API
+- ✅ Gerenciamento de níveis de acesso
 - ✅ Painel administrativo
+- ✅ Perfil do usuário atual
 
-## 🔗 URLs Importantes
+#### 📦 Produtos
+- ✅ CRUD completo via API
+- ✅ Categorização de produtos
+- ✅ Catálogo com filtros
+- ✅ Detalhes dos produtos
 
-- **Frontend**: https://obscure-lamp-r49r99gvqr9cp9gq-5173.app.github.dev
-- **Backend API**: https://obscure-lamp-r49r99gvqr9cp9gq-8081.app.github.dev/api
-- **Teste Backend**: https://obscure-lamp-r49r99gvqr9cp9gq-8081.app.github.dev/api/test/ping
+#### ⭐ Avaliações
+- ✅ Sistema de reviews via API
+- ✅ Comentários e notas
+- ✅ Associação com produtos
 
----
-*Projeto iniciado e funcionando em: 25/09/2025 13:30*
+#### ⚙️ Preferências
+- ✅ Tema (claro/escuro) via API
+- ✅ Configurações personalizadas
+- ✅ Sincronização entre dispositivos
+
+#### 💰 Orçamento
+- ✅ Calculadora de energia solar
+- ✅ Integração WhatsApp
+- ✅ Cálculos automáticos
+
+### Tecnologias
+
+**Frontend:**
+- React 19 + Vite
+- React Router
+- Axios para API
+- CSS3 com modo escuro
+
+**Backend:**
+- Spring Boot 2.7.18
+- Spring Security + JWT
+- JPA/Hibernate
+- SQL Server (somee.com)
+
+### Banco de Dados
+
+**Tabelas:**
+- `usuarios` - Dados dos usuários
+- `produtos` - Catálogo de produtos
+- `avaliacoes` - Sistema de reviews
+- `preferencias` - Configurações do usuário
+
+### APIs Disponíveis
+
+**Autenticação:**
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/auth/forgot-password`
+
+**Usuários:**
+- `GET /api/usuarios` (admin)
+- `GET /api/usuarios/me`
+- `PUT /api/usuarios/{id}`
+- `DELETE /api/usuarios/{id}`
+
+**Produtos:**
+- `GET /api/produtos`
+- `GET /api/produtos/{id}`
+- `POST /api/produtos`
+- `PUT /api/produtos/{id}`
+- `DELETE /api/produtos/{id}`
+
+**Avaliações:**
+- `GET /api/avaliacoes/produto/{id}`
+- `POST /api/avaliacoes`
+- `DELETE /api/avaliacoes/{id}`
+
+**Preferências:**
+- `GET /api/usuarios/preferencias`
+- `PUT /api/usuarios/preferencias`
+
+### Credenciais de Teste
+
+- **Email:** admin@ecosun.com
+- **Senha:** admin123
+- **Nível:** ADMIN
+
+### Status: 🟢 PRODUÇÃO
+
+O sistema está completamente funcional com todas as funcionalidades migradas para API REST e banco de dados SQL Server remoto.
