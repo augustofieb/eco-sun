@@ -51,4 +51,23 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategoria(@PathVariable Integer id) {
+        try {
+            // Verificar se há produtos usando esta categoria
+            String checkSql = "SELECT COUNT(*) FROM Produto WHERE categoria_id = ?";
+            Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, id);
+            
+            if (count > 0) {
+                return ResponseEntity.badRequest().body("Não é possível deletar categoria com produtos associados");
+            }
+            
+            String sql = "DELETE FROM Categoria WHERE id = ?";
+            jdbcTemplate.update(sql, id);
+            return ResponseEntity.ok("{\"message\":\"Categoria deletada\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
+    }
 }

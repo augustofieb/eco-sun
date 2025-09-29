@@ -90,78 +90,135 @@ const ProductDetails = () => {
 
       <div className='division'></div>
 
-      <div className="product-details-container">
-        <div className="product-main">
-          <div className="product-image">
-            <img src={product.fotoUrl || 'https://via.placeholder.com/400'} alt={product.nome} />
-          </div>
-          
-          <div className="product-info">
-            <h1>{product.nome}</h1>
-            <div className="product-rating">
-              <span className="stars">{renderStars(Math.round(getAverageRating()))}</span>
-              <span className="rating-text">({getAverageRating()}) - {reviews.length} avaliações</span>
-            </div>
-            <div className="product-price">R$ {product.preco ? product.preco.toFixed(2) : '0.00'}</div>
-            <div className="product-category">Categoria: {product.categoria?.nome || 'N/A'}</div>
-            
-            {product.descricao && (
-              <div className="product-description">
-                <h3>Descrição</h3>
-                <p>{product.descricao}</p>
+      <div className="product-container">
+        <div className="product-breadcrumb">
+          <Link to="/">Início</Link> > Energia Solar > {product.nome}
+        </div>
+
+        <div className="product-main-container">
+          <div className="product-content">
+            <div className="product-left">
+              <div className="product-gallery">
+                <img 
+                  className="product-main-image"
+                  src={product.fotoUrl && product.fotoUrl.startsWith('data:') ? product.fotoUrl : (product.fotoUrl || 'https://via.placeholder.com/500')} 
+                  alt={product.nome} 
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/500' }}
+                />
               </div>
-            )}
-            
-            <button 
-              className="btn-add-to-cart" 
-              onClick={() => setIsQuoteOpen(true)}
-            >
-              Solicitar Orçamento
-            </button>
+              
+              <h1 className="product-title">{product.nome}</h1>
+              
+              <div className="product-rating-section">
+                <span className="rating-stars">{renderStars(Math.round(getAverageRating()))}</span>
+                <a href="#reviews" className="rating-count">({getAverageRating()}) {reviews.length} opiniões</a>
+              </div>
+
+              <div className="product-specs">
+                <h3>Características principais</h3>
+                <ul className="specs-list">
+                  <li><strong>Categoria:</strong> {product.categoria?.nome || 'Energia Solar'}</li>
+                  <li><strong>Código:</strong> #{product.id}</li>
+                  <li><strong>Status:</strong> {product.status_produto}</li>
+                </ul>
+              </div>
+              
+              {product.descricao && (
+                <div className="product-description">
+                  <h3>Descrição</h3>
+                  <p>{product.descricao}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="product-sidebar">
+              <div className="price-section">
+                <div className="price-current">R$ {product.preco ? product.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'}</div>
+                <div className="price-installments">em 12x R$ {product.preco ? (product.preco / 12).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'} sem juros</div>
+              </div>
+
+              <div className="shipping-info">
+                <h4>Chegará grátis</h4>
+                <div className="shipping-free">Frete grátis para todo o Brasil</div>
+              </div>
+
+              <div className="quantity-selector">
+                <label>Quantidade:</label>
+                <input type="number" className="quantity-input" defaultValue="1" min="1" />
+              </div>
+
+              <div className="action-buttons">
+                <button className="btn-buy-now" onClick={() => setIsQuoteOpen(true)}>
+                  Solicitar orçamento
+                </button>
+                <button className="btn-add-cart">
+                  Adicionar aos favoritos
+                </button>
+              </div>
+
+              <div className="seller-info">
+                <h4>Vendido por</h4>
+                <a href="#" className="seller-name">ECO SUN Energia Solar</a>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="reviews-section">
-          <h2>Avaliações e Comentários</h2>
+        <div className="reviews-container" id="reviews">
+          <div className="reviews-header">
+            <h2>Opiniões sobre o produto</h2>
+            <div className="reviews-summary">
+              <div className="average-rating">{getAverageRating()}</div>
+              <div className="rating-breakdown">
+                <div className="rating-stars">{renderStars(Math.round(getAverageRating()))}</div>
+                <div>{reviews.length} opiniões</div>
+              </div>
+            </div>
+          </div>
           
           {user && (
             <form onSubmit={handleAddReview} className="review-form">
-              <h3>Deixe sua avaliação</h3>
-              <div className="rating-input">
-                <label>Nota:</label>
+              <h3>Deixe sua opinião</h3>
+              <div className="form-group">
+                <label>Avaliação:</label>
                 <select 
                   value={newReview.rating} 
                   onChange={(e) => setNewReview({...newReview, rating: e.target.value})}
                 >
-                  <option value={5}>5 - Excelente</option>
-                  <option value={4}>4 - Muito Bom</option>
-                  <option value={3}>3 - Bom</option>
-                  <option value={2}>2 - Regular</option>
-                  <option value={1}>1 - Ruim</option>
+                  <option value={5}>5 estrelas - Excelente</option>
+                  <option value={4}>4 estrelas - Muito bom</option>
+                  <option value={3}>3 estrelas - Bom</option>
+                  <option value={2}>2 estrelas - Regular</option>
+                  <option value={1}>1 estrela - Ruim</option>
                 </select>
               </div>
-              <textarea
-                placeholder="Escreva seu comentário..."
-                value={newReview.comment}
-                onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
-                required
-              />
-              <button type="submit" className="btn-submit">Enviar Avaliação</button>
+              <div className="form-group">
+                <label>Comentário:</label>
+                <textarea
+                  placeholder="Conte sua experiência com o produto..."
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn-submit-review">Enviar opinião</button>
             </form>
           )}
 
           <div className="reviews-list">
             {reviews.length === 0 ? (
-              <p>Ainda não há avaliações para este produto.</p>
+              <p>Ainda não há opiniões sobre este produto. Seja o primeiro a avaliar!</p>
             ) : (
               reviews.map(review => (
                 <div key={review.id} className="review-item">
                   <div className="review-header">
-                    <span className="reviewer-name">{review.nomeUsuario}</span>
-                    <span className="review-rating">{renderStars(review.nota)}</span>
-                    <span className="review-date">{new Date(review.dataAvaliacao).toLocaleDateString('pt-BR')}</span>
+                    <div className="reviewer-info">
+                      <div className="reviewer-name">{review.nomeUsuario}</div>
+                      <div className="review-date">{new Date(review.dataAvaliacao).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <div className="review-rating">{renderStars(review.nota)}</div>
                   </div>
-                  <p className="review-comment">{review.comentario}</p>
+                  <p className="review-text">{review.comentario}</p>
                 </div>
               ))
             )}

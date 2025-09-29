@@ -22,9 +22,6 @@ public class Usuario {
     @Column(name = "NivelAcesso", length = 10)
     private String nivelAcesso;
 
-    @Lob
-    @Column(name = "Foto")
-    private byte[] foto;
 
     @Column(name = "DataCadastro", nullable = false)
     private LocalDateTime dataCadastro;
@@ -50,8 +47,6 @@ public class Usuario {
     public String getNivelAcesso() { return nivelAcesso; }
     public void setNivelAcesso(String nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 
-    public byte[] getFoto() { return foto; }
-    public void setFoto(byte[] foto) { this.foto = foto; }
 
     public LocalDateTime getDataCadastro() { return dataCadastro; }
     public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }

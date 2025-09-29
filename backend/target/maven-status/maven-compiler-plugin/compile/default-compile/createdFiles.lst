@@ -1,14 +1,20 @@
 com/ecosun/service/EmailService.class
 com/ecosun/controller/UsuarioController.class
 com/ecosun/controller/AvaliacaoController.class
+com/ecosun/entity/Preferencias.class
 com/ecosun/repository/CategoriaRepository.class
 com/ecosun/dto/AuthResponse.class
+com/ecosun/controller/SimpleProdutoController.class
 com/ecosun/entity/Avaliacao.class
 com/ecosun/entity/Categoria.class
+com/ecosun/repository/ConteudoRepository.class
+com/ecosun/repository/PreferenciasRepository.class
 com/ecosun/service/AuthService.class
 com/ecosun/dto/LoginRequest.class
 com/ecosun/security/JwtUtil.class
+com/ecosun/entity/Conteudo.class
 com/ecosun/repository/UsuarioRepository.class
+com/ecosun/controller/CategoriaController.class
 com/ecosun/service/ProdutoService.class
 com/ecosun/controller/TestController.class
 com/ecosun/entity/Usuario.class
@@ -19,4 +25,5 @@ com/ecosun/controller/AuthController.class
 com/ecosun/repository/AvaliacaoRepository.class
 com/ecosun/config/SecurityConfig.class
 com/ecosun/EcoSunApplication.class
+com/ecosun/controller/ConteudoController.class
 com/ecosun/dto/ProdutoRequest.class

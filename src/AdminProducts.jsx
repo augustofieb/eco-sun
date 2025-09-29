@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
 import { getProducts, searchProducts, createProduct, updateProduct, deleteProduct } from './utils/productsAPI'
-import { getCategories, addCategory, searchCategories } from './utils/categories'
+import { getCategories, addCategory, searchCategories, deleteCategory } from './utils/categories'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
 
@@ -18,6 +18,10 @@ const AdminProducts = () => {
   const [showAddForm, setShowAddForm] = useState(false)
   const [showCategoryForm, setShowCategoryForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '' })
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [useFileUpload, setUseFileUpload] = useState(false)
+  const [deletingCategory, setDeletingCategory] = useState(null)
+  const [deletingProduct, setDeletingProduct] = useState(null)
   const [newCategory, setNewCategory] = useState({ nome: '', descricao: '' })
   const [imageError, setImageError] = useState('')
   const navigate = useNavigate()
@@ -33,9 +37,8 @@ const AdminProducts = () => {
 
   const loadCategories = async () => {
     const categoriesData = await getCategories()
-    const formattedCategories = categoriesData.map(cat => ({ id: cat.id, nome: cat.name.charAt(0).toUpperCase() + cat.name.slice(1) }))
-    setCategories(formattedCategories)
-    setFilteredCategories(formattedCategories)
+    setCategories(categoriesData)
+    setFilteredCategories(categoriesData)
   }
 
   const loadProducts = async () => {
@@ -72,21 +75,43 @@ const AdminProducts = () => {
       alert('Preço muito alto. Máximo: R$ 999.999,99')
       return
     }
-    if (formData.image && formData.image.length > 255) {
+    if (!useFileUpload && formData.image && formData.image.length > 255) {
       alert('URL da imagem muito longa. Use URLs curtas de imagens hospedadas online.')
       return
     }
-    const productData = {
-      nome: formData.name,
-      preco: price,
-      categoriaId: parseInt(formData.category),
-      descricao: formData.description,
-      foto: formData.image
-    }
-    console.log('Enviando produto:', productData)
+    
     try {
-      await createProduct(productData)
+      if (useFileUpload && selectedFile) {
+        const formDataUpload = new FormData()
+        formDataUpload.append('nome', formData.name)
+        formDataUpload.append('preco', price)
+        formDataUpload.append('categoriaId', parseInt(formData.category))
+        formDataUpload.append('descricao', formData.description)
+        formDataUpload.append('foto', selectedFile)
+        
+        const response = await fetch('/api/produtos/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formDataUpload
+        })
+        
+        if (!response.ok) throw new Error('Erro ao criar produto')
+      } else {
+        const productData = {
+          nome: formData.name,
+          preco: price,
+          categoriaId: parseInt(formData.category),
+          descricao: formData.description,
+          foto: formData.image
+        }
+        await createProduct(productData)
+      }
+      
       setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setSelectedFile(null)
+      setUseFileUpload(false)
       setShowAddForm(false)
       setImageError('')
       loadProducts()
@@ -108,20 +133,43 @@ const AdminProducts = () => {
   }
 
   const handleUpdate = async (productId) => {
-    if (formData.image && formData.image.length > 255) {
+    if (!useFileUpload && formData.image && formData.image.length > 255) {
       alert('URL da imagem muito longa. Use URLs curtas de imagens hospedadas online.')
       return
     }
+    
     try {
-      await updateProduct(productId, {
-        nome: formData.name,
-        preco: parseFloat(formData.price),
-        categoriaId: parseInt(formData.category),
-        descricao: formData.description,
-        foto: formData.image
-      })
+      if (useFileUpload && selectedFile) {
+        const formDataUpload = new FormData()
+        formDataUpload.append('nome', formData.name)
+        formDataUpload.append('preco', parseFloat(formData.price))
+        formDataUpload.append('categoriaId', parseInt(formData.category))
+        formDataUpload.append('descricao', formData.description)
+        formDataUpload.append('foto', selectedFile)
+        
+        const response = await fetch(`/api/produtos/upload/${productId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formDataUpload
+        })
+        
+        if (!response.ok) throw new Error('Erro ao atualizar produto')
+      } else {
+        await updateProduct(productId, {
+          nome: formData.name,
+          preco: parseFloat(formData.price),
+          categoriaId: parseInt(formData.category),
+          descricao: formData.description,
+          foto: formData.image
+        })
+      }
+      
       setEditingProduct(null)
       setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setSelectedFile(null)
+      setUseFileUpload(false)
       loadProducts()
     } catch (error) {
       alert('Erro ao atualizar produto')
@@ -129,13 +177,13 @@ const AdminProducts = () => {
   }
 
   const handleDelete = async (productId) => {
-    if (confirm('Tem certeza que deseja deletar este produto?')) {
-      try {
-        await deleteProduct(productId)
-        loadProducts()
-      } catch (error) {
-        alert('Erro ao deletar produto')
-      }
+    try {
+      await deleteProduct(productId)
+      setDeletingProduct(null)
+      loadProducts()
+    } catch (error) {
+      alert('Erro ao deletar produto')
+      setDeletingProduct(null)
     }
   }
 
@@ -149,6 +197,18 @@ const AdminProducts = () => {
       alert('Categoria adicionada com sucesso!')
     } catch (error) {
       alert('Erro ao adicionar categoria: ' + (error.response?.data || error.message))
+    }
+  }
+
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      await deleteCategory(categoryId)
+      setDeletingCategory(null)
+      loadCategories()
+      alert('Categoria deletada com sucesso!')
+    } catch (error) {
+      alert('Erro ao deletar categoria: ' + (error.response?.data || error.message))
+      setDeletingCategory(null)
     }
   }
 
@@ -201,16 +261,6 @@ const AdminProducts = () => {
             <div className="add-button-container">
               <button onClick={() => setShowAddForm(true)} className="btn-add">Adicionar Produto</button>
             </div>
-            
-            <div className="search-container">
-              <input 
-                type="text" 
-                placeholder="Pesquisar por nome, descrição ou ID..."
-                value={productSearchQuery}
-                onChange={(e) => handleProductSearch(e.target.value)}
-                className="search-input"
-              />
-            </div>
 
             {showAddForm && (
               <form onSubmit={handleAdd} className="product-form">
@@ -240,22 +290,60 @@ const AdminProducts = () => {
                     <option key={cat.id} value={cat.id}>{cat.nome}</option>
                   ))}
                 </select>
-                <input 
-                  type="text" 
-                  placeholder="URL da imagem (máx. 255 caracteres)" 
-                  value={formData.image}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setFormData({...formData, image: value})
-                    if (value.length > 255) {
-                      setImageError('URL muito longa! Máximo 255 caracteres.')
-                    } else {
-                      setImageError('')
-                    }
-                  }}
-                  style={{borderColor: imageError ? 'red' : '#ddd'}}
-                />
-                {imageError && <div style={{color: 'red', fontSize: '0.8rem', marginTop: '5px'}}>{imageError}</div>}
+                <div className="image-upload-section">
+                  <label>
+                    <input 
+                      type="radio" 
+                      name="imageType" 
+                      checked={!useFileUpload}
+                      onChange={() => {
+                        setUseFileUpload(false)
+                        setSelectedFile(null)
+                      }}
+                    />
+                    URL da imagem
+                  </label>
+                  <label>
+                    <input 
+                      type="radio" 
+                      name="imageType" 
+                      checked={useFileUpload}
+                      onChange={() => {
+                        setUseFileUpload(true)
+                        setFormData({...formData, image: ''})
+                        setImageError('')
+                      }}
+                    />
+                    Upload de arquivo
+                  </label>
+                </div>
+                
+                {!useFileUpload ? (
+                  <>
+                    <input 
+                      type="text" 
+                      placeholder="URL da imagem (máx. 255 caracteres)" 
+                      value={formData.image}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        setFormData({...formData, image: value})
+                        if (value.length > 255) {
+                          setImageError('URL muito longa! Máximo 255 caracteres.')
+                        } else {
+                          setImageError('')
+                        }
+                      }}
+                      style={{borderColor: imageError ? 'red' : '#ddd'}}
+                    />
+                    {imageError && <div style={{color: 'red', fontSize: '0.8rem', marginTop: '5px'}}>{imageError}</div>}
+                  </>
+                ) : (
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                  />
+                )}
                 <textarea 
                   placeholder="Descrição do produto" 
                   value={formData.description}
@@ -267,10 +355,22 @@ const AdminProducts = () => {
                   <button type="button" onClick={() => {
                     setShowAddForm(false)
                     setImageError('')
+                    setSelectedFile(null)
+                    setUseFileUpload(false)
                   }} className="btn-cancel">Cancelar</button>
                 </div>
               </form>
             )}
+            
+            <div className="search-container">
+              <input 
+                type="text" 
+                placeholder="Pesquisar por nome, descrição ou ID..."
+                value={productSearchQuery}
+                onChange={(e) => handleProductSearch(e.target.value)}
+                className="search-input"
+              />
+            </div>
           </>
         )}
 
@@ -278,16 +378,6 @@ const AdminProducts = () => {
           <>
             <div className="add-button-container">
               <button onClick={() => setShowCategoryForm(true)} className="btn-add">Adicionar Categoria</button>
-            </div>
-            
-            <div className="search-container">
-              <input 
-                type="text" 
-                placeholder="Pesquisar por nome, descrição ou ID..."
-                value={categorySearchQuery}
-                onChange={(e) => handleCategorySearch(e.target.value)}
-                className="search-input"
-              />
             </div>
 
             {showCategoryForm && (
@@ -311,6 +401,16 @@ const AdminProducts = () => {
                 </div>
               </form>
             )}
+            
+            <div className="search-container">
+              <input 
+                type="text" 
+                placeholder="Pesquisar por nome, descrição ou ID..."
+                value={categorySearchQuery}
+                onChange={(e) => handleCategorySearch(e.target.value)}
+                className="search-input"
+              />
+            </div>
           </>
         )}
 
@@ -382,7 +482,15 @@ const AdminProducts = () => {
                       ) : (
                         <>
                           <button onClick={() => handleEdit(product)} className="btn-edit">Editar</button>
-                          <button onClick={() => handleDelete(product.id)} className="btn-delete">Deletar</button>
+                          <button 
+                            onClick={() => deletingProduct === product.id ? setDeletingProduct(null) : setDeletingProduct(product.id)} 
+                            className={deletingProduct === product.id ? "btn-cancel" : "btn-delete"}
+                          >
+                            {deletingProduct === product.id ? "Cancelar" : "Deletar"}
+                          </button>
+                          {deletingProduct === product.id && (
+                            <button onClick={() => handleDelete(product.id)} className="btn-save">Confirmar</button>
+                          )}
                         </>
                       )}
                     </td>
@@ -401,12 +509,13 @@ const AdminProducts = () => {
                   <th>ID</th>
                   <th>Nome</th>
                   <th>Descrição</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCategories.length === 0 ? (
                   <tr>
-                    <td colSpan="3" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
+                    <td colSpan="4" style={{textAlign: 'center', padding: '2rem', color: '#666'}}>
                       {categorySearchQuery ? 'Nenhuma categoria encontrada' : 'Nenhuma categoria cadastrada'}
                     </td>
                   </tr>
@@ -415,6 +524,17 @@ const AdminProducts = () => {
                     <td>{category.id}</td>
                     <td>{category.nome}</td>
                     <td>{category.descricao || 'Sem descrição'}</td>
+                    <td className="actions">
+                      <button 
+                        onClick={() => deletingCategory === category.id ? setDeletingCategory(null) : setDeletingCategory(category.id)} 
+                        className={deletingCategory === category.id ? "btn-cancel" : "btn-delete"}
+                      >
+                        {deletingCategory === category.id ? "Cancelar" : "Deletar"}
+                      </button>
+                      {deletingCategory === category.id && (
+                        <button onClick={() => handleDeleteCategory(category.id)} className="btn-save">Confirmar</button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

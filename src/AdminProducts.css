@@ -116,12 +116,24 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
+
+th:nth-child(1) { width: 15%; }
+th:nth-child(2) { width: 15%; }
+th:nth-child(3) { width: 15%; }
+th:nth-child(4) { width: 30%; }
+th:nth-child(5) { width: 25%; }
 
 th, td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+th {
+  border-top: 1px solid #ddd;
 }
 
 th {
@@ -169,4 +181,35 @@ th {
   border: 1px solid #ddd;
   border-radius: 4px;
   width: 100%;
+}
+
+.image-upload-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.image-upload-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.image-upload-section input[type="radio"] {
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.actions button {
+  padding: 0.5rem 0.8rem;
+  margin-right: 0.3rem;
+  font-size: 0.85rem;
 }

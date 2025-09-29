@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8081/api';
+const API_BASE_URL = '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -64,6 +64,7 @@ export const categoriesAPI = {
   getAll: () => api.get('/categorias'),
   search: (query) => api.get(`/categorias/search?query=${encodeURIComponent(query)}`),
   create: (categoria) => api.post('/categorias', categoria),
+  delete: (id) => api.delete(`/categorias/${id}`),
 };
 
 export default api;

@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser } from './utils/authAPI'
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
-import { getCategories } from './utils/categories'
+import { getCategories, updateConteudo } from './utils/categories'
+import RichTextEditor from './components/RichTextEditor'
 import { getTheme, setTheme, initTheme } from './utils/theme'
 
 import SolarQuote from './SolarQuote'
@@ -28,6 +29,14 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
+  const [settingsView, setSettingsView] = useState('main') // 'main' ou nome da aba específica
+  const [isEditingContent, setIsEditingContent] = useState(false)
+  const [originalContent, setOriginalContent] = useState({})
+  const [editableContent, setEditableContent] = useState({
+    sobre: '<p>A <strong>ECO SUN</strong> é uma empresa dedicada a fornecer soluções sustentáveis de energia solar para residências e empresas. Nossa missão é tornar a energia limpa acessível a todos.</p><p>Fundada em 2020, já ajudamos centenas de famílias a reduzirem sua pegada de carbono e economizarem na conta de luz.</p>',
+    renovavel: '<ul><li><strong>Economia:</strong> Reduza até 95% da sua conta de luz</li><li><strong>Sustentabilidade:</strong> Energia limpa e renovável</li><li><strong>Valorização:</strong> Aumenta o valor do seu imóvel</li><li><strong>Independência:</strong> Menos dependência da rede elétrica</li><li><strong>Durabilidade:</strong> Painéis com vida útil de 25+ anos</li></ul>',
+    faq: '<div><h4>Quanto tempo dura a instalação?</h4><p>A instalação residencial típica leva de 1 a 3 dias.</p></div><div><h4>Funciona em dias nublados?</h4><p>Sim, os painéis geram energia mesmo com pouca luz solar.</p></div><div><h4>Qual a garantia dos equipamentos?</h4><p>Oferecemos 2 anos de garantia em todos os equipamentos.</p></div>'
+  })
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [profileForm, setProfileForm] = useState({
     name: '', email: '', nickname: '', address: '', number: '', password: ''
@@ -110,7 +119,7 @@ const Home = () => {
 
 
   const renderSettingsContent = () => {
-    switch (activeSettingsTab) {
+    switch (settingsView) {
       case 'conta':
         return (
           <form onSubmit={handleProfileUpdate} className="profile-form">
@@ -120,12 +129,6 @@ const Home = () => {
               placeholder="Nome completo"
               value={profileForm.name}
               onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-            />
-            <input 
-              type="text" 
-              placeholder="Apelido"
-              value={profileForm.nickname}
-              onChange={(e) => setProfileForm({...profileForm, nickname: e.target.value})}
             />
             <input 
               type="email" 
@@ -140,12 +143,6 @@ const Home = () => {
               onChange={(e) => setProfileForm({...profileForm, password: e.target.value})}
             />
             <input 
-              type="text" 
-              placeholder="Endereço"
-              value={profileForm.address}
-              onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
-            />
-            <input 
               type="tel" 
               placeholder="Telefone"
               value={profileForm.number}
@@ -157,40 +154,136 @@ const Home = () => {
       case 'sobre':
         return (
           <div className="info-content">
+            {userIsAdmin && (
+              <button 
+                onClick={() => {
+                  if (isEditingContent) {
+                    setEditableContent({...editableContent, sobre: originalContent.sobre || editableContent.sobre})
+                  } else {
+                    setOriginalContent({...originalContent, sobre: editableContent.sobre})
+                  }
+                  setIsEditingContent(!isEditingContent)
+                }} 
+                className="btn-edit"
+                style={{marginBottom: '20px'}}
+              >
+                {isEditingContent ? 'Cancelar' : 'Editar'}
+              </button>
+            )}
             <h3>Sobre Nós</h3>
-            <p>A ECO SUN é uma empresa dedicada a fornecer soluções sustentáveis de energia solar para residências e empresas. Nossa missão é tornar a energia limpa acessível a todos.</p>
-            <p>Fundada em 2020, já ajudamos centenas de famílias a reduzirem sua pegada de carbono e economizarem na conta de luz.</p>
+            {isEditingContent && userIsAdmin ? (
+              <div>
+                <RichTextEditor
+                  value={editableContent.sobre}
+                  onChange={(value) => setEditableContent({...editableContent, sobre: value})}
+                  placeholder="Digite o conteúdo sobre a empresa..."
+                />
+                <button 
+                  className="btn-primary"
+                  onClick={async () => {
+                    const success = await updateConteudo('sobre', editableContent.sobre);
+                    if (success) {
+                      alert('Conteúdo salvo com sucesso!');
+                      setIsEditingContent(false);
+                    } else {
+                      alert('Erro ao salvar conteúdo');
+                    }
+                  }}
+                >Salvar</button>
+              </div>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: editableContent.sobre }} />
+            )}
           </div>
         )
       case 'renovavel':
         return (
           <div className="info-content">
+            {userIsAdmin && (
+              <button 
+                onClick={() => {
+                  if (isEditingContent) {
+                    setEditableContent({...editableContent, renovavel: originalContent.renovavel || editableContent.renovavel})
+                  } else {
+                    setOriginalContent({...originalContent, renovavel: editableContent.renovavel})
+                  }
+                  setIsEditingContent(!isEditingContent)
+                }} 
+                className="btn-edit"
+                style={{marginBottom: '20px'}}
+              >
+                {isEditingContent ? 'Cancelar' : 'Editar'}
+              </button>
+            )}
             <h3>Por que usar energia renovável?</h3>
-            <ul>
-              <li><strong>Economia:</strong> Reduza até 95% da sua conta de luz</li>
-              <li><strong>Sustentabilidade:</strong> Energia limpa e renovável</li>
-              <li><strong>Valorização:</strong> Aumenta o valor do seu imóvel</li>
-              <li><strong>Independência:</strong> Menos dependência da rede elétrica</li>
-              <li><strong>Durabilidade:</strong> Painéis com vida útil de 25+ anos</li>
-            </ul>
+            {isEditingContent && userIsAdmin ? (
+              <div>
+                <RichTextEditor
+                  value={editableContent.renovavel}
+                  onChange={(value) => setEditableContent({...editableContent, renovavel: value})}
+                  placeholder="Digite os benefícios da energia renovável..."
+                />
+                <button 
+                  className="btn-primary"
+                  onClick={async () => {
+                    const success = await updateConteudo('renovavel', editableContent.renovavel);
+                    if (success) {
+                      alert('Conteúdo salvo com sucesso!');
+                      setIsEditingContent(false);
+                    } else {
+                      alert('Erro ao salvar conteúdo');
+                    }
+                  }}
+                >Salvar</button>
+              </div>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: editableContent.renovavel }} />
+            )}
           </div>
         )
       case 'faq':
         return (
           <div className="info-content">
+            {userIsAdmin && (
+              <button 
+                onClick={() => {
+                  if (isEditingContent) {
+                    setEditableContent({...editableContent, faq: originalContent.faq || editableContent.faq})
+                  } else {
+                    setOriginalContent({...originalContent, faq: editableContent.faq})
+                  }
+                  setIsEditingContent(!isEditingContent)
+                }} 
+                className="btn-edit"
+                style={{marginBottom: '20px'}}
+              >
+                {isEditingContent ? 'Cancelar' : 'Editar'}
+              </button>
+            )}
             <h3>Perguntas Frequentes</h3>
-            <div className="faq-item">
-              <h4>Quanto tempo dura a instalação?</h4>
-              <p>A instalação residencial típica leva de 1 a 3 dias.</p>
-            </div>
-            <div className="faq-item">
-              <h4>Funciona em dias nublados?</h4>
-              <p>Sim, os painéis geram energia mesmo com pouca luz solar.</p>
-            </div>
-            <div className="faq-item">
-              <h4>Qual a garantia dos equipamentos?</h4>
-              <p>Oferecemos 2 anos de garantia em todos os equipamentos.</p>
-            </div>
+            {isEditingContent && userIsAdmin ? (
+              <div>
+                <RichTextEditor
+                  value={editableContent.faq}
+                  onChange={(value) => setEditableContent({...editableContent, faq: value})}
+                  placeholder="Digite as perguntas frequentes..."
+                />
+                <button 
+                  className="btn-primary"
+                  onClick={async () => {
+                    const success = await updateConteudo('faq', editableContent.faq);
+                    if (success) {
+                      alert('Conteúdo salvo com sucesso!');
+                      setIsEditingContent(false);
+                    } else {
+                      alert('Erro ao salvar conteúdo');
+                    }
+                  }}
+                >Salvar</button>
+              </div>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: editableContent.faq }} />
+            )}
           </div>
         )
       case 'tema':
@@ -263,7 +356,7 @@ const Home = () => {
             {user && (
               <li>
                 <button onClick={() => setIsSettingsOpen(true)} className="settings-btn">
-                  ⚙️
+                  ☰
                 </button>
               </li>
             )}
@@ -299,7 +392,7 @@ const Home = () => {
                 className={selectedCategory === cat.id ? 'active' : ''}
                 onClick={() => handleCategoryChange(cat.id)}
               >
-                {cat.name.charAt(0).toUpperCase() + cat.name.slice(1)}
+                {(cat.nome || cat.name || '').charAt(0).toUpperCase() + (cat.nome || cat.name || '').slice(1)}
               </button>
             ))}
           </div>
@@ -310,7 +403,11 @@ const Home = () => {
               products.map(product => (
                 <div key={product.id} className="product-card">
                   <Link to={`/product/${product.id}`} className="product-link">
-                    <img src={product.fotoUrl || placaSolar} alt={product.nome} />
+                    <img 
+                      src={product.fotoUrl && product.fotoUrl.startsWith('data:') ? product.fotoUrl : (product.fotoUrl || placaSolar)} 
+                      alt={product.nome} 
+                      onError={(e) => { e.target.src = placaSolar }}
+                    />
                     <h3>{product.nome}</h3>
                     <p>R${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
                   </Link>
@@ -347,43 +444,29 @@ const Home = () => {
           <h2>Configurações</h2>
           <button onClick={() => setIsSettingsOpen(false)} className="close-settings">×</button>
         </div>
-        <div className="settings-nav">
-          <button 
-            className={activeSettingsTab === 'conta' ? 'active' : ''}
-            onClick={() => setActiveSettingsTab('conta')}
-          >
-            Conta
-          </button>
-          <button 
-            className={activeSettingsTab === 'sobre' ? 'active' : ''}
-            onClick={() => setActiveSettingsTab('sobre')}
-          >
-            Sobre Nós
-          </button>
-          <button 
-            className={activeSettingsTab === 'renovavel' ? 'active' : ''}
-            onClick={() => setActiveSettingsTab('renovavel')}
-          >
-            Por que usar energia renovável?
-          </button>
-          <button 
-            className={activeSettingsTab === 'faq' ? 'active' : ''}
-            onClick={() => setActiveSettingsTab('faq')}
-          >
-            Perguntas Frequentes
-          </button>
-          <button 
-            className={activeSettingsTab === 'tema' ? 'active' : ''}
-            onClick={() => setActiveSettingsTab('tema')}
-          >
-            Tema
-          </button>
-          <button onClick={handleLogout} className="logout-btn">
-            Sair
-          </button>
-        </div>
+        {settingsView === 'main' ? (
+          <div className="settings-nav">
+            <button onClick={() => setSettingsView('conta')}>Conta</button>
+            <button onClick={() => setSettingsView('sobre')}>Sobre Nós</button>
+            <button onClick={() => setSettingsView('renovavel')}>Por que usar energia renovável?</button>
+            <button onClick={() => setSettingsView('faq')}>Perguntas Frequentes</button>
+            <button onClick={() => setSettingsView('tema')}>Tema</button>
+            <button onClick={handleLogout} className="logout-btn">Sair</button>
+          </div>
+        ) : (
+          <div className="settings-nav">
+            <button onClick={() => setSettingsView('main')} className="back-btn">← Voltar</button>
+          </div>
+        )}
         <div className="settings-content">
-          {renderSettingsContent()}
+          {settingsView === 'main' ? (
+            <div className="settings-main">
+              <h3>Configurações</h3>
+              <p>Selecione uma opção no menu ao lado para continuar.</p>
+            </div>
+          ) : (
+            renderSettingsContent()
+          )}
         </div>
       </div>
 
