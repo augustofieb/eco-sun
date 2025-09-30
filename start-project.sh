@@ -2,35 +2,26 @@
 
 echo "🚀 Iniciando ECO SUN..."
 
-# Instalar dependências do frontend se necessário
+# Instalar dependências se necessário
 if [ ! -d "node_modules" ]; then
-    echo "📦 Instalando dependências do frontend..."
+    echo "📦 Instalando dependências..."
     npm install
 fi
 
-# Iniciar backend
+# Iniciar backend em background
 echo "🔧 Iniciando backend..."
 cd backend
-nohup mvn spring-boot:run > backend.log 2>&1 &
+mvn spring-boot:run > ../backend.log 2>&1 &
+BACKEND_PID=$!
 cd ..
 
 # Aguardar backend inicializar
 echo "⏳ Aguardando backend inicializar..."
 sleep 15
 
-# Testar backend
-if curl -s http://localhost:8081/api/test/ping > /dev/null; then
-    echo "✅ Backend funcionando!"
-else
-    echo "❌ Erro no backend"
-    exit 1
-fi
-
 # Iniciar frontend
-echo "🎨 Iniciando frontend..."
-nohup npm run dev > frontend.log 2>&1 &
+echo "🌐 Iniciando frontend..."
+npm run dev
 
-echo "✅ Projeto iniciado com sucesso!"
-echo "🌐 Frontend: https://$CODESPACE_NAME-5173.app.github.dev"
-echo "🔧 Backend: http://localhost:8081/api"
-echo "👤 Login: admin@ecosun.com / admin123"
+# Cleanup ao sair
+trap "kill $BACKEND_PID 2>/dev/null" EXIT

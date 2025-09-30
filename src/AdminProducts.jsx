@@ -92,12 +92,16 @@ const AdminProducts = () => {
         const response = await fetch('/api/produtos/upload', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
           },
           body: formDataUpload
         })
         
-        if (!response.ok) throw new Error('Erro ao criar produto')
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('Erro detalhado:', errorText)
+          throw new Error(`Erro ao criar produto: ${errorText}`)
+        }
       } else {
         const productData = {
           nome: formData.name,
@@ -150,7 +154,7 @@ const AdminProducts = () => {
         const response = await fetch(`/api/produtos/upload/${productId}`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
           },
           body: formDataUpload
         })
