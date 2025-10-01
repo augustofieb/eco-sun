@@ -142,6 +142,30 @@ li > a[href*="admin"]:hover {
 
 
 
+.configurator-link {
+  height: 40px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  margin-left: 10px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.configurator-link:hover {
+  background-color: #0056b3;
+  transform: scale(1.1) !important;
+  color: white;
+  text-decoration: none;
+}
+
 .quote-btn {
   height: 40px;
   padding: 8px 16px;
@@ -547,4 +571,54 @@ body, html {
 
 .settings-main p {
   color: #4a5568;
+}
+
+.orcamentos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.orcamento-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 15px;
+  background: #f8f9fa;
+}
+
+.orcamento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.orcamento-header h4 {
+  margin: 0;
+  color: #2c5530;
+}
+
+.orcamento-date {
+  color: #666;
+  font-size: 12px;
+}
+
+.orcamento-details {
+  margin-bottom: 10px;
+}
+
+.orcamento-details p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.orcamento-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-delete:hover {
+  background: #c82333 !important;
 }

@@ -64,7 +64,16 @@ export const categoriesAPI = {
   getAll: () => api.get('/categorias'),
   search: (query) => api.get(`/categorias/search?query=${encodeURIComponent(query)}`),
   create: (categoria) => api.post('/categorias', categoria),
+  update: (id, categoria) => api.put(`/categorias/${id}`, categoria),
   delete: (id) => api.delete(`/categorias/${id}`),
+};
+
+// Orcamentos API
+export const orcamentosAPI = {
+  getByUser: (usuarioId) => api.get(`/orcamentos/usuario/${usuarioId}`),
+  create: (orcamento) => api.post('/orcamentos', orcamento),
+  update: (id, orcamento) => api.put(`/orcamentos/${id}`, orcamento),
+  delete: (id) => api.delete(`/orcamentos/${id}`),
 };
 
 export default api;

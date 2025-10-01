@@ -15,6 +15,9 @@ public class Categoria {
     @Column(length = 255)
     private String descricao;
 
+    @Column(name = "especificacoes_obrigatorias", columnDefinition = "TEXT")
+    private String especificacoes;
+
     public Categoria() {}
 
     public Integer getId() { return id; }
@@ -25,4 +28,7 @@ public class Categoria {
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getEspecificacoes() { return especificacoes; }
+    public void setEspecificacoes(String especificacoes) { this.especificacoes = especificacoes; }
 }

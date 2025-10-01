@@ -30,7 +30,7 @@ public class AuthService {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(request.getEmail());
         if (usuario.isPresent() && passwordEncoder.matches(request.getSenha(), usuario.get().getSenha())) {
             String token = jwtUtil.generateToken(usuario.get().getEmail());
-            return new AuthResponse(token, usuario.get().getNome(), usuario.get().getEmail(), usuario.get().getNivelAcesso());
+            return new AuthResponse(token, usuario.get().getId(), usuario.get().getNome(), usuario.get().getEmail(), usuario.get().getNivelAcesso());
         }
         throw new RuntimeException("Credenciais inválidas");
     }
@@ -59,7 +59,7 @@ public class AuthService {
             Usuario savedUser = usuarioRepository.save(usuario);
             System.out.println("Usuário salvo com ID: " + savedUser.getId());
             String token = jwtUtil.generateToken(usuario.getEmail());
-            return new AuthResponse(token, usuario.getNome(), usuario.getEmail(), usuario.getNivelAcesso());
+            return new AuthResponse(token, savedUser.getId(), usuario.getNome(), usuario.getEmail(), usuario.getNivelAcesso());
         } catch (Exception e) {
             System.out.println("Erro ao salvar usuário: " + e.getMessage());
             e.printStackTrace();

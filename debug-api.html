@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug API</title>
+</head>
+<body>
+    <h1>Debug API</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testOrcamento()">Test Orcamento</button>
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@ecosun.com',
+                        senha: 'admin123'
+                    })
+                });
+                const data = await response.json();
+                console.log('Login response:', data);
+                if (data.token) {
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('user', JSON.stringify({
+                        id: data.id,
+                        name: data.nome,
+                        email: data.email,
+                        nivelAcesso: data.nivelAcesso
+                    }));
+                }
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        async function testOrcamento() {
+            try {
+                const token = sessionStorage.getItem('token');
+                const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+                
+                const orcamentoData = {
+                    usuarioId: user.id,
+                    produtosSelecionados: JSON.stringify([]),
+                    precoTotal: "1000.00",
+                    energiaTotalGerada: "100.00",
+                    economiaMensal: "65.00",
+                    tempoRetornoMeses: 15,
+                    reducaoCo2Anual: "100.80"
+                };
+
+                const response = await fetch('/api/orcamentos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(orcamentoData)
+                });
+                const data = await response.json();
+                console.log('Orcamento response:', data);
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                console.error('Orcamento error:', error);
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

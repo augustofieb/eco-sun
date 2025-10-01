@@ -6,10 +6,10 @@ let authToken = null;
 export const loginUser = async (email, password) => {
   try {
     const response = await authAPI.login(email, password);
-    const { token, nome, email: userEmail, nivelAcesso } = response.data;
+    const { token, id, nome, email: userEmail, nivelAcesso } = response.data;
     
     authToken = token;
-    currentUser = { name: nome, email: userEmail, nivelAcesso };
+    currentUser = { id, name: nome, email: userEmail, nivelAcesso };
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('user', JSON.stringify(currentUser));
     
@@ -22,10 +22,10 @@ export const loginUser = async (email, password) => {
 export const registerUser = async (name, email, password) => {
   try {
     const response = await authAPI.register(name, email, password);
-    const { token, nome, email: userEmail, nivelAcesso } = response.data;
+    const { token, id, nome, email: userEmail, nivelAcesso } = response.data;
     
     authToken = token;
-    currentUser = { name: nome, email: userEmail, nivelAcesso };
+    currentUser = { id, name: nome, email: userEmail, nivelAcesso };
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('user', JSON.stringify(currentUser));
     

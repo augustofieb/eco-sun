@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { isLoggedIn, isAdmin, getCurrentUser, logoutUser } from './utils/authAPI'
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
 import { getCategories, updateConteudo } from './utils/categories'
+import { getOrcamentosByUser, deleteOrcamento } from './utils/orcamentosAPI'
 import RichTextEditor from './components/RichTextEditor'
 import { getTheme, setTheme, initTheme } from './utils/theme'
 
@@ -42,6 +43,7 @@ const Home = () => {
     name: '', email: '', nickname: '', address: '', number: '', password: ''
   })
   const [searchQuery, setSearchQuery] = useState('')
+  const [userOrcamentos, setUserOrcamentos] = useState([])
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -99,6 +101,25 @@ const Home = () => {
       const searchResults = await searchProducts(query)
       setProducts(searchResults)
       setSelectedCategory('search')
+    }
+  }
+
+  const loadUserOrcamentos = async () => {
+    if (user && user.id) {
+      const orcamentos = await getOrcamentosByUser(user.id)
+      setUserOrcamentos(orcamentos)
+    }
+  }
+
+  const handleDeleteOrcamento = async (id) => {
+    if (confirm('Tem certeza que deseja excluir este orçamento?')) {
+      try {
+        await deleteOrcamento(id)
+        loadUserOrcamentos()
+        alert('Orçamento excluído com sucesso!')
+      } catch (error) {
+        alert('Erro ao excluir orçamento')
+      }
     }
   }
 
@@ -299,6 +320,48 @@ const Home = () => {
             </div>
           </div>
         )
+      case 'orcamentos':
+        return (
+          <div className="info-content">
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+              <h3>Meus Orçamentos</h3>
+              <button onClick={loadUserOrcamentos} className="btn-primary" style={{fontSize: '14px', padding: '8px 16px'}}>Atualizar</button>
+            </div>
+            {userOrcamentos.length === 0 ? (
+              <p>Nenhum orçamento salvo ainda.</p>
+            ) : (
+              <div className="orcamentos-list">
+                {userOrcamentos.map(orcamento => {
+                  const produtos = JSON.parse(orcamento.produtosSelecionados || '[]')
+                  return (
+                    <div key={orcamento.id} className="orcamento-card">
+                      <div className="orcamento-header">
+                        <h4>Orçamento #{orcamento.id}</h4>
+                        <span className="orcamento-date">{new Date(orcamento.dataCriacao).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                      <div className="orcamento-details">
+                        <p><strong>Preço Total:</strong> R$ {orcamento.precoTotal?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        <p><strong>Energia Gerada:</strong> {orcamento.energiaTotalGerada?.toFixed(2)} kWh/mês</p>
+                        <p><strong>Economia Mensal:</strong> R$ {orcamento.economiaMensal?.toFixed(2)}</p>
+                        <p><strong>Tempo de Retorno:</strong> {orcamento.tempoRetornoMeses} meses</p>
+                        <p><strong>Produtos:</strong> {produtos.length} itens</p>
+                      </div>
+                      <div className="orcamento-actions">
+                        <button 
+                          onClick={() => handleDeleteOrcamento(orcamento.id)}
+                          className="btn-delete"
+                          style={{background: '#dc3545', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px', cursor: 'pointer'}}
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )
       default:
         return null
     }
@@ -349,9 +412,9 @@ const Home = () => {
               </>
             )}
             <li>
-              <button onClick={() => setIsQuoteOpen(true)} className="quote-btn">
+              <Link to="/configurador" className="quote-btn" style={{textDecoration: 'none'}}>
                 💡 Orçamento
-              </button>
+              </Link>
             </li>
             {user && (
               <li>
@@ -371,7 +434,7 @@ const Home = () => {
           <div className="hero-text">
             <h1>Energia Solar<br />para a Sua Casa</h1>
             <p>Economize na conta de luz<br />com energia sustentável</p>
-            <button className="btn-primary" onClick={() => setIsQuoteOpen(true)}>Peça um orçamento</button> 
+            <Link to="/configurador" className="btn-primary" style={{textDecoration: 'none', display: 'inline-block'}}>Peça um orçamento</Link> 
 
           </div>
           <div className="hero-image"></div>
@@ -411,7 +474,7 @@ const Home = () => {
                     <h3>{product.nome}</h3>
                     <p>R${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
                   </Link>
-                  <button className="btn-secondary" onClick={() => setIsQuoteOpen(true)}>Solicitar orçamento</button>
+                  <Link to="/configurador" className="btn-secondary" style={{textDecoration: 'none', display: 'inline-block'}}>Solicitar orçamento</Link>
                 </div>
               ))
             )}
@@ -447,6 +510,10 @@ const Home = () => {
         {settingsView === 'main' ? (
           <div className="settings-nav">
             <button onClick={() => setSettingsView('conta')}>Conta</button>
+            <button onClick={() => {
+              setSettingsView('orcamentos')
+              loadUserOrcamentos()
+            }}>Meus Orçamentos</button>
             <button onClick={() => setSettingsView('sobre')}>Sobre Nós</button>
             <button onClick={() => setSettingsView('renovavel')}>Por que usar energia renovável?</button>
             <button onClick={() => setSettingsView('faq')}>Perguntas Frequentes</button>
@@ -455,7 +522,12 @@ const Home = () => {
           </div>
         ) : (
           <div className="settings-nav">
-            <button onClick={() => setSettingsView('main')} className="back-btn">← Voltar</button>
+            <button onClick={() => {
+              setSettingsView('main')
+              if (settingsView === 'orcamentos') {
+                setUserOrcamentos([])
+              }
+            }} className="back-btn">← Voltar</button>
           </div>
         )}
         <div className="settings-content">

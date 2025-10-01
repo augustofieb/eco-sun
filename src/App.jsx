@@ -7,6 +7,7 @@ import TestConnection from './components/TestConnection.jsx'
 import Admin from './Admin.jsx'
 import AdminProducts from './AdminProducts.jsx'
 import ProductDetails from './ProductDetails.jsx'
+import SolarConfigurator from './SolarConfigurator.jsx'
 
 const App = () => {
   
@@ -19,7 +20,7 @@ const App = () => {
         <Route path="/test" element={<TestConnection /> } />
         <Route path="/admin" element={<Admin /> } />
         <Route path="/admin-products" element={<AdminProducts /> } />
-
+        <Route path="/configurador" element={<SolarConfigurator /> } />
         <Route path="/product/:id" element={<ProductDetails /> } />
       </Routes>
   )

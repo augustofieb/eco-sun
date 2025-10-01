@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .antMatchers("/produtos/**").permitAll()
                 .antMatchers("/categorias/**").permitAll()
                 .antMatchers("/usuarios/**").permitAll()
+                .antMatchers("/avaliacoes/**").permitAll()
+                .antMatchers("/api/orcamentos/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .antMatchers("/conteudo/**").permitAll()
                 .anyRequest().authenticated();

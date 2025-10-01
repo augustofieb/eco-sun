@@ -28,6 +28,12 @@ public class Produto {
     @Column(name = "status_produto", nullable = false, length = 10)
     private String statusProduto;
 
+    @Column(name = "especificacoes_tecnicas", columnDefinition = "TEXT")
+    private String especificacoesTecnicas;
+
+    @Column(name = "produtos_compativeis", columnDefinition = "TEXT")
+    private String produtosCompativeis;
+
     public Produto() {}
 
     public Integer getId() { return id; }
@@ -50,4 +56,10 @@ public class Produto {
 
     public String getStatusProduto() { return statusProduto; }
     public void setStatusProduto(String statusProduto) { this.statusProduto = statusProduto; }
+
+    public String getEspecificacoesTecnicas() { return especificacoesTecnicas; }
+    public void setEspecificacoesTecnicas(String especificacoesTecnicas) { this.especificacoesTecnicas = especificacoesTecnicas; }
+
+    public String getProdutosCompativeis() { return produtosCompativeis; }
+    public void setProdutosCompativeis(String produtosCompativeis) { this.produtosCompativeis = produtosCompativeis; }
 }

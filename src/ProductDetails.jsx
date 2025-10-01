@@ -14,6 +14,7 @@ const ProductDetails = () => {
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' })
   const [user] = useState(getCurrentUser())
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
     loadProduct()
@@ -48,8 +49,11 @@ const ProductDetails = () => {
       
       setNewReview({ rating: 5, comment: '' })
       loadReviews()
+      setSuccessMessage('Avaliação enviada com sucesso!')
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
-      alert('Erro ao adicionar avaliação')
+      setSuccessMessage('Erro ao adicionar avaliação')
+      setTimeout(() => setSuccessMessage(''), 3000)
     }
   }
 
@@ -92,7 +96,7 @@ const ProductDetails = () => {
 
       <div className="product-container">
         <div className="product-breadcrumb">
-          <Link to="/">Início</Link> > Energia Solar > {product.nome}
+          <Link to="/">Início</Link> &gt; Energia Solar &gt; {product.nome}
         </div>
 
         <div className="product-main-container">
@@ -181,16 +185,18 @@ const ProductDetails = () => {
               <h3>Deixe sua opinião</h3>
               <div className="form-group">
                 <label>Avaliação:</label>
-                <select 
-                  value={newReview.rating} 
-                  onChange={(e) => setNewReview({...newReview, rating: e.target.value})}
-                >
-                  <option value={5}>5 estrelas - Excelente</option>
-                  <option value={4}>4 estrelas - Muito bom</option>
-                  <option value={3}>3 estrelas - Bom</option>
-                  <option value={2}>2 estrelas - Regular</option>
-                  <option value={1}>1 estrela - Ruim</option>
-                </select>
+                <div className="star-rating">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span
+                      key={star}
+                      className={`star ${star <= newReview.rating ? 'filled' : ''}`}
+                      onClick={() => setNewReview({...newReview, rating: star})}
+                      style={{cursor: 'pointer', fontSize: '40px', color: star <= newReview.rating ? '#ffd700' : '#ddd'}}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
               </div>
               <div className="form-group">
                 <label>Comentário:</label>
@@ -201,6 +207,7 @@ const ProductDetails = () => {
                   required
                 />
               </div>
+              {successMessage && <p style={{color: successMessage.includes('sucesso') ? 'green' : 'red', marginTop: '10px'}}>{successMessage}</p>}
               <button type="submit" className="btn-submit-review">Enviar opinião</button>
             </form>
           )}

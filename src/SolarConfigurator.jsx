@@ -1,0 +1,273 @@
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { getProducts } from './utils/productsAPI'
+import { getCategories } from './utils/categories'
+import { getCurrentUser, isAdmin, logoutUser } from './utils/authAPI'
+import { createOrcamento } from './utils/orcamentosAPI'
+import Logo from './assets/Logo.png'
+import './SolarConfigurator.css'
+
+const SolarConfigurator = () => {
+  const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState([])
+  const [selectedProducts, setSelectedProducts] = useState([])
+  const [activeCategory, setActiveCategory] = useState(null)
+  const [user] = useState(getCurrentUser())
+  const [summary, setSummary] = useState({
+    totalPrice: 0,
+    totalEnergy: 0,
+    monthlyEconomy: 0,
+    paybackTime: 0,
+    co2Reduction: 0
+  })
+
+  useEffect(() => {
+    loadCategories()
+    loadProducts()
+  }, [])
+
+  useEffect(() => {
+    calculateSummary()
+  }, [selectedProducts])
+
+  const loadCategories = async () => {
+    const categoriesData = await getCategories()
+    setCategories(categoriesData)
+    if (categoriesData.length > 0) {
+      setActiveCategory(categoriesData[0].id)
+    }
+  }
+
+  const loadProducts = async () => {
+    const productsData = await getProducts()
+    setProducts(productsData)
+  }
+
+  const addProduct = (product) => {
+    const existingProduct = selectedProducts.find(p => p.id === product.id)
+    if (existingProduct) {
+      setSelectedProducts(selectedProducts.map(p => 
+        p.id === product.id ? {...p, quantity: p.quantity + 1} : p
+      ))
+    } else {
+      setSelectedProducts([...selectedProducts, {...product, quantity: 1}])
+    }
+  }
+
+  const removeProduct = (productId) => {
+    setSelectedProducts(selectedProducts.filter(p => p.id !== productId))
+  }
+
+  const updateQuantity = (productId, quantity) => {
+    if (quantity <= 0) {
+      removeProduct(productId)
+    } else {
+      setSelectedProducts(selectedProducts.map(p => 
+        p.id === productId ? {...p, quantity} : p
+      ))
+    }
+  }
+
+  const calculateSummary = () => {
+    const totalPrice = selectedProducts.reduce((sum, p) => sum + (p.preco * p.quantity), 0)
+    const totalEnergy = selectedProducts.reduce((sum, p) => {
+      const specs = p.especificacoesTecnicas ? JSON.parse(p.especificacoesTecnicas) : {}
+      const energia = specs.energia || 0
+      return sum + (energia * p.quantity)
+    }, 0)
+    
+    const monthlyEconomy = totalEnergy * 0.65 // R$ 0,65 por kWh
+    const paybackTime = totalPrice > 0 ? Math.ceil(totalPrice / monthlyEconomy) : 0
+    const co2Reduction = totalEnergy * 0.084 * 12 // kg CO2 por ano
+
+    setSummary({
+      totalPrice,
+      totalEnergy,
+      monthlyEconomy,
+      paybackTime,
+      co2Reduction
+    })
+  }
+
+  const handleSaveOrcamento = async () => {
+    try {
+      // Check if user is logged in
+      if (!user || !user.id) {
+        alert('Você precisa estar logado para salvar um orçamento')
+        return
+      }
+
+      const orcamentoData = {
+        usuarioId: user.id,
+        produtosSelecionados: JSON.stringify(selectedProducts),
+        precoTotal: summary.totalPrice.toString(),
+        energiaTotalGerada: summary.totalEnergy.toString(),
+        economiaMensal: summary.monthlyEconomy.toString(),
+        tempoRetornoMeses: summary.paybackTime,
+        reducaoCo2Anual: summary.co2Reduction.toString()
+      }
+      
+      console.log('Saving orcamento:', orcamentoData)
+      await createOrcamento(orcamentoData)
+      alert('Orçamento salvo com sucesso!')
+    } catch (error) {
+      console.error('Error saving orcamento:', error)
+      alert('Erro ao salvar orçamento: ' + (error.response?.data?.message || error.message))
+    }
+  }
+
+  const filteredProducts = products.filter(p => p.categoria_id === activeCategory)
+
+  return (
+    <>
+      <header className="cabecalho">
+        <nav className="topo">
+          <ul className="menu">
+            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
+            <li className="spacer"></li>
+            {user ? (
+              <>
+                {isAdmin() && (
+                  <>
+                    <li>
+                      <Link to="/admin" className="admin-link">Usuários</Link>
+                    </li>
+                    <li>
+                      <Link to="/admin-products" className="admin-link">Produtos</Link>
+                    </li>
+                  </>
+                )}
+                <li>
+                  <span className="user-welcome">Olá, {user.nome || user.name}</span>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/create-account" className="create-account">Crie sua conta</Link>
+                </li>
+                <li>
+                  <Link to="/login" className="sign-in">Entre</Link>
+                </li>
+              </>
+            )}
+            <li>
+              <Link to="/" className="quote-btn" style={{textDecoration: 'none', marginRight: '50px'}}>
+                🏠 Início
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <div className='division'></div>
+
+      <div className="solar-configurator">
+        <div className="configurator-header">
+          <h1>Configure seu Sistema Solar</h1>
+          <p>Monte seu sistema personalizado selecionando os componentes</p>
+        </div>
+
+      <div className="configurator-content">
+        <div className="products-section">
+          <div className="category-tabs">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                className={`category-tab ${activeCategory === category.id ? 'active' : ''}`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.nome}
+              </button>
+            ))}
+          </div>
+
+          <div className="products-grid">
+            {filteredProducts.map(product => (
+              <div key={product.id} className="product-card">
+                <img 
+                  src={product.fotoUrl || 'https://via.placeholder.com/200'} 
+                  alt={product.nome}
+                  className="product-image"
+                />
+                <h3>{product.nome}</h3>
+                <p className="product-price">R$ {product.preco?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                <button 
+                  className="add-product-btn"
+                  onClick={() => addProduct(product)}
+                >
+                  Adicionar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="cart-section">
+          <h2>Produtos Selecionados</h2>
+          {selectedProducts.length === 0 ? (
+            <p>Nenhum produto selecionado</p>
+          ) : (
+            <div className="selected-products">
+              {selectedProducts.map(product => (
+                <div key={product.id} className="selected-product">
+                  <span className="product-name">{product.nome}</span>
+                  <div className="quantity-controls">
+                    <button onClick={() => updateQuantity(product.id, product.quantity - 1)}>-</button>
+                    <span>{product.quantity}</span>
+                    <button onClick={() => updateQuantity(product.id, product.quantity + 1)}>+</button>
+                  </div>
+                  <span className="product-total">
+                    R$ {(product.preco * product.quantity).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                  </span>
+                  <button 
+                    className="remove-btn"
+                    onClick={() => removeProduct(product.id)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="summary-section">
+            <h3>Resumo do Sistema</h3>
+            <div className="summary-item">
+              <span>Preço Total:</span>
+              <span>R$ {summary.totalPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+            </div>
+            <div className="summary-item">
+              <span>Energia Gerada:</span>
+              <span>{summary.totalEnergy.toFixed(2)} kWh/mês</span>
+            </div>
+            <div className="summary-item">
+              <span>Economia Mensal:</span>
+              <span>R$ {summary.monthlyEconomy.toFixed(2)}</span>
+            </div>
+            <div className="summary-item">
+              <span>Tempo de Retorno:</span>
+              <span>{summary.paybackTime} meses</span>
+            </div>
+            <div className="summary-item">
+              <span>Redução CO₂/ano:</span>
+              <span>{summary.co2Reduction.toFixed(2)} kg</span>
+            </div>
+            
+            {user && selectedProducts.length > 0 && (
+              <button 
+                className="save-quote-btn"
+                onClick={handleSaveOrcamento}
+              >
+                Salvar Orçamento
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+      </div>
+    </>
+  )
+}
+
+export default SolarConfigurator
