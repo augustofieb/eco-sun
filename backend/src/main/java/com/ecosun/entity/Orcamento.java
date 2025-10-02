@@ -34,6 +34,9 @@ public class Orcamento {
 
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
+    
+    @Column(name = "data_orcamento")
+    private LocalDateTime dataOrcamento;
 
     @Column(name = "status", length = 20)
     private String status;
@@ -66,7 +69,24 @@ public class Orcamento {
 
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    
+    public LocalDateTime getDataOrcamento() { return dataOrcamento; }
+    public void setDataOrcamento(LocalDateTime dataOrcamento) { this.dataOrcamento = dataOrcamento; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    
+    @Override
+    public String toString() {
+        return "Orcamento{" +
+                "id=" + id +
+                ", usuarioId=" + usuarioId +
+                ", precoTotal=" + precoTotal +
+                ", energiaTotalGerada=" + energiaTotalGerada +
+                ", economiaMensal=" + economiaMensal +
+                ", tempoRetornoMeses=" + tempoRetornoMeses +
+                ", reducaoCo2Anual=" + reducaoCo2Anual +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

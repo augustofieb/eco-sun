@@ -17,10 +17,11 @@ public class CategoriaController {
     @GetMapping
     public ResponseEntity<?> getAllCategorias() {
         try {
-            String sql = "SELECT id, nome, descricao FROM Categoria";
+            String sql = "SELECT id, nome, descricao, especificacoes_obrigatorias FROM Categoria";
             List<Map<String, Object>> categorias = jdbcTemplate.queryForList(sql);
             return ResponseEntity.ok(categorias);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.ok("[]");
         }
     }
@@ -42,9 +43,10 @@ public class CategoriaController {
         try {
             String nome = (String) request.get("nome");
             String descricao = (String) request.get("descricao");
+            String especificacoes = (String) request.get("especificacoes");
             
-            String sql = "INSERT INTO Categoria (nome, descricao) VALUES (?, ?)";
-            jdbcTemplate.update(sql, nome, descricao);
+            String sql = "INSERT INTO Categoria (nome, descricao, especificacoes_obrigatorias) VALUES (?, ?, ?)";
+            jdbcTemplate.update(sql, nome, descricao, especificacoes);
             
             return ResponseEntity.ok("{\"message\":\"Categoria criada com sucesso\"}");
         } catch (Exception e) {

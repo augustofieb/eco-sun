@@ -5,11 +5,12 @@ import com.ecosun.repository.OrcamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orcamentos")
+@RequestMapping("/orcamentos")
 @CrossOrigin(origins = "*")
 public class OrcamentoController {
     @Autowired
@@ -23,9 +24,44 @@ public class OrcamentoController {
     @PostMapping
     public ResponseEntity<?> createOrcamento(@RequestBody Orcamento orcamento) {
         try {
-            orcamento.setDataCriacao(LocalDateTime.now());
-            orcamento.setStatus("RASCUNHO");
+            System.out.println("Recebendo orçamento: " + orcamento.toString());
+            
+            // Validar dados obrigatórios
+            if (orcamento.getUsuarioId() == null) {
+                return ResponseEntity.badRequest().body("ID do usuário é obrigatório");
+            }
+            
+            // Garantir valores padrão para campos que não podem ser null
+            if (orcamento.getPrecoTotal() == null) {
+                orcamento.setPrecoTotal(BigDecimal.ZERO);
+            }
+            if (orcamento.getEnergiaTotalGerada() == null) {
+                orcamento.setEnergiaTotalGerada(BigDecimal.ZERO);
+            }
+            if (orcamento.getEconomiaMensal() == null) {
+                orcamento.setEconomiaMensal(BigDecimal.ZERO);
+            }
+            if (orcamento.getTempoRetornoMeses() == null) {
+                orcamento.setTempoRetornoMeses(0);
+            }
+            if (orcamento.getReducaoCo2Anual() == null) {
+                orcamento.setReducaoCo2Anual(BigDecimal.ZERO);
+            }
+            
+            // Garantir que as datas sejam sempre definidas
+            LocalDateTime now = LocalDateTime.now();
+            orcamento.setDataCriacao(now);
+            orcamento.setDataOrcamento(now);
+            
+            if (orcamento.getStatus() == null || orcamento.getStatus().isEmpty()) {
+                orcamento.setStatus("RASCUNHO");
+            }
+            
+            System.out.println("Datas definidas: " + now);
+            System.out.println("Orçamento antes da validação: " + orcamento.toString());
+            
             Orcamento saved = orcamentoRepository.save(orcamento);
+            System.out.println("Orçamento salvo com sucesso: " + saved.getId());
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             System.out.println("Erro ao criar orçamento: " + e.getMessage());

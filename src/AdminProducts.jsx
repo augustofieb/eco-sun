@@ -17,13 +17,14 @@ const AdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [showCategoryForm, setShowCategoryForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '' })
+  const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
   const [selectedFile, setSelectedFile] = useState(null)
   const [useFileUpload, setUseFileUpload] = useState(false)
   const [deletingCategory, setDeletingCategory] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
-  const [newCategory, setNewCategory] = useState({ nome: '', descricao: '' })
+  const [newCategory, setNewCategory] = useState({ nome: '', descricao: '', especificacoes: [] })
   const [imageError, setImageError] = useState('')
+  const [newSpec, setNewSpec] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -103,17 +104,29 @@ const AdminProducts = () => {
           throw new Error(`Erro ao criar produto: ${errorText}`)
         }
       } else {
+        // Construir especificações técnicas
+        const especificacoesTecnicas = {}
+        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+          Object.keys(formData.categorySpecs).forEach(key => {
+            const value = formData[`spec_${key}`]
+            if (value) {
+              especificacoesTecnicas[key] = value
+            }
+          })
+        }
+        
         const productData = {
           nome: formData.name,
           preco: price,
           categoriaId: parseInt(formData.category),
           descricao: formData.description,
-          foto: formData.image
+          foto: formData.image,
+          especificacoesTecnicas: Object.keys(especificacoesTecnicas).length > 0 ? JSON.stringify(especificacoesTecnicas) : null
         }
         await createProduct(productData)
       }
       
-      setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
       setSelectedFile(null)
       setUseFileUpload(false)
       setShowAddForm(false)
@@ -171,7 +184,7 @@ const AdminProducts = () => {
       }
       
       setEditingProduct(null)
-      setFormData({ name: '', price: '', category: '', image: '', description: '' })
+      setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
       setSelectedFile(null)
       setUseFileUpload(false)
       loadProducts()
@@ -193,9 +206,26 @@ const AdminProducts = () => {
 
   const handleAddCategory = async (e) => {
     e.preventDefault()
+    
+    // Verificar se já existe categoria com o mesmo nome
+    const existingCategory = categories.find(cat => 
+      cat.nome.toLowerCase() === newCategory.nome.toLowerCase()
+    )
+    
+    if (existingCategory) {
+      alert('Já existe uma categoria com este nome!')
+      return
+    }
+    
     try {
-      await addCategory(newCategory.nome, newCategory.descricao)
-      setNewCategory({ nome: '', descricao: '' })
+      const especificacoesObj = {}
+      newCategory.especificacoes.forEach(spec => {
+        especificacoesObj[spec.toLowerCase().replace(/\s+/g, '_')] = spec
+      })
+      
+      await addCategory(newCategory.nome, newCategory.descricao, JSON.stringify(especificacoesObj))
+      setNewCategory({ nome: '', descricao: '', especificacoes: [] })
+      setNewSpec('')
       setShowCategoryForm(false)
       loadCategories()
       alert('Categoria adicionada com sucesso!')
@@ -214,6 +244,23 @@ const AdminProducts = () => {
       alert('Erro ao deletar categoria: ' + (error.response?.data || error.message))
       setDeletingCategory(null)
     }
+  }
+
+  const addSpecification = () => {
+    if (newSpec.trim()) {
+      setNewCategory({
+        ...newCategory,
+        especificacoes: [...newCategory.especificacoes, newSpec.trim()]
+      })
+      setNewSpec('')
+    }
+  }
+
+  const removeSpecification = (index) => {
+    setNewCategory({
+      ...newCategory,
+      especificacoes: newCategory.especificacoes.filter((_, i) => i !== index)
+    })
   }
 
 
@@ -286,7 +333,20 @@ const AdminProducts = () => {
                 />
                 <select 
                   value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, category: e.target.value})
+                    const selectedCategory = categories.find(cat => cat.id === parseInt(e.target.value))
+                    if (selectedCategory?.especificacoes_obrigatorias) {
+                      try {
+                        const specs = JSON.parse(selectedCategory.especificacoes_obrigatorias)
+                        setFormData(prev => ({...prev, categorySpecs: specs}))
+                      } catch (e) {
+                        setFormData(prev => ({...prev, categorySpecs: {}}))
+                      }
+                    } else {
+                      setFormData(prev => ({...prev, categorySpecs: {}}))
+                    }
+                  }}
                   required
                 >
                   <option value="">Selecione categoria</option>
@@ -294,6 +354,21 @@ const AdminProducts = () => {
                     <option key={cat.id} value={cat.id}>{cat.nome}</option>
                   ))}
                 </select>
+                
+                {formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0 && (
+                  <div className="category-specs">
+                    <h4>Especificações da Categoria:</h4>
+                    {Object.entries(formData.categorySpecs).map(([key, label]) => (
+                      <input
+                        key={key}
+                        type="text"
+                        placeholder={label}
+                        value={formData[`spec_${key}`] || ''}
+                        onChange={(e) => setFormData({...formData, [`spec_${key}`]: e.target.value})}
+                      />
+                    ))}
+                  </div>
+                )}
                 <div className="image-upload-section">
                   <label>
                     <input 
@@ -361,6 +436,7 @@ const AdminProducts = () => {
                     setImageError('')
                     setSelectedFile(null)
                     setUseFileUpload(false)
+                    setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
                   }} className="btn-cancel">Cancelar</button>
                 </div>
               </form>
@@ -399,9 +475,38 @@ const AdminProducts = () => {
                   onChange={(e) => setNewCategory({...newCategory, descricao: e.target.value})}
                   rows="3"
                 />
+                
+                <div className="specifications-section">
+                  <h4>Especificações da Categoria</h4>
+                  <div className="spec-input-container">
+                    <input 
+                      type="text" 
+                      placeholder="Nova especificação" 
+                      value={newSpec}
+                      onChange={(e) => setNewSpec(e.target.value)}
+                    />
+                    <button type="button" onClick={addSpecification} className="btn-add-spec">+</button>
+                  </div>
+                  
+                  {newCategory.especificacoes.length > 0 && (
+                    <div className="specs-list">
+                      {newCategory.especificacoes.map((spec, index) => (
+                        <div key={index} className="spec-item">
+                          <span>{spec}</span>
+                          <button type="button" onClick={() => removeSpecification(index)} className="btn-remove-spec">×</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
                 <div>
                   <button type="submit" className="btn-save">Adicionar</button>
-                  <button type="button" onClick={() => setShowCategoryForm(false)} className="btn-cancel">Cancelar</button>
+                  <button type="button" onClick={() => {
+                    setShowCategoryForm(false)
+                    setNewCategory({ nome: '', descricao: '', especificacoes: [] })
+                    setNewSpec('')
+                  }} className="btn-cancel">Cancelar</button>
                 </div>
               </form>
             )}

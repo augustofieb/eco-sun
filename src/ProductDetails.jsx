@@ -81,12 +81,12 @@ const ProductDetails = () => {
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
             <li className="spacer"></li>
             <li>
-              <Link to="/" className="sign-in">Voltar</Link>
-            </li>
-            <li>
               <button onClick={() => setIsQuoteOpen(true)} className="quote-btn">
                 💡 Orçamento
               </button>
+            </li>
+            <li>
+              <Link to="/" className="sign-in" style={{marginRight: '40px'}}>Voltar</Link>
             </li>
           </ul>
         </nav>
@@ -124,6 +124,16 @@ const ProductDetails = () => {
                   <li><strong>Categoria:</strong> {product.categoria?.nome || 'Energia Solar'}</li>
                   <li><strong>Código:</strong> #{product.id}</li>
                   <li><strong>Status:</strong> {product.status_produto}</li>
+                  {product.especificacoes_tecnicas && (() => {
+                    try {
+                      const specs = JSON.parse(product.especificacoes_tecnicas)
+                      return Object.entries(specs).map(([key, value]) => (
+                        <li key={key}><strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> {value}</li>
+                      ))
+                    } catch (e) {
+                      return null
+                    }
+                  })()}
                 </ul>
               </div>
               

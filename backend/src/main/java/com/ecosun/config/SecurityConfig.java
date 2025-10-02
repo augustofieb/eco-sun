@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .antMatchers("/categorias/**").permitAll()
                 .antMatchers("/usuarios/**").permitAll()
                 .antMatchers("/avaliacoes/**").permitAll()
+                .antMatchers("/orcamentos/**").permitAll()
                 .antMatchers("/api/orcamentos/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .antMatchers("/conteudo/**").permitAll()

@@ -16,9 +16,9 @@ export const getCategories = async () => {
   }
 };
 
-export const addCategory = async (nome, descricao = '') => {
+export const addCategory = async (nome, descricao = '', especificacoes = '') => {
   try {
-    const response = await categoriesAPI.create({ nome, descricao });
+    const response = await categoriesAPI.create({ nome, descricao, especificacoes });
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);

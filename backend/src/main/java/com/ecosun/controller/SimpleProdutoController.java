@@ -47,7 +47,7 @@ public class SimpleProdutoController {
     @GetMapping
     public ResponseEntity<?> getAllProdutos() {
         try {
-            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl FROM Produto WHERE status_produto = 'ATIVO'";
+            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl, especificacoes_tecnicas FROM Produto WHERE status_produto = 'ATIVO'";
             List<Map<String, Object>> produtos = jdbcTemplate.queryForList(sql);
             return ResponseEntity.ok(produtos);
         } catch (Exception e) {
@@ -86,9 +86,10 @@ public class SimpleProdutoController {
             Double preco = ((Number) request.get("preco")).doubleValue();
             Integer categoriaId = ((Number) request.get("categoriaId")).intValue();
             String fotoUrl = (String) request.get("foto");
+            String especificacoesTecnicas = (String) request.get("especificacoesTecnicas");
             
-            String sql = "INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto, fotoUrl) VALUES (?, ?, ?, ?, 'ATIVO', ?)";
-            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoUrl);
+            String sql = "INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto, fotoUrl, especificacoes_tecnicas) VALUES (?, ?, ?, ?, 'ATIVO', ?, ?)";
+            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoUrl, especificacoesTecnicas);
             
             return ResponseEntity.ok("{\"message\":\"Produto criado com sucesso\"}");
         } catch (Exception e) {
@@ -174,7 +175,7 @@ public class SimpleProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProdutoById(@PathVariable Integer id) {
         try {
-            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl FROM Produto WHERE id = ? AND status_produto = 'ATIVO'";
+            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl, especificacoes_tecnicas FROM Produto WHERE id = ? AND status_produto = 'ATIVO'";
             List<Map<String, Object>> produtos = jdbcTemplate.queryForList(sql, id);
             if (produtos.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -195,4 +196,10 @@ public class SimpleProdutoController {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
         }
     }
+
+
+
+
+
+
 }

@@ -1,4 +1,5 @@
 import './Login.css'
+import './Home.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Logo from './assets/Logo.png'
@@ -36,21 +37,15 @@ const Login = () => {
   }
 
   return (
-    <>
-      <title>ECO SUN - Login</title>
+    <div>
       <header className="cabecalho">
         <nav className="topo">
           <ul className="menu">
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
-
             <li className="spacer"> </li>
             <li>
-              <Link to="/create-account" className="create-account" style={{marginRight: '20px'}}>Crie sua conta</Link>
+              <Link to="/" className="sign-in" style={{marginRight: '40px'}}>Voltar</Link>
             </li>
-            <li>
-              <Link to="/" className="sign-in" style={{marginRight: '70px'}}>Home</Link>
-            </li>
-
           </ul>
         </nav>
       </header>
@@ -88,13 +83,13 @@ const Login = () => {
               <button type="submit" className="btn-primary">Entrar</button>
               <div className="login-links">
                 <Link to="/forgot-password" className="forgot-password">Esqueceu a senha?</Link>
-                <Link to="/create-account" className="create-account-link">Não tem conta? Crie uma</Link>
+                <Link to="/create-account" className="create-account-link">Não tem conta? Crie Uma</Link>
               </div>
             </form>
           </div>
         </section>
       </main>
-    </>
+    </div>
   )
 }
 

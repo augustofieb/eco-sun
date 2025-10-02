@@ -26,6 +26,15 @@
   background-color: #2d2d2d;
 }
 
+.dark-mode .topo .menu li a,
+.dark-mode .topo .menu .user-welcome,
+.dark-mode .topo .menu .create-account,
+.dark-mode .topo .menu .sign-in,
+.dark-mode .topo .menu .admin-link,
+.dark-mode .topo .menu .quote-btn {
+  color: #4ade80 !important;
+}
+
 .dark-mode .main-content {
   background-color: #1a1a1a;
 }

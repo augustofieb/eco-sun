@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
-import './Auth.css';
+import './Register.css';
+import '../Home.css';
+import Logo from '../assets/Logo.png';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -24,8 +26,24 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
+    <div>
+      <header className="cabecalho">
+        <nav className="topo">
+          <ul className="menu">
+            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
+            <li className="spacer"> </li>
+            <li>
+              <Link to="/" className="sign-in" style={{marginRight: '40px'}}>Voltar</Link>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <div className='division'></div>
+
+      <main className="main-content">
+        <section className="auth-container">
+          <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Recuperar Senha</h2>
         {message && <div className="info-message">{message}</div>}
         
@@ -44,7 +62,9 @@ const ForgotPassword = () => {
         <div className="auth-links">
           <Link to="/login">Voltar ao login</Link>
         </div>
-      </form>
+          </form>
+        </section>
+      </main>
     </div>
   );
 };

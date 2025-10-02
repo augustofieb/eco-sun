@@ -4,6 +4,7 @@ import { getProducts } from './utils/productsAPI'
 import { getCategories } from './utils/categories'
 import { getCurrentUser, isAdmin, logoutUser } from './utils/authAPI'
 import { createOrcamento } from './utils/orcamentosAPI'
+
 import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
 
@@ -77,7 +78,7 @@ const SolarConfigurator = () => {
     }, 0)
     
     const monthlyEconomy = totalEnergy * 0.65 // R$ 0,65 por kWh
-    const paybackTime = totalPrice > 0 ? Math.ceil(totalPrice / monthlyEconomy) : 0
+    const paybackTime = (totalPrice > 0 && monthlyEconomy > 0) ? Math.ceil(totalPrice / monthlyEconomy) : 0
     const co2Reduction = totalEnergy * 0.084 * 12 // kg CO2 por ano
 
     setSummary({
@@ -91,7 +92,6 @@ const SolarConfigurator = () => {
 
   const handleSaveOrcamento = async () => {
     try {
-      // Check if user is logged in
       if (!user || !user.id) {
         alert('Você precisa estar logado para salvar um orçamento')
         return
@@ -100,21 +100,21 @@ const SolarConfigurator = () => {
       const orcamentoData = {
         usuarioId: user.id,
         produtosSelecionados: JSON.stringify(selectedProducts),
-        precoTotal: summary.totalPrice.toString(),
-        energiaTotalGerada: summary.totalEnergy.toString(),
-        economiaMensal: summary.monthlyEconomy.toString(),
-        tempoRetornoMeses: summary.paybackTime,
-        reducaoCo2Anual: summary.co2Reduction.toString()
+        precoTotal: Number(summary.totalPrice.toFixed(2)) || 0,
+        energiaTotalGerada: Number(summary.totalEnergy.toFixed(2)) || 0,
+        economiaMensal: Number(summary.monthlyEconomy.toFixed(2)) || 0,
+        tempoRetornoMeses: summary.paybackTime || 0,
+        reducaoCo2Anual: Number(summary.co2Reduction.toFixed(2)) || 0
       }
       
-      console.log('Saving orcamento:', orcamentoData)
       await createOrcamento(orcamentoData)
       alert('Orçamento salvo com sucesso!')
     } catch (error) {
-      console.error('Error saving orcamento:', error)
       alert('Erro ao salvar orçamento: ' + (error.response?.data?.message || error.message))
     }
   }
+
+
 
   const filteredProducts = products.filter(p => p.categoria_id === activeCategory)
 

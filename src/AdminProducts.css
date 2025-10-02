@@ -213,3 +213,99 @@ th {
   margin-right: 0.3rem;
   font-size: 0.85rem;
 }
+.specifications-section {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+}
+
+.specifications-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.spec-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.spec-input-container input {
+  flex: 1;
+}
+
+.btn-add-spec {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-add-spec:hover {
+  background-color: #218838;
+}
+
+.specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e9ecef;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.spec-item span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 10px;
+}
+
+.btn-remove-spec {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin-left: auto;
+}
+
+.btn-remove-spec:hover {
+  color: #c82333;
+}
+
+.category-specs {
+  margin: 15px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+.category-specs h4 {
+  margin: 0 0 15px 0;
+  color: #2c5530;
+  font-size: 1rem;
+}
+
+.category-specs input {
+  margin-bottom: 10px;
+}
