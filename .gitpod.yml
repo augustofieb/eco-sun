@@ -1,0 +1,16 @@
+image: gitpod/workspace-java-17
+
+ports:
+  - port: 5173
+    onOpen: ignore
+  - port: 8081
+    onOpen: ignore
+
+tasks:
+  - name: Install Dependencies
+    init: npm install --no-audit --no-fund
+    command: echo "Ready to start!"
+
+vscode:
+  extensions:
+    - ms-vscode.vscode-json

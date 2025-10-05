@@ -1,25 +1,28 @@
 {
   "name": "ECO SUN Development",
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:18",
   "forwardPorts": [5173, 8081],
   "portsAttributes": {
     "5173": {
       "label": "Frontend",
-      "onAutoForward": "notify"
+      "onAutoForward": "silent"
     },
     "8081": {
       "label": "Backend API",
-      "onAutoForward": "notify",
-      "visibility": "public"
+      "onAutoForward": "silent"
     }
   },
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install --no-audit --no-fund",
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
+    }
+  },
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-vscode.vscode-json",
-        "bradlc.vscode-tailwindcss",
-        "esbenp.prettier-vscode"
+        "ms-vscode.vscode-json"
       ]
     }
   }
