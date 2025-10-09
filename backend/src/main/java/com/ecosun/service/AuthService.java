@@ -29,8 +29,11 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(request.getEmail());
         if (usuario.isPresent() && passwordEncoder.matches(request.getSenha(), usuario.get().getSenha())) {
+            if ("INATIVO".equals(usuario.get().getStatusUsuario())) {
+                throw new RuntimeException("Conta desativada. Entre em contato com o administrador.");
+            }
             String token = jwtUtil.generateToken(usuario.get().getEmail());
-            return new AuthResponse(token, usuario.get().getId(), usuario.get().getNome(), usuario.get().getEmail(), usuario.get().getNivelAcesso());
+            return new AuthResponse(token, usuario.get().getId(), usuario.get().getNome(), usuario.get().getEmail(), usuario.get().getNivelAcesso(), usuario.get().getStatusUsuario());
         }
         throw new RuntimeException("Credenciais inválidas");
     }
@@ -59,7 +62,7 @@ public class AuthService {
             Usuario savedUser = usuarioRepository.save(usuario);
             System.out.println("Usuário salvo com ID: " + savedUser.getId());
             String token = jwtUtil.generateToken(usuario.getEmail());
-            return new AuthResponse(token, savedUser.getId(), usuario.getNome(), usuario.getEmail(), usuario.getNivelAcesso());
+            return new AuthResponse(token, savedUser.getId(), usuario.getNome(), usuario.getEmail(), usuario.getNivelAcesso(), usuario.getStatusUsuario());
         } catch (Exception e) {
             System.out.println("Erro ao salvar usuário: " + e.getMessage());
             e.printStackTrace();

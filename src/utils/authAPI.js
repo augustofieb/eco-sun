@@ -6,16 +6,16 @@ let authToken = null;
 export const loginUser = async (email, password) => {
   try {
     const response = await authAPI.login(email, password);
-    const { token, id, nome, email: userEmail, nivelAcesso } = response.data;
+    const { token, id, nome, email: userEmail, nivelAcesso, statusUsuario } = response.data;
     
     authToken = token;
-    currentUser = { id, name: nome, email: userEmail, nivelAcesso };
+    currentUser = { id, name: nome, email: userEmail, nivelAcesso, statusUsuario };
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('user', JSON.stringify(currentUser));
     
     return { success: true, user: currentUser };
   } catch (error) {
-    return { success: false, error: 'Credenciais inválidas' };
+    return { success: false, error: error.response?.data || 'Credenciais inválidas' };
   }
 };
 
@@ -74,4 +74,28 @@ export const logoutUser = () => {
 
 export const getToken = () => {
   return authToken || sessionStorage.getItem('token');
+};
+
+export const refreshUserData = async () => {
+  try {
+    const user = getCurrentUser();
+    if (!user) return null;
+    
+    const response = await usersAPI.getById(user.id);
+    const updatedUser = {
+      id: response.data.id,
+      name: response.data.nome,
+      nome: response.data.nome,
+      email: response.data.email,
+      nivelAcesso: response.data.nivelAcesso,
+      statusUsuario: response.data.statusUsuario
+    };
+    
+    currentUser = updatedUser;
+    sessionStorage.setItem('user', JSON.stringify(updatedUser));
+    return updatedUser;
+  } catch (error) {
+    console.error('Erro ao recarregar dados do usuário:', error);
+    return null;
+  }
 };

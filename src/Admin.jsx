@@ -10,6 +10,7 @@ const Admin = () => {
   const [filteredUsers, setFilteredUsers] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [editingUser, setEditingUser] = useState(null)
+  const [showEditForm, setShowEditForm] = useState(false)
   const [editForm, setEditForm] = useState({ nome: '', email: '', nivelAcesso: '', statusUsuario: '' })
   const navigate = useNavigate()
 
@@ -39,6 +40,7 @@ const Admin = () => {
 
   const handleEdit = (user) => {
     setEditingUser(user.id)
+    setShowEditForm(true)
     setEditForm({ 
       nome: user.nome, 
       email: user.email, 
@@ -47,24 +49,46 @@ const Admin = () => {
     })
   }
 
-  const handleUpdate = async (userId) => {
+  const handleUpdate = async (e) => {
+    e.preventDefault()
     try {
-      await updateUser(userId, editForm)
+      await updateUser(editingUser, editForm)
       setEditingUser(null)
+      setShowEditForm(false)
+      setEditForm({ nome: '', email: '', nivelAcesso: '', statusUsuario: '' })
       loadUsers()
     } catch (error) {
-      // removed alert
+      console.error('Erro ao atualizar usuário:', error)
     }
   }
 
-  const handleDelete = async (userId) => {
-    if (confirm('Tem certeza que deseja deletar este usuário?')) {
-      try {
-        await deleteUser(userId)
-        loadUsers()
-      } catch (error) {
-        // removed alert
+  const handleDeactivate = async (user) => {
+    try {
+      const updatedUser = {
+        nome: user.nome,
+        email: user.email,
+        nivelAcesso: user.nivelAcesso,
+        statusUsuario: 'INATIVO'
       }
+      await updateUser(user.id, updatedUser)
+      loadUsers()
+    } catch (error) {
+      console.error('Erro ao desativar usuário:', error)
+    }
+  }
+
+  const handleReactivate = async (user) => {
+    try {
+      const updatedUser = {
+        nome: user.nome,
+        email: user.email,
+        nivelAcesso: user.nivelAcesso,
+        statusUsuario: 'ATIVO'
+      }
+      await updateUser(user.id, updatedUser)
+      loadUsers()
+    } catch (error) {
+      console.error('Erro ao reativar usuário:', error)
     }
   }
 
@@ -97,6 +121,50 @@ const Admin = () => {
         <h1> Painel Administrativo</h1>
         <div className="users-table">
           <h2>Gerenciar Usuários ({filteredUsers.length} usuários)</h2>
+          
+          {showEditForm && (
+            <form onSubmit={handleUpdate} className="product-form">
+              <input 
+                type="text" 
+                placeholder="Nome do usuário" 
+                value={editForm.nome}
+                onChange={(e) => setEditForm({...editForm, nome: e.target.value})}
+                required 
+              />
+              <input 
+                type="email" 
+                placeholder="Email" 
+                value={editForm.email}
+                onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                required 
+              />
+              <select 
+                value={editForm.nivelAcesso}
+                onChange={(e) => setEditForm({...editForm, nivelAcesso: e.target.value})}
+                required
+              >
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+              <select 
+                value={editForm.statusUsuario}
+                onChange={(e) => setEditForm({...editForm, statusUsuario: e.target.value})}
+                required
+              >
+                <option value="ATIVO">ATIVO</option>
+                <option value="INATIVO">INATIVO</option>
+              </select>
+              <div>
+                <button type="submit" className="btn-save">Atualizar</button>
+                <button type="button" onClick={() => {
+                  setShowEditForm(false)
+                  setEditingUser(null)
+                  setEditForm({ nome: '', email: '', nivelAcesso: '', statusUsuario: '' })
+                }} className="btn-cancel">Cancelar</button>
+              </div>
+            </form>
+          )}
+          
         <div className="search-container">
           <input 
             type="text" 
@@ -127,55 +195,16 @@ const Admin = () => {
               ) : filteredUsers.map(user => (
                 <tr key={user.id}>
                   <td>{user.id}</td>
-                  <td>
-                    {editingUser === user.id ? (
-                      <input 
-                        value={editForm.nome}
-                        onChange={(e) => setEditForm({...editForm, nome: e.target.value})}
-                      />
-                    ) : user.nome}
-                  </td>
-                  <td>
-                    {editingUser === user.id ? (
-                      <input 
-                        value={editForm.email}
-                        onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                      />
-                    ) : user.email}
-                  </td>
-                  <td>
-                    {editingUser === user.id ? (
-                      <select 
-                        value={editForm.nivelAcesso}
-                        onChange={(e) => setEditForm({...editForm, nivelAcesso: e.target.value})}
-                      >
-                        <option value="USER">USER</option>
-                        <option value="ADMIN">ADMIN</option>
-                      </select>
-                    ) : user.nivelAcesso}
-                  </td>
-                  <td>
-                    {editingUser === user.id ? (
-                      <select 
-                        value={editForm.statusUsuario}
-                        onChange={(e) => setEditForm({...editForm, statusUsuario: e.target.value})}
-                      >
-                        <option value="ATIVO">ATIVO</option>
-                        <option value="INATIVO">INATIVO</option>
-                      </select>
-                    ) : user.statusUsuario}
-                  </td>
+                  <td>{user.nome}</td>
+                  <td>{user.email}</td>
+                  <td>{user.nivelAcesso}</td>
+                  <td>{user.statusUsuario}</td>
                   <td className="actions">
-                    {editingUser === user.id ? (
-                      <>
-                        <button onClick={() => handleUpdate(user.id)} className="btn-save">Salvar</button>
-                        <button onClick={() => setEditingUser(null)} className="btn-cancel">Cancelar</button>
-                      </>
+                    <button onClick={() => handleEdit(user)} className="btn-edit">Editar</button>
+                    {user.statusUsuario === 'ATIVO' ? (
+                      <button onClick={() => handleDeactivate(user)} className="btn-delete">Desativar</button>
                     ) : (
-                      <>
-                        <button onClick={() => handleEdit(user)} className="btn-edit">Editar</button>
-                        <button onClick={() => handleDelete(user.id)} className="btn-delete">Deletar</button>
-                      </>
+                      <button onClick={() => handleReactivate(user)} className="btn-save">Reativar</button>
                     )}
                   </td>
                 </tr>

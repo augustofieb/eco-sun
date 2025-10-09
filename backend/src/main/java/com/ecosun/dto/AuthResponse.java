@@ -6,13 +6,15 @@ public class AuthResponse {
     private String nome;
     private String email;
     private String nivelAcesso;
+    private String statusUsuario;
 
-    public AuthResponse(String token, Integer id, String nome, String email, String nivelAcesso) {
+    public AuthResponse(String token, Integer id, String nome, String email, String nivelAcesso, String statusUsuario) {
         this.token = token;
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.nivelAcesso = nivelAcesso;
+        this.statusUsuario = statusUsuario;
     }
 
     public String getToken() { return token; }
@@ -29,4 +31,7 @@ public class AuthResponse {
 
     public String getNivelAcesso() { return nivelAcesso; }
     public void setNivelAcesso(String nivelAcesso) { this.nivelAcesso = nivelAcesso; }
+
+    public String getStatusUsuario() { return statusUsuario; }
+    public void setStatusUsuario(String statusUsuario) { this.statusUsuario = statusUsuario; }
 }

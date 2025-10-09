@@ -3,9 +3,10 @@ import './dark-mode.css'
 import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { isLoggedIn, isAdmin, getCurrentUser, logoutUser } from './utils/authAPI'
+import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/authAPI'
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
 import { getCategories, updateConteudo } from './utils/categories'
+import { updateUser } from './utils/usersAPI'
 
 import RichTextEditor from './components/RichTextEditor'
 import { getTheme, setTheme, initTheme } from './utils/theme'
@@ -43,29 +44,41 @@ const Home = () => {
     name: '', email: '', nickname: '', address: '', number: '', password: ''
   })
   const [searchQuery, setSearchQuery] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
 
   useEffect(() => {
-    const currentUser = getCurrentUser()
-    console.log('Current user:', currentUser)
-    setUser(currentUser)
-    setUserIsAdmin(isAdmin())
-    
-    if (currentUser) {
-      setProfileForm({
-        name: currentUser.nome || currentUser.name || '',
-        email: currentUser.email || '',
-        nickname: currentUser.nickname || '',
-        address: currentUser.address || '',
-        number: currentUser.number || '',
-        password: ''
-      })
+    const loadUserData = async () => {
+      let currentUser = getCurrentUser()
+      
+      // Se o usuário está logado, recarregar dados do backend
+      if (currentUser) {
+        const refreshedUser = await refreshUserData()
+        if (refreshedUser) {
+          currentUser = refreshedUser
+        }
+      }
+      
+      console.log('Current user:', currentUser)
+      setUser(currentUser)
+      setUserIsAdmin(isAdmin())
+      
+      if (currentUser) {
+        setProfileForm({
+          name: currentUser.nome || currentUser.name || '',
+          email: currentUser.email || '',
+          nickname: currentUser.nickname || '',
+          address: currentUser.address || '',
+          number: currentUser.number || '',
+          password: ''
+        })
+      }
     }
+    
+    loadUserData()
     loadCategories()
     setIsDarkMode(getTheme() === 'dark')
     initTheme()
-    
-    // Load products from API
     loadProducts()
   }, [])
 
@@ -109,10 +122,36 @@ const Home = () => {
 
 
 
-  const handleProfileUpdate = (e) => {
+  const handleProfileUpdate = async (e) => {
     e.preventDefault()
-    // Funcionalidade de atualização de perfil pode ser implementada futuramente
-
+    try {
+      const updatedData = {
+        nome: profileForm.name,
+        email: profileForm.email,
+        nivelAcesso: user.nivelAcesso,
+        statusUsuario: user.statusUsuario
+      }
+      
+      if (profileForm.password) {
+        updatedData.senha = profileForm.password
+      }
+      
+      await updateUser(user.id, updatedData)
+      
+      // Atualizar dados do usuário no sessionStorage
+      const updatedUser = { ...user, nome: profileForm.name, email: profileForm.email }
+      sessionStorage.setItem('user', JSON.stringify(updatedUser))
+      setUser(updatedUser)
+      
+      // Limpar senha do formulário
+      setProfileForm({ ...profileForm, password: '' })
+      
+      // Mostrar mensagem de sucesso
+      setSuccessMessage('Dados atualizados com sucesso!')
+      setTimeout(() => setSuccessMessage(''), 3000)
+    } catch (error) {
+      console.error('Erro ao atualizar dados:', error)
+    }
   }
 
   const toggleDarkMode = () => {
@@ -128,6 +167,18 @@ const Home = () => {
       case 'conta':
         return user ? (
           <form onSubmit={handleProfileUpdate} className="profile-form">
+            {successMessage && (
+              <div className="success-message" style={{
+                backgroundColor: '#d4edda',
+                color: '#155724',
+                padding: '10px',
+                borderRadius: '5px',
+                marginBottom: '15px',
+                border: '1px solid #c3e6cb'
+              }}>
+                {successMessage}
+              </div>
+            )}
 
             <input 
               type="text" 
