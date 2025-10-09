@@ -20,7 +20,7 @@ const Login = () => {
     try {
       const result = await loginUser(formData.email, formData.password)
       if (result.success) {
-        alert(`Bem-vindo, ${result.user.name}!`)
+
         navigate('/')
       } else {
         setError(result.error)

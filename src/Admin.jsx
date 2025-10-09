@@ -53,7 +53,7 @@ const Admin = () => {
       setEditingUser(null)
       loadUsers()
     } catch (error) {
-      alert('Erro ao atualizar usuário: ' + (error.response?.data || error.message))
+      // removed alert
     }
   }
 
@@ -63,7 +63,7 @@ const Admin = () => {
         await deleteUser(userId)
         loadUsers()
       } catch (error) {
-        alert('Erro ao deletar usuário: ' + (error.response?.data || error.message))
+        // removed alert
       }
     }
   }

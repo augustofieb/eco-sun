@@ -27,7 +27,7 @@ const Register = () => {
     try {
       const result = await registerUser(formData.name, formData.email, formData.password)
       if (result.success) {
-        alert('Conta criada com sucesso!')
+        // removed alert
         navigate('/')
       } else {
         setError(result.error)

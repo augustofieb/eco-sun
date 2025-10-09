@@ -34,7 +34,7 @@ const ProductDetails = () => {
   const handleAddReview = async (e) => {
     e.preventDefault()
     if (!user) {
-      alert('Você precisa estar logado para avaliar')
+
       return
     }
     
@@ -94,7 +94,8 @@ const ProductDetails = () => {
 
       <div className='division'></div>
 
-      <div className="product-container">
+      <div className="product-section">
+        <div className="product-container">
         <div className="product-breadcrumb">
           <Link to="/">Início</Link> &gt; Energia Solar &gt; {product.nome}
         </div>
@@ -151,28 +152,15 @@ const ProductDetails = () => {
                 <div className="price-installments">em 12x R$ {product.preco ? (product.preco / 12).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'} sem juros</div>
               </div>
 
-              <div className="shipping-info">
-                <h4>Chegará grátis</h4>
-                <div className="shipping-free">Frete grátis para todo o Brasil</div>
-              </div>
-
-              <div className="quantity-selector">
-                <label>Quantidade:</label>
-                <input type="number" className="quantity-input" defaultValue="1" min="1" />
-              </div>
-
               <div className="action-buttons">
                 <button className="btn-buy-now" onClick={() => setIsQuoteOpen(true)}>
                   Solicitar orçamento
                 </button>
-                <button className="btn-add-cart">
-                  Adicionar aos favoritos
-                </button>
               </div>
 
               <div className="seller-info">
-                <h4>Vendido por</h4>
-                <a href="#" className="seller-name">ECO SUN Energia Solar</a>
+                <h4>Orçamento Personalizado</h4>
+                <p className="seller-name">Solicite um orçamento gratuito e personalizado para sua residência</p>
               </div>
             </div>
           </div>
@@ -240,6 +228,7 @@ const ProductDetails = () => {
               ))
             )}
           </div>
+        </div>
         </div>
       </div>
 

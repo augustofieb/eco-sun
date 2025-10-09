@@ -112,7 +112,7 @@ const Home = () => {
   const handleProfileUpdate = (e) => {
     e.preventDefault()
     // Funcionalidade de atualização de perfil pode ser implementada futuramente
-    alert('Funcionalidade em desenvolvimento')
+
   }
 
   const toggleDarkMode = () => {
@@ -126,7 +126,7 @@ const Home = () => {
   const renderSettingsContent = () => {
     switch (settingsView) {
       case 'conta':
-        return (
+        return user ? (
           <form onSubmit={handleProfileUpdate} className="profile-form">
 
             <input 
@@ -155,6 +155,15 @@ const Home = () => {
             />
             <button type="submit" className="btn-primary">Salvar Alterações</button>
           </form>
+        ) : (
+          <div className="info-content">
+            <h3>Acesso à Conta</h3>
+            <p>Você precisa estar logado para acessar as configurações da conta.</p>
+            <div style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
+              <Link to="/login" className="btn-primary">Fazer Login</Link>
+              <Link to="/create-account" className="btn-secondary">Criar Conta</Link>
+            </div>
+          </div>
         )
       case 'sobre':
         return (
@@ -188,10 +197,10 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('sobre', editableContent.sobre);
                     if (success) {
-                      alert('Conteúdo salvo com sucesso!');
+                      
                       setIsEditingContent(false);
                     } else {
-                      alert('Erro ao salvar conteúdo');
+                      
                     }
                   }}
                 >Salvar</button>
@@ -233,10 +242,10 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('renovavel', editableContent.renovavel);
                     if (success) {
-                      alert('Conteúdo salvo com sucesso!');
+                      
                       setIsEditingContent(false);
                     } else {
-                      alert('Erro ao salvar conteúdo');
+                      
                     }
                   }}
                 >Salvar</button>
@@ -278,10 +287,10 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('faq', editableContent.faq);
                     if (success) {
-                      alert('Conteúdo salvo com sucesso!');
+                      
                       setIsEditingContent(false);
                     } else {
-                      alert('Erro ao salvar conteúdo');
+                      
                     }
                   }}
                 >Salvar</button>
@@ -359,13 +368,11 @@ const Home = () => {
                 💡 Orçamento
               </Link>
             </li>
-            {user && (
-              <li>
-                <button onClick={() => setIsSettingsOpen(true)} className="settings-btn">
-                  ☰
-                </button>
-              </li>
-            )}
+            <li>
+              <button onClick={() => setIsSettingsOpen(true)} className="settings-btn">
+                ☰
+              </button>
+            </li>
           </ul>
         </nav>
       </header>

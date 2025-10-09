@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getCurrentUser } from './utils/auth'
+import { Link } from 'react-router-dom'
 import './SolarQuote.css'
 
 const SolarQuote = ({ isOpen, onClose }) => {
@@ -71,7 +72,16 @@ const SolarQuote = ({ isOpen, onClose }) => {
         </div>
         
         <div className="quote-content">
-          {!quote ? (
+          {!getCurrentUser() ? (
+            <div className="login-required">
+              <h3>Login Necessário</h3>
+              <p>Você precisa estar logado para solicitar um orçamento personalizado.</p>
+              <div style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
+                <Link to="/login" className="btn-primary" onClick={onClose}>Fazer Login</Link>
+                <Link to="/create-account" className="btn-secondary" onClick={onClose}>Criar Conta</Link>
+              </div>
+            </div>
+          ) : !quote ? (
             <form onSubmit={calculateQuote} className="quote-form">
               <div className="form-group">
                 <label>Nome completo:</label>

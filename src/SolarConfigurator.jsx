@@ -14,6 +14,7 @@ const SolarConfigurator = () => {
   const [selectedProducts, setSelectedProducts] = useState([])
   const [activeCategory, setActiveCategory] = useState(null)
   const [user] = useState(getCurrentUser())
+  const [successMessage, setSuccessMessage] = useState('')
   const [summary, setSummary] = useState({
     totalPrice: 0,
     totalEnergy: 0,
@@ -93,7 +94,6 @@ const SolarConfigurator = () => {
   const handleSaveOrcamento = async () => {
     try {
       if (!user || !user.id) {
-        alert('Você precisa estar logado para salvar um orçamento')
         return
       }
 
@@ -108,9 +108,11 @@ const SolarConfigurator = () => {
       }
       
       await createOrcamento(orcamentoData)
-      alert('Orçamento salvo com sucesso!')
+      setSuccessMessage('Orçamento salvo com sucesso!')
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
-      alert('Erro ao salvar orçamento: ' + (error.response?.data?.message || error.message))
+      setSuccessMessage('Erro ao salvar orçamento')
+      setTimeout(() => setSuccessMessage(''), 3000)
     }
   }
 
@@ -162,11 +164,29 @@ const SolarConfigurator = () => {
 
       <div className='division'></div>
 
-      <div className="solar-configurator">
+      <div className="configurator-section">
+        <div className="solar-configurator">
         <div className="configurator-header">
           <h1>Configure seu Sistema Solar</h1>
           <p>Monte seu sistema personalizado selecionando os componentes</p>
+          
+          {successMessage && (
+            <div className="success-message">
+              {successMessage}
+            </div>
+          )}
         </div>
+        
+        {!user ? (
+          <div className="login-required">
+            <h3>Login Necessário</h3>
+            <p>Você precisa estar logado para usar o configurador de sistema solar.</p>
+            <div style={{display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center'}}>
+              <Link to="/login" className="btn-primary">Fazer Login</Link>
+              <Link to="/create-account" className="btn-secondary">Criar Conta</Link>
+            </div>
+          </div>
+        ) : (
 
       <div className="configurator-content">
         <div className="products-section">
@@ -254,7 +274,7 @@ const SolarConfigurator = () => {
               <span>{summary.co2Reduction.toFixed(2)} kg</span>
             </div>
             
-            {user && selectedProducts.length > 0 && (
+            {selectedProducts.length > 0 && (
               <button 
                 className="save-quote-btn"
                 onClick={handleSaveOrcamento}
@@ -265,6 +285,8 @@ const SolarConfigurator = () => {
           </div>
         </div>
       </div>
+        )}
+        </div>
       </div>
     </>
   )
