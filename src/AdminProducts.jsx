@@ -25,6 +25,7 @@ const AdminProducts = () => {
   const [newCategory, setNewCategory] = useState({ nome: '', descricao: '', especificacoes: [] })
   const [imageError, setImageError] = useState('')
   const [newSpec, setNewSpec] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -228,7 +229,8 @@ const AdminProducts = () => {
       setNewSpec('')
       setShowCategoryForm(false)
       loadCategories()
-      alert('Categoria adicionada com sucesso!')
+      setSuccessMessage('Categoria adicionada com sucesso!')
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
       alert('Erro ao adicionar categoria: ' + (error.response?.data || error.message))
     }
@@ -239,7 +241,8 @@ const AdminProducts = () => {
       await deleteCategory(categoryId)
       setDeletingCategory(null)
       loadCategories()
-      alert('Categoria deletada com sucesso!')
+      setSuccessMessage('Categoria removida com sucesso!')
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
       alert('Erro ao deletar categoria: ' + (error.response?.data || error.message))
       setDeletingCategory(null)
@@ -291,6 +294,12 @@ const AdminProducts = () => {
       <div className='content'>
         <main className="admin-content">
           <h1>Gerenciar Produtos e Categorias</h1>
+          
+          {successMessage && (
+            <div className="success-message">
+              {successMessage}
+            </div>
+          )}
         
         <div className="tabs">
           <button 
