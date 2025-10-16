@@ -242,6 +242,64 @@ body {
   background: #218838;
 }
 
+.app-banner {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  position: relative;
+  text-align: center;
+}
+
+.app-banner-content h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.app-banner-content p {
+  margin: 0 0 15px 0;
+  opacity: 0.9;
+}
+
+.app-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.app-store-btn,
+.play-store-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.app-store-btn:hover,
+.play-store-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.close-banner {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.close-banner:hover {
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   .configurator-content {
     grid-template-columns: 1fr;

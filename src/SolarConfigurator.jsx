@@ -15,6 +15,7 @@ const SolarConfigurator = () => {
   const [activeCategory, setActiveCategory] = useState(null)
   const [user] = useState(getCurrentUser())
   const [successMessage, setSuccessMessage] = useState('')
+  const [showAppBanner, setShowAppBanner] = useState(false)
   const [summary, setSummary] = useState({
     totalPrice: 0,
     totalEnergy: 0,
@@ -109,6 +110,7 @@ const SolarConfigurator = () => {
       
       await createOrcamento(orcamentoData)
       setSuccessMessage('Orçamento salvo com sucesso!')
+      setShowAppBanner(true)
       setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
       setSuccessMessage('Erro ao salvar orçamento')
@@ -173,6 +175,25 @@ const SolarConfigurator = () => {
           {successMessage && (
             <div className="success-message">
               {successMessage}
+            </div>
+          )}
+          
+          {showAppBanner && (
+            <div className="app-banner">
+              <div className="app-banner-content">
+                <h4>📱 Baixe nosso App!</h4>
+                <p>Para visualizar seus orçamentos salvos e acompanhar o andamento, baixe nosso aplicativo móvel.</p>
+                <div className="app-links">
+                  <a href="#" className="app-store-btn">App Store</a>
+                  <a href="#" className="play-store-btn">Google Play</a>
+                </div>
+                <button 
+                  className="close-banner"
+                  onClick={() => setShowAppBanner(false)}
+                >
+                  ×
+                </button>
+              </div>
             </div>
           )}
         </div>

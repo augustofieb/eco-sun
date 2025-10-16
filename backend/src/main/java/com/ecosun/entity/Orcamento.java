@@ -41,6 +41,37 @@ public class Orcamento {
     @Column(name = "status", length = 20)
     private String status;
 
+    // Campos do formulário
+    @Column(name = "nome", length = 100)
+    private String nome;
+
+    @Column(name = "email", length = 100)
+    private String email;
+
+    @Column(name = "telefone", length = 20)
+    private String telefone;
+
+    @Column(name = "endereco", length = 255)
+    private String endereco;
+
+    @Column(name = "area_telhado", precision = 8, scale = 2)
+    private BigDecimal areaTelhado;
+
+    @Column(name = "conta_mensal_media", precision = 8, scale = 2)
+    private BigDecimal contaMensalMedia;
+
+    @Column(name = "tipo_telhado", length = 50)
+    private String tipoTelhado;
+
+    @Column(name = "objetivo_energia", length = 50)
+    private String objetivoEnergia;
+
+    @Column(name = "potencia_sistema", precision = 8, scale = 2)
+    private BigDecimal potenciaSistema;
+
+    @Column(name = "numero_paineis")
+    private Integer numeroPaineis;
+
     public Orcamento() {}
 
     public Integer getId() { return id; }
@@ -75,6 +106,36 @@ public class Orcamento {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+
+    public String getEndereco() { return endereco; }
+    public void setEndereco(String endereco) { this.endereco = endereco; }
+
+    public BigDecimal getAreaTelhado() { return areaTelhado; }
+    public void setAreaTelhado(BigDecimal areaTelhado) { this.areaTelhado = areaTelhado; }
+
+    public BigDecimal getContaMensalMedia() { return contaMensalMedia; }
+    public void setContaMensalMedia(BigDecimal contaMensalMedia) { this.contaMensalMedia = contaMensalMedia; }
+
+    public String getTipoTelhado() { return tipoTelhado; }
+    public void setTipoTelhado(String tipoTelhado) { this.tipoTelhado = tipoTelhado; }
+
+    public String getObjetivoEnergia() { return objetivoEnergia; }
+    public void setObjetivoEnergia(String objetivoEnergia) { this.objetivoEnergia = objetivoEnergia; }
+
+    public BigDecimal getPotenciaSistema() { return potenciaSistema; }
+    public void setPotenciaSistema(BigDecimal potenciaSistema) { this.potenciaSistema = potenciaSistema; }
+
+    public Integer getNumeroPaineis() { return numeroPaineis; }
+    public void setNumeroPaineis(Integer numeroPaineis) { this.numeroPaineis = numeroPaineis; }
     
     @Override
     public String toString() {

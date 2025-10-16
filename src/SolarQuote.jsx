@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getCurrentUser } from './utils/auth'
 import { Link } from 'react-router-dom'
+import { orcamentosAPI } from './services/api'
 import './SolarQuote.css'
 
 const SolarQuote = ({ isOpen, onClose }) => {
@@ -29,6 +30,7 @@ const SolarQuote = ({ isOpen, onClose }) => {
   }, [isOpen])
 
   const [quote, setQuote] = useState(null)
+  const [showAppBanner, setShowAppBanner] = useState(false)
 
   const handleInputChange = (e) => {
     setFormData({
@@ -59,6 +61,35 @@ const SolarQuote = ({ isOpen, onClose }) => {
       paybackTime: paybackTime.toFixed(1),
       co2Reduction: (energyConsumption * 0.0817).toFixed(1) // toneladas CO2/ano
     })
+  }
+
+  const saveQuote = async () => {
+    try {
+      const user = getCurrentUser()
+      const orcamento = {
+        usuarioId: user.id,
+        nome: formData.name,
+        email: formData.email,
+        telefone: formData.phone,
+        endereco: formData.address,
+        areaTelhado: formData.roofArea,
+        contaMensalMedia: formData.monthlyBill,
+        tipoTelhado: formData.roofType,
+        objetivoEnergia: formData.energyGoal,
+        potenciaSistema: quote.systemPower,
+        numeroPaineis: quote.panelsNeeded,
+        precoTotal: quote.totalCost,
+        economiaMensal: quote.monthlySavings,
+        tempoRetornoMeses: Math.round(parseFloat(quote.paybackTime) * 12),
+        reducaoCo2Anual: quote.co2Reduction
+      }
+      
+      await orcamentosAPI.create(orcamento)
+      setShowAppBanner(true)
+    } catch (error) {
+      console.error('Erro ao salvar orçamento:', error)
+      alert('Erro ao salvar orçamento. Tente novamente.')
+    }
   }
 
   if (!isOpen) return null
@@ -230,11 +261,37 @@ Investimento: R$ ${quote.totalCost}`
                 
                 <button 
                   className="btn-secondary"
+                  onClick={saveQuote}
+                >
+                  Salvar Orçamento
+                </button>
+                
+                <button 
+                  className="btn-secondary"
                   onClick={() => setQuote(null)}
                 >
                   Novo Orçamento
                 </button>
               </div>
+              
+              {showAppBanner && (
+                <div className="app-banner">
+                  <div className="app-banner-content">
+                    <h4>📱 Baixe nosso App!</h4>
+                    <p>Para visualizar seus orçamentos salvos e acompanhar o andamento, baixe nosso aplicativo móvel.</p>
+                    <div className="app-links">
+                      <a href="#" className="app-store-btn">App Store</a>
+                      <a href="#" className="play-store-btn">Google Play</a>
+                    </div>
+                    <button 
+                      className="close-banner"
+                      onClick={() => setShowAppBanner(false)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
