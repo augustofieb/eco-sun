@@ -6,6 +6,7 @@ public class ProdutoRequest {
     private Double preco;
     private String foto;
     private Integer categoriaId;
+    private String especificacoesTecnicas;
 
     public ProdutoRequest() {}
 
@@ -23,4 +24,7 @@ public class ProdutoRequest {
 
     public Integer getCategoriaId() { return categoriaId; }
     public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
+
+    public String getEspecificacoesTecnicas() { return especificacoesTecnicas; }
+    public void setEspecificacoesTecnicas(String especificacoesTecnicas) { this.especificacoesTecnicas = especificacoesTecnicas; }
 }

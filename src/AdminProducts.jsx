@@ -88,6 +88,19 @@ const AdminProducts = () => {
         formDataUpload.append('descricao', formData.description)
         formDataUpload.append('foto', selectedFile)
         
+        // Construir especificações técnicas
+        const especificacoesTecnicas = {}
+        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+          Object.keys(formData.categorySpecs).forEach(key => {
+            const value = formData[`spec_${key}`]
+            if (value) {
+              especificacoesTecnicas[key] = value
+            }
+          })
+        }
+        
+        formDataUpload.append('especificacoesTecnicas', JSON.stringify(especificacoesTecnicas))
+        
         const response = await fetch('/api/produtos/upload', {
           method: 'POST',
           headers: {
@@ -119,7 +132,7 @@ const AdminProducts = () => {
           categoriaId: parseInt(formData.category),
           descricao: formData.description,
           foto: formData.image,
-          especificacoesTecnicas: Object.keys(especificacoesTecnicas).length > 0 ? JSON.stringify(especificacoesTecnicas) : null
+          especificacoesTecnicas: JSON.stringify(especificacoesTecnicas)
         }
         await createProduct(productData)
       }
@@ -137,13 +150,44 @@ const AdminProducts = () => {
   const handleEdit = (product) => {
     setEditingProduct(product.id)
     setShowAddForm(true)
-    setFormData({ 
-      name: product.nome, 
-      price: product.preco, 
-      category: product.categoriaId, 
-      image: product.fotoUrl || '', 
-      description: product.descricao || '' 
-    })
+
+    // Carregar especificações existentes
+    let existingSpecs = {}
+    if (product.especificacoes_tecnicas) {
+      try {
+        existingSpecs = JSON.parse(product.especificacoes_tecnicas)
+      } catch (e) {
+        existingSpecs = {}
+      }
+    }
+
+    // Preparar formData com especificações
+    const formDataWithSpecs = {
+      name: product.nome,
+      price: product.preco,
+      category: product.categoriaId,
+      image: product.fotoUrl || '',
+      description: product.descricao || '',
+      categorySpecs: {}
+    }
+
+    // Carregar especificações da categoria
+    const selectedCategory = categories.find(cat => cat.id === product.categoriaId)
+    if (selectedCategory?.especificacoes_obrigatorias) {
+      try {
+        const categorySpecs = JSON.parse(selectedCategory.especificacoes_obrigatorias)
+        formDataWithSpecs.categorySpecs = categorySpecs
+
+        // Preencher valores existentes das especificações
+        Object.keys(categorySpecs).forEach(key => {
+          formDataWithSpecs[`spec_${key}`] = existingSpecs[key] || ''
+        })
+      } catch (e) {
+        formDataWithSpecs.categorySpecs = {}
+      }
+    }
+
+    setFormData(formDataWithSpecs)
   }
 
   const handleUpdate = async (productId) => {
@@ -157,6 +201,19 @@ const AdminProducts = () => {
         formDataUpload.append('descricao', formData.description)
         formDataUpload.append('foto', selectedFile)
         
+        // Construir especificações técnicas
+        const especificacoesTecnicas = {}
+        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+          Object.keys(formData.categorySpecs).forEach(key => {
+            const value = formData[`spec_${key}`]
+            if (value) {
+              especificacoesTecnicas[key] = value
+            }
+          })
+        }
+        
+        formDataUpload.append('especificacoesTecnicas', JSON.stringify(especificacoesTecnicas))
+        
         const response = await fetch(`/api/produtos/upload/${productId}`, {
           method: 'PUT',
           headers: {
@@ -167,12 +224,24 @@ const AdminProducts = () => {
         
         if (!response.ok) throw new Error('Erro ao atualizar produto')
       } else {
+        // Construir especificações técnicas
+        const especificacoesTecnicas = {}
+        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+          Object.keys(formData.categorySpecs).forEach(key => {
+            const value = formData[`spec_${key}`]
+            if (value) {
+              especificacoesTecnicas[key] = value
+            }
+          })
+        }
+        
         await updateProduct(productId, {
           nome: formData.name,
           preco: parseFloat(formData.price),
           categoriaId: parseInt(formData.category),
           descricao: formData.description,
-          foto: formData.image
+          foto: formData.image,
+          especificacoesTecnicas: JSON.stringify(especificacoesTecnicas)
         })
       }
       

@@ -87,10 +87,14 @@ public class SimpleProdutoController {
             Integer categoriaId = ((Number) request.get("categoriaId")).intValue();
             String fotoUrl = (String) request.get("foto");
             String especificacoesTecnicas = (String) request.get("especificacoesTecnicas");
-            
+            // Garantir que especificacoesTecnicas não seja null
+            if (especificacoesTecnicas == null) {
+                especificacoesTecnicas = "{}";
+            }
+
             String sql = "INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto, fotoUrl, especificacoes_tecnicas) VALUES (?, ?, ?, ?, 'ATIVO', ?, ?)";
             jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoUrl, especificacoesTecnicas);
-            
+
             return ResponseEntity.ok("{\"message\":\"Produto criado com sucesso\"}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
@@ -103,6 +107,7 @@ public class SimpleProdutoController {
             @RequestParam("descricao") String descricao,
             @RequestParam("preco") Double preco,
             @RequestParam("categoriaId") Integer categoriaId,
+            @RequestParam(value = "especificacoesTecnicas", required = false) String especificacoesTecnicas,
             @RequestParam(value = "foto", required = false) MultipartFile foto) {
         try {
             String fotoBase64 = null;
@@ -110,10 +115,15 @@ public class SimpleProdutoController {
                 byte[] fotoBytes = foto.getBytes();
                 fotoBase64 = "data:" + foto.getContentType() + ";base64," + Base64.getEncoder().encodeToString(fotoBytes);
             }
-            
-            String sql = "INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto, fotoUrl) VALUES (?, ?, ?, ?, 'ATIVO', ?)";
-            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoBase64);
-            
+
+            // Garantir que especificacoesTecnicas não seja null
+            if (especificacoesTecnicas == null || especificacoesTecnicas.trim().isEmpty()) {
+                especificacoesTecnicas = "{}";
+            }
+
+            String sql = "INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto, fotoUrl, especificacoes_tecnicas) VALUES (?, ?, ?, ?, 'ATIVO', ?, ?)";
+            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoBase64, especificacoesTecnicas);
+
             return ResponseEntity.ok("{\"message\":\"Produto criado com sucesso\"}");
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Erro ao processar imagem: " + e.getMessage());
@@ -130,10 +140,15 @@ public class SimpleProdutoController {
             Double preco = ((Number) request.get("preco")).doubleValue();
             Integer categoriaId = ((Number) request.get("categoriaId")).intValue();
             String fotoUrl = (String) request.get("foto");
-            
-            String sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ?, fotoUrl = ? WHERE id = ?";
-            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoUrl, id);
-            
+            String especificacoesTecnicas = (String) request.get("especificacoesTecnicas");
+            // Garantir que especificacoesTecnicas não seja null
+            if (especificacoesTecnicas == null) {
+                especificacoesTecnicas = "{}";
+            }
+
+            String sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ?, fotoUrl = ?, especificacoes_tecnicas = ? WHERE id = ?";
+            jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoUrl, especificacoesTecnicas, id);
+
             return ResponseEntity.ok("{\"message\":\"Produto atualizado com sucesso\"}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
@@ -147,6 +162,7 @@ public class SimpleProdutoController {
             @RequestParam("descricao") String descricao,
             @RequestParam("preco") Double preco,
             @RequestParam("categoriaId") Integer categoriaId,
+            @RequestParam(value = "especificacoesTecnicas", required = false) String especificacoesTecnicas,
             @RequestParam(value = "foto", required = false) MultipartFile foto) {
         try {
             String fotoBase64 = null;
@@ -154,16 +170,21 @@ public class SimpleProdutoController {
                 byte[] fotoBytes = foto.getBytes();
                 fotoBase64 = "data:" + foto.getContentType() + ";base64," + Base64.getEncoder().encodeToString(fotoBytes);
             }
-            
+
+            // Garantir que especificacoesTecnicas não seja null
+            if (especificacoesTecnicas == null || especificacoesTecnicas.trim().isEmpty()) {
+                especificacoesTecnicas = "{}";
+            }
+
             String sql;
             if (fotoBase64 != null) {
-                sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ?, fotoUrl = ? WHERE id = ?";
-                jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoBase64, id);
+                sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ?, fotoUrl = ?, especificacoes_tecnicas = ? WHERE id = ?";
+                jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, fotoBase64, especificacoesTecnicas, id);
             } else {
-                sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ? WHERE id = ?";
-                jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, id);
+                sql = "UPDATE Produto SET nome = ?, descricao = ?, preco = ?, categoria_id = ?, especificacoes_tecnicas = ? WHERE id = ?";
+                jdbcTemplate.update(sql, nome, descricao, preco, categoriaId, especificacoesTecnicas, id);
             }
-            
+
             return ResponseEntity.ok("{\"message\":\"Produto atualizado com sucesso\"}");
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Erro ao processar imagem: " + e.getMessage());
