@@ -45,6 +45,7 @@ const Home = () => {
   })
   const [searchQuery, setSearchQuery] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
 
   useEffect(() => {
@@ -88,15 +89,19 @@ const Home = () => {
   }
 
   const loadProducts = async () => {
+    setIsLoading(true)
     const productsData = await getProducts()
     setProducts(productsData)
+    setIsLoading(false)
   }
 
   const handleCategoryChange = async (category) => {
     setSelectedCategory(category)
     setSearchQuery('')
+    setIsLoading(true)
     const productsData = await getProductsByCategory(category)
     setProducts(productsData)
+    setIsLoading(false)
   }
 
   const handleLogout = () => {
@@ -112,9 +117,11 @@ const Home = () => {
       loadProducts()
       setSelectedCategory('all')
     } else {
+      setIsLoading(true)
       const searchResults = await searchProducts(query)
       setProducts(searchResults)
       setSelectedCategory('search')
+      setIsLoading(false)
     }
   }
 
@@ -461,7 +468,12 @@ const Home = () => {
             ))}
           </div>
           <div className="products-grid">
-            {products.length === 0 ? (
+            {isLoading ? (
+              <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Carregando produtos...</p>
+              </div>
+            ) : products.length === 0 ? (
               <p className="no-products">Nenhum produto encontrado nesta categoria.</p>
             ) : (
               products.map(product => (

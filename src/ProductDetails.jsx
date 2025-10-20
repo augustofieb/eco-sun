@@ -15,6 +15,7 @@ const ProductDetails = () => {
   const [user] = useState(getCurrentUser())
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     loadProduct()
@@ -22,8 +23,10 @@ const ProductDetails = () => {
   }, [id])
 
   const loadProduct = async () => {
+    setIsLoading(true)
     const productData = await getProductById(parseInt(id))
     setProduct(productData)
+    setIsLoading(false)
   }
 
   const loadReviews = async () => {
@@ -68,6 +71,17 @@ const ProductDetails = () => {
   }
 
 
+
+  if (isLoading) {
+    return (
+      <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5', zIndex: 1000}}>
+        <div style={{textAlign: 'center'}}>
+          <div className="loading-spinner"></div>
+          <p>Carregando produto...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!product) {
     return <div>Produto não encontrado</div>
@@ -141,7 +155,7 @@ const ProductDetails = () => {
               {product.descricao && (
                 <div className="product-description">
                   <h3>Descrição</h3>
-                  <p>{product.descricao}</p>
+                  <div dangerouslySetInnerHTML={{ __html: product.descricao }} />
                 </div>
               )}
             </div>

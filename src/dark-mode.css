@@ -230,3 +230,12 @@
 .dark-mode .empty-cart {
   color: #a0aec0;
 }
+
+.dark-mode .loading-container p {
+  color: #b0b0b0;
+}
+
+.dark-mode .loading-spinner {
+  border-color: #4a4a4a;
+  border-top-color: #4299e1;
+}
