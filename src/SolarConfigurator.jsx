@@ -73,22 +73,53 @@ const SolarConfigurator = () => {
 
   const calculateSummary = () => {
     const totalPrice = selectedProducts.reduce((sum, p) => sum + (p.preco * p.quantity), 0)
-    const totalEnergy = selectedProducts.reduce((sum, p) => {
-      const specs = p.especificacoesTecnicas ? JSON.parse(p.especificacoesTecnicas) : {}
-      const energia = specs.energia || 0
-      return sum + (energia * p.quantity)
-    }, 0)
     
-    const monthlyEconomy = totalEnergy * 0.65 // R$ 0,65 por kWh
-    const paybackTime = (totalPrice > 0 && monthlyEconomy > 0) ? Math.ceil(totalPrice / monthlyEconomy) : 0
-    const co2Reduction = totalEnergy * 0.084 * 12 // kg CO2 por ano
+    let totalEnergy = 0
+    let totalMonthlyEconomy = 0
+    let totalCo2Reduction = 0
+    
+    selectedProducts.forEach(p => {
+      const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {}
+      const isPlacaSolar = categories.find(cat => cat.id === p.categoria_id)?.nome?.toLowerCase().includes('placa')
+      
+      if (isPlacaSolar) {
+        // Usar especificações do produto se disponíveis
+        const energiaMensal = parseFloat(specs.energia_mensal_kwh) || 0
+        const economiaMensal = parseFloat(specs.economia_mensal_rs) || 0
+        const co2Anual = parseFloat(specs.reducao_co2_kg_ano) || 0
+        
+        totalEnergy += energiaMensal * p.quantity
+        totalMonthlyEconomy += economiaMensal * p.quantity
+        totalCo2Reduction += co2Anual * p.quantity
+      }
+    })
+    
+    // Se não houver especificações, usar cálculos padrão
+    if (totalEnergy === 0) {
+      totalEnergy = selectedProducts.reduce((sum, p) => {
+        const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {}
+        const potencia = parseFloat(specs.potencia_wp) || 0
+        const energiaEstimada = (potencia * 5 * 30) / 1000 // 5h sol/dia * 30 dias
+        return sum + (energiaEstimada * p.quantity)
+      }, 0)
+    }
+    
+    if (totalMonthlyEconomy === 0) {
+      totalMonthlyEconomy = totalEnergy * 0.65 // R$ 0,65 por kWh
+    }
+    
+    if (totalCo2Reduction === 0) {
+      totalCo2Reduction = totalEnergy * 0.084 * 12 // kg CO2 por ano
+    }
+    
+    const paybackTime = (totalPrice > 0 && totalMonthlyEconomy > 0) ? Math.ceil(totalPrice / totalMonthlyEconomy) : 0
 
     setSummary({
       totalPrice,
       totalEnergy,
-      monthlyEconomy,
+      monthlyEconomy: totalMonthlyEconomy,
       paybackTime,
-      co2Reduction
+      co2Reduction: totalCo2Reduction
     })
   }
 
@@ -224,23 +255,58 @@ const SolarConfigurator = () => {
           </div>
 
           <div className="products-grid">
-            {filteredProducts.map(product => (
-              <div key={product.id} className="product-card">
-                <img 
-                  src={product.fotoUrl || 'https://via.placeholder.com/200'} 
-                  alt={product.nome}
-                  className="product-image"
-                />
-                <h3>{product.nome}</h3>
-                <p className="product-price">R$ {product.preco?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                <button 
-                  className="add-product-btn"
-                  onClick={() => addProduct(product)}
-                >
-                  Adicionar
-                </button>
-              </div>
-            ))}
+            {filteredProducts.map(product => {
+              const specs = product.especificacoes_tecnicas ? JSON.parse(product.especificacoes_tecnicas) : {}
+              const isPlacaSolar = categories.find(cat => cat.id === product.categoria_id)?.nome?.toLowerCase().includes('placa')
+              
+              return (
+                <div key={product.id} className="product-card">
+                  <img 
+                    src={product.fotoUrl || 'https://via.placeholder.com/200'} 
+                    alt={product.nome}
+                    className="product-image"
+                  />
+                  <h3>{product.nome}</h3>
+                  <p className="product-price">R$ {product.preco?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                  
+                  {isPlacaSolar && (
+                    <div className="energy-specs">
+                      {specs.energia_mensal_kwh && (
+                        <div className="spec-item">
+                          <span className="spec-icon">⚡</span>
+                          <span>{specs.energia_mensal_kwh} kWh/mês</span>
+                        </div>
+                      )}
+                      {specs.economia_mensal_rs && (
+                        <div className="spec-item">
+                          <span className="spec-icon">💰</span>
+                          <span>R$ {specs.economia_mensal_rs}/mês</span>
+                        </div>
+                      )}
+                      {specs.reducao_co2_kg_ano && (
+                        <div className="spec-item">
+                          <span className="spec-icon">🌱</span>
+                          <span>{specs.reducao_co2_kg_ano} kg CO₂/ano</span>
+                        </div>
+                      )}
+                      {specs.potencia_wp && (
+                        <div className="spec-item">
+                          <span className="spec-icon">🔋</span>
+                          <span>{specs.potencia_wp} Wp</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <button 
+                    className="add-product-btn"
+                    onClick={() => addProduct(product)}
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              )
+            })}
           </div>
         </div>
 

@@ -54,6 +54,22 @@ public class CategoriaController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCategoria(@PathVariable Integer id, @RequestBody Map<String, Object> request) {
+        try {
+            String nome = (String) request.get("nome");
+            String descricao = (String) request.get("descricao");
+            String especificacoes = (String) request.get("especificacoes");
+            
+            String sql = "UPDATE Categoria SET nome = ?, descricao = ?, especificacoes_obrigatorias = ? WHERE id = ?";
+            jdbcTemplate.update(sql, nome, descricao, especificacoes, id);
+            
+            return ResponseEntity.ok("{\"message\":\"Categoria atualizada com sucesso\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategoria(@PathVariable Integer id) {
         try {

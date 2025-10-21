@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
 import { getProducts, searchProducts, createProduct, updateProduct, deleteProduct } from './utils/productsAPI'
-import { getCategories, addCategory, searchCategories, deleteCategory } from './utils/categories'
+import { getCategories, addCategory, searchCategories, deleteCategory, updateCategory } from './utils/categories'
 import RichTextEditor from './components/RichTextEditor'
 import './AdminProducts.css'
 import Logo from './assets/Logo.png'
@@ -23,6 +23,7 @@ const AdminProducts = () => {
   const [useFileUpload, setUseFileUpload] = useState(true)
   const [deletingCategory, setDeletingCategory] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
+  const [editingCategory, setEditingCategory] = useState(null)
   const [newCategory, setNewCategory] = useState({ nome: '', descricao: '', especificacoes: [] })
 
   const [newSpec, setNewSpec] = useState('')
@@ -269,14 +270,15 @@ const AdminProducts = () => {
   const handleAddCategory = async (e) => {
     e.preventDefault()
     
-    // Verificar se já existe categoria com o mesmo nome
-    const existingCategory = categories.find(cat => 
-      cat.nome.toLowerCase() === newCategory.nome.toLowerCase()
-    )
-    
-    if (existingCategory) {
-      // removed alert
-      return
+    // Verificar se já existe categoria com o mesmo nome (apenas para nova categoria)
+    if (!editingCategory) {
+      const existingCategory = categories.find(cat => 
+        cat.nome.toLowerCase() === newCategory.nome.toLowerCase()
+      )
+      
+      if (existingCategory) {
+        return
+      }
     }
     
     try {
@@ -285,12 +287,23 @@ const AdminProducts = () => {
         especificacoesObj[spec.toLowerCase().replace(/\s+/g, '_')] = spec
       })
       
-      await addCategory(newCategory.nome, newCategory.descricao, JSON.stringify(especificacoesObj))
+      if (editingCategory) {
+        await updateCategory(editingCategory, {
+          nome: newCategory.nome,
+          descricao: newCategory.descricao,
+          especificacoes: JSON.stringify(especificacoesObj)
+        })
+        setSuccessMessage('Categoria atualizada com sucesso!')
+        setEditingCategory(null)
+      } else {
+        await addCategory(newCategory.nome, newCategory.descricao, JSON.stringify(especificacoesObj))
+        setSuccessMessage('Categoria adicionada com sucesso!')
+      }
+      
       setNewCategory({ nome: '', descricao: '', especificacoes: [] })
       setNewSpec('')
       setShowCategoryForm(false)
       loadCategories()
-      setSuccessMessage('Categoria adicionada com sucesso!')
       setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
       // removed alert
@@ -324,6 +337,28 @@ const AdminProducts = () => {
     setNewCategory({
       ...newCategory,
       especificacoes: newCategory.especificacoes.filter((_, i) => i !== index)
+    })
+  }
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category.id)
+    setShowCategoryForm(true)
+    
+    // Carregar especificações existentes
+    let existingSpecs = []
+    if (category.especificacoes_obrigatorias) {
+      try {
+        const specsObj = JSON.parse(category.especificacoes_obrigatorias)
+        existingSpecs = Object.values(specsObj)
+      } catch (e) {
+        existingSpecs = []
+      }
+    }
+    
+    setNewCategory({
+      nome: category.nome,
+      descricao: category.descricao || '',
+      especificacoes: existingSpecs
     })
   }
 
@@ -521,9 +556,10 @@ const AdminProducts = () => {
                 </div>
                 
                 <div>
-                  <button type="submit" className="btn-save">Adicionar</button>
+                  <button type="submit" className="btn-save">{editingCategory ? 'Atualizar' : 'Adicionar'}</button>
                   <button type="button" onClick={() => {
                     setShowCategoryForm(false)
+                    setEditingCategory(null)
                     setNewCategory({ nome: '', descricao: '', especificacoes: [] })
                     setNewSpec('')
                   }} className="btn-cancel">Cancelar</button>
@@ -611,6 +647,7 @@ const AdminProducts = () => {
                     <td>{category.nome}</td>
                     <td>{category.descricao || 'Sem descrição'}</td>
                     <td className="actions">
+                      <button onClick={() => handleEditCategory(category)} className="btn-edit">Editar</button>
                       <button 
                         onClick={() => deletingCategory === category.id ? setDeletingCategory(null) : setDeletingCategory(category.id)} 
                         className={deletingCategory === category.id ? "btn-cancel" : "btn-delete"}

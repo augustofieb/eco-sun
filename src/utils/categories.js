@@ -36,6 +36,16 @@ export const searchCategories = async (query) => {
   }
 };
 
+export const updateCategory = async (id, categoria) => {
+  try {
+    const response = await categoriesAPI.update(id, categoria);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating category:', error);
+    throw error;
+  }
+};
+
 export const deleteCategory = async (id) => {
   try {
     const response = await categoriesAPI.delete(id);
