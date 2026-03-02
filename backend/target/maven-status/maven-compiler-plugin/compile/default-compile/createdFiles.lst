@@ -16,8 +16,8 @@ com/ecosun/security/JwtUtil.class
 com/ecosun/entity/Conteudo.class
 com/ecosun/repository/UsuarioRepository.class
 com/ecosun/controller/CategoriaController.class
-com/ecosun/service/ProdutoService.class
 com/ecosun/controller/TestController.class
+com/ecosun/service/ProdutoService.class
 com/ecosun/entity/Usuario.class
 com/ecosun/entity/Produto.class
 com/ecosun/repository/OrcamentoRepository.class
@@ -26,7 +26,7 @@ com/ecosun/entity/Orcamento.class
 com/ecosun/repository/ProdutoRepository.class
 com/ecosun/controller/AuthController.class
 com/ecosun/repository/AvaliacaoRepository.class
-com/ecosun/config/SecurityConfig.class
 com/ecosun/EcoSunApplication.class
+com/ecosun/config/SecurityConfig.class
 com/ecosun/controller/ConteudoController.class
 com/ecosun/dto/ProdutoRequest.class

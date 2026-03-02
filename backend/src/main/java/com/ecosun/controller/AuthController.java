@@ -5,6 +5,7 @@ import com.ecosun.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -33,16 +34,16 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> request) {
         try {
-            authService.forgotPassword(email);
+            authService.forgotPassword(request.get("email"));
             return ResponseEntity.ok("Email de recuperação enviado");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao enviar email");
         }
     }
 
-    @PutMapping("/make-admin/{userId}")
+    @PatchMapping("/make-admin/{userId}")
     public ResponseEntity<String> makeAdmin(@PathVariable Integer userId) {
         try {
             authService.makeAdmin(userId);

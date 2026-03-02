@@ -25,6 +25,20 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUsuarioById(@PathVariable Integer id) {
+        try {
+            String sql = "SELECT id, nome, email, nivelAcesso, dataCadastro, statusUsuario FROM Usuario WHERE id = ?";
+            List<Map<String, Object>> usuarios = jdbcTemplate.queryForList(sql, id);
+            if (usuarios.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(usuarios.get(0));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> searchUsuarios(@RequestParam String query) {
         try {

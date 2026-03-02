@@ -26,44 +26,36 @@ Site para solicitação de orçamentos personalizados de sistemas de energia sol
 
 ## Como Executar
 
-### Ambiente Local
-1. Clone o repositório
-2. Instale as dependências: `npm install`
-3. Execute o servidor de desenvolvimento: `npm run dev`
-4. Acesse `http://localhost:5173`
-
-### GitHub Codespaces
-1. Execute o script de inicialização: `./start-project.sh`
-2. Acesse a URL fornecida pelo script
-3. **Login de teste**: `admin@ecosun.com` / `admin123`
-
-**Ou execute manualmente:**
+### Método Recomendado - Script Automático
 ```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Iniciar backend em background
-cd backend && mvn spring-boot:run &
-
-# 3. Voltar para raiz e iniciar frontend
-cd .. && npm run dev
+./start-project.sh
 ```
 
-**Alternativa com terminais separados:**
+O script irá:
+1. Instalar dependências automaticamente
+2. Iniciar o backend em background
+3. Aguardar o backend estar pronto
+4. Iniciar o frontend
+5. **Login de teste**: `admin@ecosun.com` / `admin123`
+
+### Método Manual - Terminais Separados
+
+**Terminal 1 - Backend:**
 ```bash
-# Terminal 1 - Backend
 cd backend
 mvn spring-boot:run
+```
 
-# Terminal 2 - Frontend
+**Terminal 2 - Frontend:**
+```bash
+npm install
 npm run dev
 ```
 
-### Testar Migração
-Para verificar se a migração do localStorage para API foi bem-sucedida:
-```bash
-./test-migration.sh
-```
+### Acesso
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8081/api`
+- Login: `admin@ecosun.com` / `admin123`
 
 ## Estrutura do Projeto
 

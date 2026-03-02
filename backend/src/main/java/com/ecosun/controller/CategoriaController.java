@@ -26,6 +26,20 @@ public class CategoriaController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoriaById(@PathVariable Integer id) {
+        try {
+            String sql = "SELECT id, nome, descricao, especificacoes_obrigatorias FROM Categoria WHERE id = ?";
+            List<Map<String, Object>> categorias = jdbcTemplate.queryForList(sql, id);
+            if (categorias.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(categorias.get(0));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> searchCategorias(@RequestParam String query) {
         try {

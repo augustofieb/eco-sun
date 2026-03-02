@@ -17,8 +17,15 @@ public class OrcamentoController {
     private OrcamentoRepository orcamentoRepository;
 
     @GetMapping("/usuario/{usuarioId}")
-    public List<Orcamento> getOrcamentosByUsuario(@PathVariable Integer usuarioId) {
-        return orcamentoRepository.findByUsuarioId(usuarioId);
+    public ResponseEntity<List<Orcamento>> getOrcamentosByUsuario(@PathVariable Integer usuarioId) {
+        return ResponseEntity.ok(orcamentoRepository.findByUsuarioId(usuarioId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Orcamento> getOrcamentoById(@PathVariable Integer id) {
+        return orcamentoRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
