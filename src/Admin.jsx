@@ -92,6 +92,32 @@ const Admin = () => {
     }
   }
 
+  const exportToCSV = () => {
+    const headers = ['ID', 'Nome', 'Email', 'Nível de Acesso', 'Status']
+    const csvData = filteredUsers.map(user => [
+      user.id,
+      user.nome,
+      user.email,
+      user.nivelAcesso,
+      user.statusUsuario
+    ])
+    
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.join(','))
+    ].join('\n')
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `relatorio_usuarios_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   if (!isAdmin()) {
     return <div>Acesso negado</div>
   }
@@ -120,7 +146,12 @@ const Admin = () => {
       <main className="admin-content">
         <h1> Painel Administrativo</h1>
         <div className="users-table">
-          <h2>Gerenciar Usuários ({filteredUsers.length} usuários)</h2>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+            <h2>Gerenciar Usuários ({filteredUsers.length} usuários)</h2>
+            <button onClick={exportToCSV} className="btn-save" style={{padding: '10px 20px'}}>
+               Exportar Relatório
+            </button>
+          </div>
           
           {showEditForm && (
             <form onSubmit={handleUpdate} className="product-form">

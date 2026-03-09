@@ -4,6 +4,7 @@ import { getProducts } from './utils/productsAPI'
 import { getCategories } from './utils/categories'
 import { getCurrentUser, isAdmin, logoutUser } from './utils/authAPI'
 import { createOrcamento } from './utils/orcamentosAPI'
+import ImageCarousel from './components/ImageCarousel'
 
 import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
@@ -16,6 +17,7 @@ const SolarConfigurator = () => {
   const [user] = useState(getCurrentUser())
   const [successMessage, setSuccessMessage] = useState('')
   const [showAppBanner, setShowAppBanner] = useState(false)
+  const [selectedProductImages, setSelectedProductImages] = useState(null)
   const [summary, setSummary] = useState({
     totalPrice: 0,
     totalEnergy: 0,
@@ -37,7 +39,7 @@ const SolarConfigurator = () => {
     const categoriesData = await getCategories()
     setCategories(categoriesData)
     if (categoriesData.length > 0) {
-      setActiveCategory(categoriesData[0].id)
+      setActiveCategory(null)
     }
   }
 
@@ -69,6 +71,18 @@ const SolarConfigurator = () => {
         p.id === productId ? {...p, quantity} : p
       ))
     }
+  }
+
+  const formatSpecName = (key) => {
+    const names = {
+      'potencia_wp': 'Potência',
+      'energia_mensal_kwh': 'Energia Mensal',
+      'economia_mensal_rs': 'Economia Mensal',
+      'reducao_co2_kg_ano': 'Redução CO₂/ano',
+      'reducao_co2': 'Redução CO₂',
+      'redução_co2': 'Redução CO₂'
+    }
+    return names[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   }
 
   const calculateSummary = () => {
@@ -151,7 +165,7 @@ const SolarConfigurator = () => {
 
 
 
-  const filteredProducts = products.filter(p => p.categoria_id === activeCategory)
+  const filteredProducts = activeCategory === null ? products : products.filter(p => p.categoria_id === activeCategory)
 
   return (
     <>
@@ -188,7 +202,7 @@ const SolarConfigurator = () => {
             )}
             <li>
               <Link to="/" className="quote-btn" style={{textDecoration: 'none', marginRight: '50px'}}>
-                🏠 Início
+                Início
               </Link>
             </li>
           </ul>
@@ -243,6 +257,12 @@ const SolarConfigurator = () => {
       <div className="configurator-content">
         <div className="products-section">
           <div className="category-tabs">
+            <button
+              className={`category-tab ${activeCategory === null ? 'active' : ''}`}
+              onClick={() => setActiveCategory(null)}
+            >
+              Todos
+            </button>
             {categories.map(category => (
               <button
                 key={category.id}
@@ -257,7 +277,6 @@ const SolarConfigurator = () => {
           <div className="products-grid">
             {filteredProducts.map(product => {
               const specs = product.especificacoes_tecnicas ? JSON.parse(product.especificacoes_tecnicas) : {}
-              const isPlacaSolar = categories.find(cat => cat.id === product.categoria_id)?.nome?.toLowerCase().includes('placa')
               
               return (
                 <div key={product.id} className="product-card">
@@ -265,36 +284,22 @@ const SolarConfigurator = () => {
                     src={product.fotoUrl || 'https://via.placeholder.com/200'} 
                     alt={product.nome}
                     className="product-image"
+                    onClick={() => setSelectedProductImages({ 
+                      images: [product.fotoUrl || 'https://via.placeholder.com/200'], 
+                      name: product.nome 
+                    })}
+                    style={{cursor: 'pointer'}}
                   />
                   <h3>{product.nome}</h3>
                   <p className="product-price">R$ {product.preco?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
                   
-                  {isPlacaSolar && (
+                  {Object.keys(specs).length > 0 && (
                     <div className="energy-specs">
-                      {specs.energia_mensal_kwh && (
-                        <div className="spec-item">
-                          <span className="spec-icon">⚡</span>
-                          <span>{specs.energia_mensal_kwh} kWh/mês</span>
+                      {Object.entries(specs).map(([key, value]) => (
+                        <div key={key} className="spec-item">
+                          <span>{formatSpecName(key)}: {value}</span>
                         </div>
-                      )}
-                      {specs.economia_mensal_rs && (
-                        <div className="spec-item">
-                          <span className="spec-icon">💰</span>
-                          <span>R$ {specs.economia_mensal_rs}/mês</span>
-                        </div>
-                      )}
-                      {specs.reducao_co2_kg_ano && (
-                        <div className="spec-item">
-                          <span className="spec-icon">🌱</span>
-                          <span>{specs.reducao_co2_kg_ano} kg CO₂/ano</span>
-                        </div>
-                      )}
-                      {specs.potencia_wp && (
-                        <div className="spec-item">
-                          <span className="spec-icon">🔋</span>
-                          <span>{specs.potencia_wp} Wp</span>
-                        </div>
-                      )}
+                      ))}
                     </div>
                   )}
                   
@@ -316,25 +321,37 @@ const SolarConfigurator = () => {
             <p>Nenhum produto selecionado</p>
           ) : (
             <div className="selected-products">
-              {selectedProducts.map(product => (
-                <div key={product.id} className="selected-product">
-                  <span className="product-name">{product.nome}</span>
-                  <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(product.id, product.quantity - 1)}>-</button>
-                    <span>{product.quantity}</span>
-                    <button onClick={() => updateQuantity(product.id, product.quantity + 1)}>+</button>
+              {selectedProducts.map(product => {
+                const specs = product.especificacoes_tecnicas ? JSON.parse(product.especificacoes_tecnicas) : {}
+                return (
+                  <div key={product.id} className="selected-product">
+                    <div>
+                      <span className="product-name">{product.nome}</span>
+                      <div className="quantity-controls">
+                        <button onClick={() => updateQuantity(product.id, product.quantity - 1)}>-</button>
+                        <span>{product.quantity}</span>
+                        <button onClick={() => updateQuantity(product.id, product.quantity + 1)}>+</button>
+                      </div>
+                      <span className="product-total">
+                        R$ {(product.preco * product.quantity).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                      </span>
+                      <button 
+                        className="remove-btn"
+                        onClick={() => removeProduct(product.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                    {Object.keys(specs).length > 0 && (
+                      <div className="selected-specs">
+                        {Object.entries(specs).map(([key, value]) => (
+                          <span key={key}>{formatSpecName(key)}: {value}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <span className="product-total">
-                    R$ {(product.preco * product.quantity).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-                  </span>
-                  <button 
-                    className="remove-btn"
-                    onClick={() => removeProduct(product.id)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
 
@@ -375,6 +392,14 @@ const SolarConfigurator = () => {
         )}
         </div>
       </div>
+      
+      {selectedProductImages && (
+        <ImageCarousel
+          images={selectedProductImages.images}
+          productName={selectedProductImages.name}
+          onClose={() => setSelectedProductImages(null)}
+        />
+      )}
     </>
   )
 }

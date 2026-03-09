@@ -1,0 +1,118 @@
+.carousel-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.carousel-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.carousel-content h3 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #2c5530;
+}
+
+.carousel-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: #666;
+  z-index: 10;
+}
+
+.carousel-close:hover {
+  color: #000;
+}
+
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.carousel-container img {
+  max-width: 600px;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.carousel-btn {
+  position: absolute;
+  background: rgba(44, 85, 48, 0.8);
+  color: white;
+  border: none;
+  font-size: 40px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.carousel-btn:hover {
+  background: rgba(44, 85, 48, 1);
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ddd;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background: #2c5530;
+}
+
+.dot:hover {
+  background: #4a7c59;
+}
+
+@media (max-width: 768px) {
+  .carousel-container img {
+    max-width: 90vw;
+    max-height: 60vh;
+  }
+  
+  .carousel-btn {
+    font-size: 30px;
+    padding: 5px 15px;
+  }
+}

@@ -19,7 +19,7 @@ const AdminProducts = () => {
   const [showAddForm, setShowAddForm] = useState(false)
   const [showCategoryForm, setShowCategoryForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
-  const [selectedFile, setSelectedFile] = useState(null)
+  const [selectedFiles, setSelectedFiles] = useState([])
   const [useFileUpload, setUseFileUpload] = useState(true)
   const [deletingCategory, setDeletingCategory] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
@@ -81,13 +81,13 @@ const AdminProducts = () => {
     }
     
     try {
-      if (useFileUpload && selectedFile) {
+      if (useFileUpload && selectedFiles.length > 0) {
         const formDataUpload = new FormData()
         formDataUpload.append('nome', formData.name)
         formDataUpload.append('preco', price)
         formDataUpload.append('categoriaId', parseInt(formData.category))
         formDataUpload.append('descricao', formData.description)
-        formDataUpload.append('foto', selectedFile)
+        formDataUpload.append('foto', selectedFiles[0])
         
         // Construir especificações técnicas
         const especificacoesTecnicas = {}
@@ -139,7 +139,7 @@ const AdminProducts = () => {
       }
       
       setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
-      setSelectedFile(null)
+      setSelectedFiles([])
       setShowAddForm(false)
       loadProducts()
     } catch (error) {
@@ -152,7 +152,7 @@ const AdminProducts = () => {
     setEditingProduct(product.id)
     setShowAddForm(true)
 
-    // Carregar especificações existentes
+    // Carregar especificações existentes do produto
     let existingSpecs = {}
     if (product.especificacoes_tecnicas) {
       try {
@@ -179,7 +179,7 @@ const AdminProducts = () => {
         const categorySpecs = JSON.parse(selectedCategory.especificacoes_obrigatorias)
         formDataWithSpecs.categorySpecs = categorySpecs
 
-        // Preencher valores existentes das especificações
+        // Preencher valores das especificações da categoria
         Object.keys(categorySpecs).forEach(key => {
           formDataWithSpecs[`spec_${key}`] = existingSpecs[key] || ''
         })
@@ -188,31 +188,36 @@ const AdminProducts = () => {
       }
     }
 
+    // Adicionar especificações antigas que não estão mais na categoria
+    Object.keys(existingSpecs).forEach(key => {
+      if (!formDataWithSpecs.categorySpecs[key]) {
+        formDataWithSpecs.categorySpecs[key] = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+        formDataWithSpecs[`spec_${key}`] = existingSpecs[key]
+      }
+    })
+
     setFormData(formDataWithSpecs)
   }
 
   const handleUpdate = async (productId) => {
     
     try {
-      if (useFileUpload && selectedFile) {
+      // Construir especificações técnicas (incluindo vazias)
+      const especificacoesTecnicas = {}
+      if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+        Object.keys(formData.categorySpecs).forEach(key => {
+          const value = formData[`spec_${key}`]
+          especificacoesTecnicas[key] = value || ''
+        })
+      }
+      
+      if (useFileUpload && selectedFiles.length > 0) {
         const formDataUpload = new FormData()
         formDataUpload.append('nome', formData.name)
         formDataUpload.append('preco', parseFloat(formData.price))
         formDataUpload.append('categoriaId', parseInt(formData.category))
         formDataUpload.append('descricao', formData.description)
-        formDataUpload.append('foto', selectedFile)
-        
-        // Construir especificações técnicas
-        const especificacoesTecnicas = {}
-        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
-          Object.keys(formData.categorySpecs).forEach(key => {
-            const value = formData[`spec_${key}`]
-            if (value) {
-              especificacoesTecnicas[key] = value
-            }
-          })
-        }
-        
+        formDataUpload.append('foto', selectedFiles[0])
         formDataUpload.append('especificacoesTecnicas', JSON.stringify(especificacoesTecnicas))
         
         const response = await fetch(`/api/produtos/upload/${productId}`, {
@@ -225,17 +230,6 @@ const AdminProducts = () => {
         
         if (!response.ok) throw new Error('Erro ao atualizar produto')
       } else {
-        // Construir especificações técnicas
-        const especificacoesTecnicas = {}
-        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
-          Object.keys(formData.categorySpecs).forEach(key => {
-            const value = formData[`spec_${key}`]
-            if (value) {
-              especificacoesTecnicas[key] = value
-            }
-          })
-        }
-        
         await updateProduct(productId, {
           nome: formData.name,
           preco: parseFloat(formData.price),
@@ -249,7 +243,7 @@ const AdminProducts = () => {
       setEditingProduct(null)
       setShowAddForm(false)
       setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
-      setSelectedFile(null)
+      setSelectedFiles([])
       loadProducts()
     } catch (error) {
       // removed alert
@@ -482,15 +476,21 @@ const AdminProducts = () => {
                 <input 
                   type="file" 
                   accept="image/*"
-                  onChange={(e) => setSelectedFile(e.target.files[0])}
-                  required
+                  multiple
+                  onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+                  required={!editingProduct}
                 />
+                {selectedFiles.length > 0 && (
+                  <div style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
+                    {selectedFiles.length} foto(s) selecionada(s)
+                  </div>
+                )}
                 <div>
                   <button type="submit" className="btn-save">{editingProduct ? 'Atualizar' : 'Salvar'}</button>
                   <button type="button" onClick={() => {
                     setShowAddForm(false)
                     setEditingProduct(null)
-                    setSelectedFile(null)
+                    setSelectedFiles([])
                     setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
                   }} className="btn-cancel">Cancelar</button>
                 </div>
