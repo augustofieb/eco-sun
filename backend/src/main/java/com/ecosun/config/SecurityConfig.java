@@ -38,7 +38,8 @@ public class SecurityConfig {
                 .antMatchers("/api/orcamentos/**").permitAll()
                 .antMatchers("/test/**").permitAll()
                 .antMatchers("/conteudo/**").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/estatisticas/**").permitAll()
+                .anyRequest().permitAll();
         
         return http.build();
     }

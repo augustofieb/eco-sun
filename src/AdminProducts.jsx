@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
 import { getProducts, searchProducts, createProduct, updateProduct, deleteProduct } from './utils/productsAPI'
 import { getCategories, addCategory, searchCategories, deleteCategory, updateCategory } from './utils/categories'
 import RichTextEditor from './components/RichTextEditor'
+import AdminLayout from './components/AdminLayout'
 import './AdminProducts.css'
-import Logo from './assets/Logo.png'
 
 const AdminProducts = () => {
   const [activeTab, setActiveTab] = useState('products')
@@ -18,9 +18,8 @@ const AdminProducts = () => {
   const [editingProduct, setEditingProduct] = useState(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [showCategoryForm, setShowCategoryForm] = useState(false)
-  const [formData, setFormData] = useState({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
+  const [formData, setFormData] = useState({ name: '', price: '', category: '', description: '', categorySpecs: {} })
   const [selectedFiles, setSelectedFiles] = useState([])
-  const [useFileUpload, setUseFileUpload] = useState(true)
   const [deletingCategory, setDeletingCategory] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
   const [editingCategory, setEditingCategory] = useState(null)
@@ -72,79 +71,61 @@ const AdminProducts = () => {
     }
   }
 
+  const filesToBase64 = (files) =>
+    Promise.all(files.map(file => new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })))
+
+  const addFiles = (newFiles) => {
+    const entries = newFiles.map(file => ({ file, preview: URL.createObjectURL(file) }))
+    setSelectedFiles(prev => [...prev, ...entries])
+  }
+
+  const removeFile = (index) => {
+    setSelectedFiles(prev => {
+      URL.revokeObjectURL(prev[index].preview)
+      return prev.filter((_, i) => i !== index)
+    })
+  }
+
+  const clearFiles = () => {
+    setSelectedFiles(prev => { prev.forEach(e => URL.revokeObjectURL(e.preview)); return [] })
+  }
+
+  const buildEspecificacoes = () => {
+    const especificacoesTecnicas = {}
+    if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
+      Object.keys(formData.categorySpecs).forEach(key => {
+        const value = formData[`spec_${key}`]
+        if (value) especificacoesTecnicas[key] = value
+      })
+    }
+    return JSON.stringify(especificacoesTecnicas)
+  }
+
   const handleAdd = async (e) => {
     e.preventDefault()
     const price = parseFloat(formData.price)
-    if (price > 999999.99) {
-      // removed alert
-      return
-    }
-    
+    if (price > 999999.99) return
     try {
-      if (useFileUpload && selectedFiles.length > 0) {
-        const formDataUpload = new FormData()
-        formDataUpload.append('nome', formData.name)
-        formDataUpload.append('preco', price)
-        formDataUpload.append('categoriaId', parseInt(formData.category))
-        formDataUpload.append('descricao', formData.description)
-        formDataUpload.append('foto', selectedFiles[0])
-        
-        // Construir especificações técnicas
-        const especificacoesTecnicas = {}
-        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
-          Object.keys(formData.categorySpecs).forEach(key => {
-            const value = formData[`spec_${key}`]
-            if (value) {
-              especificacoesTecnicas[key] = value
-            }
-          })
-        }
-        
-        formDataUpload.append('especificacoesTecnicas', JSON.stringify(especificacoesTecnicas))
-        
-        const response = await fetch('/api/produtos/upload', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-          },
-          body: formDataUpload
-        })
-        
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('Erro detalhado:', errorText)
-          throw new Error(`Erro ao criar produto: ${errorText}`)
-        }
-      } else {
-        // Construir especificações técnicas
-        const especificacoesTecnicas = {}
-        if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
-          Object.keys(formData.categorySpecs).forEach(key => {
-            const value = formData[`spec_${key}`]
-            if (value) {
-              especificacoesTecnicas[key] = value
-            }
-          })
-        }
-        
-        const productData = {
-          nome: formData.name,
-          preco: price,
-          categoriaId: parseInt(formData.category),
-          descricao: formData.description,
-          foto: formData.image,
-          especificacoesTecnicas: JSON.stringify(especificacoesTecnicas)
-        }
-        await createProduct(productData)
-      }
-      
-      setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
-      setSelectedFiles([])
+      const base64Images = await filesToBase64(selectedFiles.map(e => e.file))
+      await createProduct({
+        nome: formData.name,
+        preco: price,
+        categoriaId: parseInt(formData.category),
+        descricao: formData.description,
+        foto: base64Images.join('|'),
+        especificacoesTecnicas: buildEspecificacoes()
+      })
+      setFormData({ name: '', price: '', category: '', description: '', categorySpecs: {} })
+      clearFiles()
       setShowAddForm(false)
       loadProducts()
     } catch (error) {
       console.error('Erro ao adicionar produto:', error.response?.data || error.message)
-      // removed alert
     }
   }
 
@@ -167,7 +148,6 @@ const AdminProducts = () => {
       name: product.nome,
       price: product.preco,
       category: product.categoriaId,
-      image: product.fotoUrl || '',
       description: product.descricao || '',
       categorySpecs: {}
     }
@@ -200,50 +180,25 @@ const AdminProducts = () => {
   }
 
   const handleUpdate = async (productId) => {
-    
     try {
-      // Construir especificações técnicas (incluindo vazias)
-      const especificacoesTecnicas = {}
-      if (formData.categorySpecs && Object.keys(formData.categorySpecs).length > 0) {
-        Object.keys(formData.categorySpecs).forEach(key => {
-          const value = formData[`spec_${key}`]
-          especificacoesTecnicas[key] = value || ''
-        })
+      const product = products.find(p => p.id === productId)
+      let fotoUrl = product?.fotoUrl || ''
+      if (selectedFiles.length > 0) {
+        const base64Images = await filesToBase64(selectedFiles.map(e => e.file))
+        fotoUrl = base64Images.join('|')
       }
-      
-      if (useFileUpload && selectedFiles.length > 0) {
-        const formDataUpload = new FormData()
-        formDataUpload.append('nome', formData.name)
-        formDataUpload.append('preco', parseFloat(formData.price))
-        formDataUpload.append('categoriaId', parseInt(formData.category))
-        formDataUpload.append('descricao', formData.description)
-        formDataUpload.append('foto', selectedFiles[0])
-        formDataUpload.append('especificacoesTecnicas', JSON.stringify(especificacoesTecnicas))
-        
-        const response = await fetch(`/api/produtos/upload/${productId}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-          },
-          body: formDataUpload
-        })
-        
-        if (!response.ok) throw new Error('Erro ao atualizar produto')
-      } else {
-        await updateProduct(productId, {
-          nome: formData.name,
-          preco: parseFloat(formData.price),
-          categoriaId: parseInt(formData.category),
-          descricao: formData.description,
-          foto: formData.image,
-          especificacoesTecnicas: JSON.stringify(especificacoesTecnicas)
-        })
-      }
-      
+      await updateProduct(productId, {
+        nome: formData.name,
+        preco: parseFloat(formData.price),
+        categoriaId: parseInt(formData.category),
+        descricao: formData.description,
+        foto: fotoUrl,
+        especificacoesTecnicas: buildEspecificacoes()
+      })
       setEditingProduct(null)
       setShowAddForm(false)
-      setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
-      setSelectedFiles([])
+      setFormData({ name: '', price: '', category: '', description: '', categorySpecs: {} })
+      clearFiles()
       loadProducts()
     } catch (error) {
       // removed alert
@@ -363,26 +318,8 @@ const AdminProducts = () => {
   }
 
   return (
-    <>
-      <header className="cabecalho">
-        <nav className="topo">
-          <ul className="menu">
-            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
-            <li className="spacer"></li>
-            <li>
-              <Link to="/admin" className="admin-link">Usuários</Link>
-            </li>
-            <li>
-              <Link to="/" className="sign-in">Home</Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <div className='division'></div>
-
-      <div className='content'>
-        <main className="admin-content">
+    <AdminLayout>
+      <main className="admin-content">
           <h1>Gerenciar Produtos e Categorias</h1>
           
           {successMessage && (
@@ -477,12 +414,35 @@ const AdminProducts = () => {
                   type="file" 
                   accept="image/*"
                   multiple
-                  onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+                  onChange={(e) => addFiles(Array.from(e.target.files))}
                   required={!editingProduct}
                 />
                 {selectedFiles.length > 0 && (
-                  <div style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>
-                    {selectedFiles.length} foto(s) selecionada(s)
+                  <div style={{marginTop: '8px'}}>
+                    <div style={{fontSize: '12px', color: '#666', marginBottom: '6px'}}>
+                      {selectedFiles.length} foto(s) selecionada(s)
+                    </div>
+                    <div style={{display: 'flex', gap: '6px', flexWrap: 'wrap'}}>
+                      {selectedFiles.map((entry, i) => (
+                        <div key={i} style={{position: 'relative'}}>
+                          <img
+                            src={entry.preview}
+                            alt={`preview ${i + 1}`}
+                            style={{width: '70px', height: '70px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd'}}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeFile(i)}
+                            style={{position: 'absolute', top: '-6px', right: '-6px', background: '#e53935', color: 'white', border: 'none', borderRadius: '50%', width: '18px', height: '18px', fontSize: '11px', cursor: 'pointer', lineHeight: '1', padding: 0}}
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {editingProduct && selectedFiles.length === 0 && (
+                  <div style={{fontSize: '12px', color: '#999', marginTop: '5px'}}>
+                    Nenhum arquivo selecionado — imagens atuais serão mantidas
                   </div>
                 )}
                 <div>
@@ -490,8 +450,8 @@ const AdminProducts = () => {
                   <button type="button" onClick={() => {
                     setShowAddForm(false)
                     setEditingProduct(null)
-                    setSelectedFiles([])
-                    setFormData({ name: '', price: '', category: '', image: '', description: '', categorySpecs: {} })
+                    clearFiles()
+                    setFormData({ name: '', price: '', category: '', description: '', categorySpecs: {} })
                   }} className="btn-cancel">Cancelar</button>
                 </div>
               </form>
@@ -665,8 +625,7 @@ const AdminProducts = () => {
           </div>
         )}
         </main>
-      </div>
-    </>
+    </AdminLayout>
   )
 }
 

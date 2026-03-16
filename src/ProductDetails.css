@@ -54,6 +54,75 @@ body {
   text-align: center;
 }
 
+.carousel {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.carousel-btn:hover { background: rgba(0,0,0,0.7); }
+.carousel-prev { left: 8px; }
+.carousel-next { right: 8px; }
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.carousel-dot.active { background: #3483fa; }
+
+.carousel-thumbnails {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.carousel-thumb {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border: 2px solid #e6e6e6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.carousel-thumb.active { border-color: #3483fa; }
+
 .product-main-image {
   width: 100%;
   max-width: 500px;

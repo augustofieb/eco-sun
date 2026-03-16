@@ -1,0 +1,82 @@
+.al-root {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6f9;
+}
+
+.al-sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #1a2332;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+}
+
+.al-logo {
+  padding: 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.al-logo img {
+  width: 100%;
+  max-width: 140px;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.al-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  gap: 2px;
+}
+
+.al-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+
+.al-link:hover {
+  background: rgba(255,255,255,0.07);
+  color: white;
+}
+
+.al-link.active {
+  background: rgba(52,131,250,0.15);
+  color: #5ba4f5;
+  border-left-color: #3483fa;
+}
+
+.al-icon { font-size: 18px; }
+
+.al-main {
+  margin-left: 220px;
+  flex: 1;
+  padding: 32px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .al-sidebar {
+    width: 60px;
+    min-width: 60px;
+  }
+  .al-label { display: none; }
+  .al-logo img { max-width: 36px; }
+  .al-main { margin-left: 60px; padding: 16px; }
+}

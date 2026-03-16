@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { isAdmin } from './utils/authAPI'
 import { getUsers, searchUsers, updateUser, deleteUser } from './utils/usersAPI'
+import AdminLayout from './components/AdminLayout'
 import './Admin.css'
-import Logo from './assets/Logo.png'
 
 const Admin = () => {
   const [users, setUsers] = useState([])
@@ -123,26 +123,7 @@ const Admin = () => {
   }
 
   return (
-    <>
-      <header className="cabecalho">
-        <nav className="topo">
-          <ul className="menu">
-            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
-            <li className="spacer"></li>
-            <li>
-              <Link to="/admin-products" className="admin-link">Produtos</Link>
-            </li>
-            <li>
-              <Link to="/" className="sign-in">Home</Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <div className='division'></div>
-
-    <div className='content'>
-      
+    <AdminLayout>
       <main className="admin-content">
         <h1> Painel Administrativo</h1>
         <div className="users-table">
@@ -244,8 +225,7 @@ const Admin = () => {
           </table>
         </div>
       </main>
-      </div>
-    </>
+    </AdminLayout>
   )
 }
 

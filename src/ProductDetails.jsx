@@ -16,6 +16,7 @@ const ProductDetails = () => {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
     loadProduct()
@@ -70,6 +71,12 @@ const ProductDetails = () => {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating)
   }
 
+  const getImages = () => {
+    if (!product?.fotoUrl) return ['https://via.placeholder.com/500']
+    const urls = product.fotoUrl.split('|').filter(Boolean)
+    return urls.length > 0 ? urls : ['https://via.placeholder.com/500']
+  }
+
 
 
   if (isLoading) {
@@ -118,12 +125,45 @@ const ProductDetails = () => {
           <div className="product-content">
             <div className="product-left">
               <div className="product-gallery">
-                <img 
-                  className="product-main-image"
-                  src={product.fotoUrl && product.fotoUrl.startsWith('data:') ? product.fotoUrl : (product.fotoUrl || 'https://via.placeholder.com/500')} 
-                  alt={product.nome} 
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/500' }}
-                />
+                {(() => {
+                  const images = getImages()
+                  return images.length > 1 ? (
+                    <div className="carousel">
+                      <button className="carousel-btn carousel-prev" onClick={() => setCurrentImageIndex(i => (i - 1 + images.length) % images.length)}>&#8249;</button>
+                      <img
+                        className="product-main-image"
+                        src={images[currentImageIndex]}
+                        alt={`${product.nome} ${currentImageIndex + 1}`}
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/500' }}
+                      />
+                      <button className="carousel-btn carousel-next" onClick={() => setCurrentImageIndex(i => (i + 1) % images.length)}>&#8250;</button>
+                      <div className="carousel-dots">
+                        {images.map((_, i) => (
+                          <span key={i} className={`carousel-dot${i === currentImageIndex ? ' active' : ''}`} onClick={() => setCurrentImageIndex(i)} />
+                        ))}
+                      </div>
+                      <div className="carousel-thumbnails">
+                        {images.map((src, i) => (
+                          <img
+                            key={i}
+                            src={src}
+                            alt={`thumb ${i + 1}`}
+                            className={`carousel-thumb${i === currentImageIndex ? ' active' : ''}`}
+                            onClick={() => setCurrentImageIndex(i)}
+                            onError={(e) => { e.target.src = 'https://via.placeholder.com/80' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      className="product-main-image"
+                      src={images[0]}
+                      alt={product.nome}
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/500' }}
+                    />
+                  )
+                })()}
               </div>
               
               <h1 className="product-title">{product.nome}</h1>

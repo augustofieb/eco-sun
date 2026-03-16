@@ -1,7 +1,7 @@
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/repository/UsuarioRepository.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/service/AuthService.java
-/workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/RegisterRequest.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Preferencias.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/RegisterRequest.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Conteudo.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/config/SecurityConfig.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Categoria.java
@@ -11,8 +11,8 @@
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/CategoriaController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/LoginRequest.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/AvaliacaoController.java
-/workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Produto.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/UsuarioController.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Produto.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/repository/PreferenciasRepository.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/ConteudoController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/repository/AvaliacaoRepository.java
@@ -21,12 +21,13 @@
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Avaliacao.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/AuthResponse.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Orcamento.java
-/workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/ProdutoRequest.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/StatsController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/AuthController.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/dto/ProdutoRequest.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/SimpleProdutoController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/service/EmailService.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/TestController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/EcoSunApplication.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/repository/ProdutoRepository.java
-/workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Usuario.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/OrcamentoController.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Usuario.java

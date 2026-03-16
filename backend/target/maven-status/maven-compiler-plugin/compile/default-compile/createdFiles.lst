@@ -1,3 +1,4 @@
+com/ecosun/controller/StatsController.class
 com/ecosun/service/EmailService.class
 com/ecosun/controller/OrcamentoController.class
 com/ecosun/controller/UsuarioController.class
@@ -18,8 +19,8 @@ com/ecosun/repository/UsuarioRepository.class
 com/ecosun/controller/CategoriaController.class
 com/ecosun/controller/TestController.class
 com/ecosun/service/ProdutoService.class
-com/ecosun/entity/Usuario.class
 com/ecosun/entity/Produto.class
+com/ecosun/entity/Usuario.class
 com/ecosun/repository/OrcamentoRepository.class
 com/ecosun/dto/RegisterRequest.class
 com/ecosun/entity/Orcamento.class
