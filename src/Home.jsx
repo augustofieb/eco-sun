@@ -14,13 +14,12 @@ import { getTheme, setTheme, initTheme } from './utils/theme'
 import SolarQuote from './SolarQuote'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
-import microinversor from './assets/microinversor.png'
-import controlador from './assets/controlador.png'
-import bateriaSolar from './assets/Bateria_solar.png'
 import economiaIcon from './assets/porco_economia.png'
 import garantiaIcon from './assets/garantia.png'
 import suporteIcon from './assets/Suporte_tecnico.png'
 import CasaIcon from './assets/background-casa.png'
+import sofa from './assets/sofa.png'
+import reembolso from './assets/reembolso-alternativo.png'
 
 const Home = () => {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
@@ -30,7 +29,6 @@ const Home = () => {
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [activeSettingsTab, setActiveSettingsTab] = useState('conta')
   const [settingsView, setSettingsView] = useState('main') // 'main' ou nome da aba específica
   const [isEditingContent, setIsEditingContent] = useState(false)
   const [originalContent, setOriginalContent] = useState({})
@@ -257,9 +255,7 @@ const Home = () => {
                     if (success) {
                       
                       setIsEditingContent(false);
-                    } else {
-                      
-                    }
+                    } 
                   }}
                 >Salvar</button>
               </div>
@@ -302,9 +298,7 @@ const Home = () => {
                     if (success) {
                       
                       setIsEditingContent(false);
-                    } else {
-                      
-                    }
+                    } 
                   }}
                 >Salvar</button>
               </div>
@@ -347,9 +341,7 @@ const Home = () => {
                     if (success) {
                       
                       setIsEditingContent(false);
-                    } else {
-                      
-                    }
+                    } 
                   }}
                 >Salvar</button>
               </div>
@@ -494,21 +486,23 @@ const Home = () => {
           </div>
         </section>
 
+   <h1> Por que usar Energia Solar? </h1>
         <section className="info-cards">
+         
           <div className="info-card">
             <img src={economiaIcon} alt="Economia" />
-            <h3>Economia</h3>
-            <p>Reduza sua conta de energia</p>
+            <h3>Redução da conta de energia</h3>
+            <p>Economize centenas de reais todos os meses e recupere o investimento em poucos anos. Além disso, é possível alcançar uma redução de até 95%, tornando sua economia ainda maior a longo prazo.</p>
           </div>
           <div className="info-card">
-            <img src={garantiaIcon} alt="Garantia" />
-            <h3>Garantia</h3>
-            <p>Garantia de 2 anos</p>
+            <img src={sofa} alt="Sofá" />
+            <h3>Mais bem-estar para o seu dia a dia</h3>
+            <p>Melhore a qualidade de vida da sua família e diminua a sua despesa ao mesmo tempo. Com mais economia, você também ganha tranquilidade para aproveitar melhor o dia a dia.</p>
           </div>
           <div className="info-card">
-            <img src={suporteIcon} alt="Suporte Técnico" />
-            <h3>Suporte Técnico</h3>
-            <p>Assistência especializada</p>
+            <img src={reembolso} alt="dinheiro" />
+            <h3>Baixa manutenção</h3>
+            <p>Os sistemas de energia solar exigem pouca manutenção, com limpeza simples e revisões ocasionais para manter o máximo desempenho ao longo dos anos.</p>
           </div>
         </section>
       </main>
