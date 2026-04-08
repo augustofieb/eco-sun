@@ -70,6 +70,7 @@ export const categoriesAPI = {
 
 // Orcamentos API
 export const orcamentosAPI = {
+  getAll: () => api.get('/orcamentos'),
   getByUser: (usuarioId) => api.get(`/orcamentos/usuario/${usuarioId}`),
   create: (orcamento) => api.post('/orcamentos', orcamento),
   update: (id, orcamento) => api.put(`/orcamentos/${id}`, orcamento),

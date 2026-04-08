@@ -320,6 +320,7 @@ const AdminProducts = () => {
   return (
     <AdminLayout>
       <main className="admin-content">
+      
           <h1>Gerenciar Produtos e Categorias</h1>
           
           {successMessage && (

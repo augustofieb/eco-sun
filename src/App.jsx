@@ -7,6 +7,8 @@ import TestConnection from './components/TestConnection.jsx'
 import Admin from './Admin.jsx'
 import AdminProducts from './AdminProducts.jsx'
 import AdminStats from './AdminStats.jsx'
+import AdminDashboard from './AdminDashboard.jsx'
+import AdminOrcamentos from './AdminOrcamentos.jsx'
 import ProductDetails from './ProductDetails.jsx'
 import SolarConfigurator from './SolarConfigurator.jsx'
 
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/create-account" element={<Register /> } />
         <Route path="/forgot-password" element={<ForgotPassword /> } />
         <Route path="/test" element={<TestConnection /> } />
+        <Route path="/admin-orcamentos" element={<AdminOrcamentos /> } />
+        <Route path="/admin-dashboard" element={<AdminDashboard /> } />
         <Route path="/admin" element={<Admin /> } />
         <Route path="/admin-products" element={<AdminProducts /> } />
         <Route path="/admin-stats" element={<AdminStats /> } />

@@ -3,10 +3,11 @@ import Logo from '../assets/Logo.png'
 import './AdminLayout.css'
 
 const NAV = [
-  { to: '/admin-stats',    icon: '📊', label: 'Dashboard'  },
-  { to: '/admin',          icon: '👥', label: 'Usuários'   },
-  { to: '/admin-products', icon: '📦', label: 'Produtos'   },
-  { to: '/',               icon: '🏠', label: 'Voltar ao site' },
+  { to: '/admin-dashboard', icon: '🏠', label: 'Início'       },
+  { to: '/admin-stats',     icon: '📊', label: 'Estatísticas' },
+  { to: '/admin',           icon: '👥', label: 'Usuários'     },
+  { to: '/admin-products',  icon: '📦', label: 'Produtos'     },
+  { to: '/',                icon: '↩️', label: 'Voltar ao site' },
 ]
 
 const AdminLayout = ({ children }) => {
