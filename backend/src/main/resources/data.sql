@@ -17,6 +17,7 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Orcamento' AND xtype='U')
 CREATE TABLE Orcamento (
     id INT IDENTITY(1,1) PRIMARY KEY,
     usuario_id INT,
+    nome VARCHAR(100) NOT NULL,
     produtos_selecionados NTEXT,
     preco_total DECIMAL(10,2),
     energia_total_gerada DECIMAL(8,2),
@@ -26,6 +27,16 @@ CREATE TABLE Orcamento (
     data_criacao DATETIME2 DEFAULT GETDATE(),
     status NVARCHAR(20) DEFAULT 'RASCUNHO'
 );
+
+-- Garantir coluna nome na tabela Orcamento (migração caso a tabela já exista)
+IF NOT EXISTS (
+    SELECT 1
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'nome'
+)
+BEGIN
+    ALTER TABLE Orcamento ADD nome VARCHAR(100) NOT NULL DEFAULT 'Orçamento';
+END
 
 -- Adicionar colunas às tabelas existentes se não existirem
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Categoria' AND COLUMN_NAME = 'especificacoes_obrigatorias')

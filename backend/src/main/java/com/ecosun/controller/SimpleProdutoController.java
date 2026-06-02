@@ -53,6 +53,7 @@ public class SimpleProdutoController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProduto(@RequestBody Map<String, Object> request) {
         try {
             String nome = (String) request.get("nome");
@@ -76,6 +77,7 @@ public class SimpleProdutoController {
     }
 
     @PostMapping("/upload")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createProdutoWithUpload(
             @RequestParam("nome") String nome,
             @RequestParam("descricao") String descricao,
@@ -107,6 +109,7 @@ public class SimpleProdutoController {
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateProduto(@PathVariable Integer id, @RequestBody Map<String, Object> request) {
         try {
             String nome = (String) request.get("nome");
@@ -130,6 +133,7 @@ public class SimpleProdutoController {
     }
 
     @PutMapping("/upload/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateProdutoWithUpload(
             @PathVariable Integer id,
             @RequestParam("nome") String nome,
@@ -182,6 +186,7 @@ public class SimpleProdutoController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProduto(@PathVariable Integer id) {
         try {
             String sql = "UPDATE Produto SET status_produto = 'INATIVO' WHERE id = ?";

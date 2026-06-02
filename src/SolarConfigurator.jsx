@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { getProducts } from './utils/productsAPI'
 import { getCategories } from './utils/categories'
-import { getCurrentUser, isAdmin, logoutUser } from './utils/authAPI'
+import { getCurrentUser, isAdmin } from './utils/authAPI'
+
 import { createOrcamento } from './utils/orcamentosAPI'
 import ImageCarousel from './components/ImageCarousel'
+import OrcamentoNomeModal from './components/OrcamentoNomeModal'
 
 import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
 
+
 const SolarConfigurator = () => {
+  const location = useLocation()
+
+
+
+
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [selectedProducts, setSelectedProducts] = useState([])
@@ -18,7 +26,11 @@ const SolarConfigurator = () => {
   const [successMessage, setSuccessMessage] = useState('')
   const [showAppBanner, setShowAppBanner] = useState(false)
   const [selectedProductImages, setSelectedProductImages] = useState(null)
+  const [showOrcamentoNomeModal, setShowOrcamentoNomeModal] = useState(false)
+
   const [summary, setSummary] = useState({
+
+
     totalPrice: 0,
     totalEnergy: 0,
     monthlyEconomy: 0,
@@ -47,6 +59,39 @@ const SolarConfigurator = () => {
     const productsData = await getProducts()
     setProducts(productsData)
   }
+
+  useEffect(() => {
+    // Aplicar recomendações recebidas do Home (preferencialmente via sessionStorage)
+    const sessionRaw = sessionStorage.getItem('recommendedProductIds')
+
+
+    const parsed = sessionRaw ? JSON.parse(sessionRaw) : null
+
+
+    const ids = parsed?.recommendedProductIds
+    if (!Array.isArray(ids) || ids.length === 0) return
+    if (!Array.isArray(products) || products.length === 0) return
+
+    const byId = new Map(products.map(p => [p.id, p]))
+
+    // Agrupar quantidades por ID
+    const counts = ids.reduce((acc, id) => {
+      if (byId.has(id)) acc[id] = (acc[id] || 0) + 1
+      return acc
+    }, {})
+
+    const nextSelected = Object.entries(counts)
+      .map(([id, quantity]) => ({
+        ...byId.get(id),
+        quantity
+      }))
+
+    setSelectedProducts(nextSelected)
+
+    // Opcional: limpar para evitar reaplicar em refresh/back
+      // sessionStorage.removeItem('recommendedProductIds')
+  }, [location, products])
+
 
   const addProduct = (product) => {
     const existingProduct = selectedProducts.find(p => p.id === product.id)
@@ -138,13 +183,15 @@ const SolarConfigurator = () => {
   }
 
   const handleSaveOrcamento = async () => {
-    try {
-      if (!user || !user.id) {
-        return
-      }
+    if (!user || !user.id) return
+    setShowOrcamentoNomeModal(true)
+  }
 
+  const submitOrcamento = async (nome) => {
+    try {
       const orcamentoData = {
         usuarioId: user.id,
+        nome,
         produtosSelecionados: JSON.stringify(selectedProducts),
         precoTotal: Number(summary.totalPrice.toFixed(2)) || 0,
         energiaTotalGerada: Number(summary.totalEnergy.toFixed(2)) || 0,
@@ -152,16 +199,18 @@ const SolarConfigurator = () => {
         tempoRetornoMeses: summary.paybackTime || 0,
         reducaoCo2Anual: Number(summary.co2Reduction.toFixed(2)) || 0
       }
-      
+
       await createOrcamento(orcamentoData)
+      setShowOrcamentoNomeModal(false)
       setSuccessMessage('Orçamento salvo com sucesso!')
       setShowAppBanner(true)
       setTimeout(() => setSuccessMessage(''), 3000)
-    } catch (error) {
+    } catch { // eslint-disable-line no-empty
       setSuccessMessage('Erro ao salvar orçamento')
       setTimeout(() => setSuccessMessage(''), 3000)
     }
   }
+
 
 
 
@@ -392,6 +441,12 @@ const SolarConfigurator = () => {
         )}
         </div>
       </div>
+
+      <OrcamentoNomeModal
+        open={showOrcamentoNomeModal}
+        onClose={() => setShowOrcamentoNomeModal(false)}
+        onConfirm={submitOrcamento}
+      />
       
       {selectedProductImages && (
         <ImageCarousel
@@ -403,5 +458,6 @@ const SolarConfigurator = () => {
     </>
   )
 }
+
 
 export default SolarConfigurator

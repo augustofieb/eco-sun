@@ -30,6 +30,7 @@ public class ConteudoController {
     }
     
     @PutMapping("/api/conteudo/{chave}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> updateConteudo(@PathVariable String chave, @RequestBody Map<String, String> request) {
         String novoConteudo = request.get("conteudo");
         conteudoMap.put(chave, novoConteudo);

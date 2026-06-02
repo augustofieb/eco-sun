@@ -29,6 +29,7 @@ public class OrcamentoController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canWriteOrcamento(#orcamento)")
     public ResponseEntity<?> createOrcamento(@RequestBody Orcamento orcamento) {
         try {
             System.out.println("Recebendo orçamento: " + orcamento.toString());
@@ -37,6 +38,11 @@ public class OrcamentoController {
             if (orcamento.getUsuarioId() == null) {
                 return ResponseEntity.badRequest().body("ID do usuário é obrigatório");
             }
+
+            if (orcamento.getNome() == null || orcamento.getNome().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Nome do orçamento é obrigatório");
+            }
+
             
             // Garantir valores padrão para campos que não podem ser null
             if (orcamento.getPrecoTotal() == null) {
@@ -78,6 +84,7 @@ public class OrcamentoController {
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canUpdateOrcamento(#id, #orcamento)")
     public ResponseEntity<Orcamento> updateOrcamento(@PathVariable Integer id, @RequestBody Orcamento orcamento) {
         if (orcamentoRepository.existsById(id)) {
             orcamento.setId(id);
@@ -87,6 +94,7 @@ public class OrcamentoController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canDeleteOrcamento(#id)")
     public ResponseEntity<Void> deleteOrcamento(@PathVariable Integer id) {
         if (orcamentoRepository.existsById(id)) {
             orcamentoRepository.deleteById(id);

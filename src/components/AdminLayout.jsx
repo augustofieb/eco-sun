@@ -16,7 +16,7 @@ const AdminLayout = ({ children }) => {
     <div className="al-root">
       <aside className="al-sidebar">
         <div className="al-logo">
-          <img src={Logo} alt="Logo" />
+          <Link to="/"><img src={Logo} alt="Logo" /></Link>
         </div>
         <nav className="al-nav">
           {NAV.map(({ to, icon, label }) => (

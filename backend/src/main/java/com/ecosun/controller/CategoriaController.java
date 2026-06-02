@@ -88,7 +88,7 @@ public class CategoriaController {
     public ResponseEntity<?> deleteCategoria(@PathVariable Integer id) {
         try {
             // Verificar se há produtos usando esta categoria
-            String checkSql = "SELECT COUNT(*) FROM Produto WHERE categoria_id = ?";
+            String checkSql = "SELECT COUNT(*) FROM Produto WHERE categoria_id = ? AND status_produto = 'ativo'";
             Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, id);
             
             if (count > 0) {

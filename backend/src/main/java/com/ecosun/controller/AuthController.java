@@ -44,6 +44,7 @@ public class AuthController {
     }
 
     @PatchMapping("/make-admin/{userId}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> makeAdmin(@PathVariable Integer userId) {
         try {
             authService.makeAdmin(userId);

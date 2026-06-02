@@ -15,6 +15,7 @@ public class UsuarioController {
     private JdbcTemplate jdbcTemplate;
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUsuarios() {
         try {
             String sql = "SELECT id, nome, email, nivelAcesso, dataCadastro, statusUsuario FROM Usuario";
@@ -26,6 +27,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUsuarioById(@PathVariable Integer id) {
         try {
             String sql = "SELECT id, nome, email, nivelAcesso, dataCadastro, statusUsuario FROM Usuario WHERE id = ?";
@@ -40,6 +42,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/search")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> searchUsuarios(@RequestParam String query) {
         try {
             String sql = "SELECT id, nome, email, nivelAcesso, dataCadastro, statusUsuario FROM Usuario WHERE nome LIKE ? OR email LIKE ? OR CAST(id AS VARCHAR) LIKE ?";
@@ -52,6 +55,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUsuario(@PathVariable Integer id, @RequestBody Map<String, Object> request) {
         try {
             String nome = (String) request.get("nome");
@@ -69,6 +73,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUsuario(@PathVariable Integer id) {
         try {
             String sql = "DELETE FROM Usuario WHERE id = ?";

@@ -1,9 +1,12 @@
 import './Home.css'
+import './HomeQuickSimulator.css'
+
 import './dark-mode.css'
 import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { isLoggedIn, isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/authAPI'
+import { isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/authAPI'
+
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
 import { getCategories, updateConteudo } from './utils/categories'
 import { updateUser } from './utils/usersAPI'
@@ -15,9 +18,8 @@ import SolarQuote from './SolarQuote'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
 import economiaIcon from './assets/porco_economia.png'
-import garantiaIcon from './assets/garantia.png'
-import suporteIcon from './assets/Suporte_tecnico.png'
 import CasaIcon from './assets/background-casa.png'
+
 import sofa from './assets/sofa.png'
 import reembolso from './assets/reembolso-alternativo.png'
 
@@ -44,6 +46,60 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+
+  const [quickForm, setQuickForm] = useState({
+    monthlyKwh: '',
+    monthlyBill: ''
+  })
+
+  const [quickResult, setQuickResult] = useState(null)
+
+  const calcularEstimativa = ({ monthlyKwh, monthlyBill }) => {
+    const kwh = parseFloat(monthlyKwh)
+    const bill = parseFloat(monthlyBill)
+
+
+    if (!Number.isFinite(kwh) || kwh <= 0 || !Number.isFinite(bill) || bill <= 0) {
+      return {
+        monthlySavings: 0,
+        reductionPercent: 0,
+        paybackYears: 0,
+        co2Reduction: 0
+      }
+    }
+
+    // Heurísticas simples/consistentes com o SolarQuote
+    const energyConsumptionYear = kwh * 12
+    const monthlySavings = bill * 0.9 // assume ~10% de manutenção/variação
+    const reductionPercent = 95
+
+    const systemPower = energyConsumptionYear / 1200 // kW (mesma regra do SolarQuote)
+    const panelsNeeded = Math.ceil(systemPower / 0.55)
+    const totalCost = panelsNeeded * 1200 + 3000
+
+    const paybackTimeYears = totalCost / (monthlySavings * 12)
+    const co2Reduction = (energyConsumptionYear * 0.0817) // toneladas CO2/ano
+
+    return {
+      monthlySavings,
+      reductionPercent,
+      paybackYears: paybackTimeYears,
+      co2Reduction
+    }
+  }
+
+
+
+
+  const formatBRL = (value) => {
+    const num = typeof value === 'number' ? value : Number(value)
+    if (!Number.isFinite(num)) return '0'
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+  }
+
+
+
+
 
 
   useEffect(() => {
@@ -371,9 +427,8 @@ const Home = () => {
 
   return (
     <>
-
-
       <header className="cabecalho">
+
         <nav className="topo">
           <ul className="menu">
             <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
@@ -391,11 +446,9 @@ const Home = () => {
               <>
                 {userIsAdmin && (
                   <>
+                    
                     <li>
-                      <Link to="/admin" className="admin-link">Usuários</Link>
-                    </li>
-                    <li>
-                      <Link to="/admin-products" className="admin-link">Produtos</Link>
+                      <Link to="/admin-dashboard" className="admin-link">Admin</Link>
                     </li>
                   </>
                 )}
@@ -488,7 +541,6 @@ const Home = () => {
 
    <h1> Por que usar Energia Solar? </h1>
         <section className="info-cards">
-         
           <div className="info-card">
             <img src={economiaIcon} alt="Economia" />
             <h3>Redução da conta de energia</h3>
@@ -505,7 +557,160 @@ const Home = () => {
             <p>Os sistemas de energia solar exigem pouca manutenção, com limpeza simples e revisões ocasionais para manter o máximo desempenho ao longo dos anos.</p>
           </div>
         </section>
+
+        <section className="quick-simulator">
+          <h2 className="quick-title">Simulador rápido de economia</h2>
+          <p className="quick-subtitle">Informe seus números e veja uma estimativa em segundos.</p>
+
+          <div className="quick-grid">
+            <div className="quick-inputs">
+              <label>
+                Consumo mensal (kWh)
+                <input
+                  type="number"
+                  min="0"
+                  value={quickForm.monthlyKwh}
+                  onChange={(e) => setQuickForm((prev) => ({ ...prev, monthlyKwh: e.target.value }))}
+                  placeholder="Ex: 250"
+                />
+              </label>
+
+              <label>
+                Conta média (R$)
+                <input
+                  type="number"
+                  min="0"
+                  value={quickForm.monthlyBill}
+                  onChange={(e) => setQuickForm((prev) => ({ ...prev, monthlyBill: e.target.value }))}
+                  placeholder="Ex: 220"
+                />
+              </label>
+
+              <div className="quick-actions">
+                <button
+                  className="btn-primary quick-cta"
+                  onClick={() => setQuickResult(calcularEstimativa(quickForm))}
+                >
+                  Ver estimativa
+                </button>
+<button
+                  type="button"
+                  className="btn-secondary quick-link"
+                  style={{ textDecoration: 'none' }}
+                  onClick={() => {
+                    // Navega com pré-seleção para o configurador
+                    const kwh = parseFloat(quickForm.monthlyKwh);
+                    const bill = parseFloat(quickForm.monthlyBill);
+                    if (!Number.isFinite(kwh) || kwh <= 0 || !Number.isFinite(bill) || bill <= 0) return;
+
+                    // Heurística: estimar tamanho aproximado do sistema baseado em kWh
+                    const energyConsumptionYear = kwh * 12;
+                    const systemPower = energyConsumptionYear / 1200; // mesma regra do SolarQuote
+                    const panelsNeeded = Math.max(1, Math.ceil(systemPower / 0.55));
+
+                    // Para recomendar produtos no configurador, precisamos selecionar IDs após carregar produtos.
+                    // Usaremos o estado atual 'products' carregado no Home.
+                    const placaCandidates = products.filter(p => {
+                      const nome = (p.nome || '').toLowerCase();
+                      return nome.includes('placa') || (p.categoria_id && String(p.categoria_id).toLowerCase().includes('placa'));
+                    });
+
+                    // Fallback: tentar encontrar pela especificação de potência
+                    const panelSpecCandidates = products.filter(p => {
+                      try {
+                        const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {};
+                        return specs && (parseFloat(specs.potencia_wp) || 0) > 0;
+                      } catch {
+                        return false;
+                      }
+                    });
+
+                    const panelPool = placaCandidates.length > 0 ? placaCandidates : panelSpecCandidates;
+                    const inverterCandidates = products.filter(p => {
+                      const nome = (p.nome || '').toLowerCase();
+                      return nome.includes('inversor') || nome.includes('micro') || nome.includes('controlador');
+                    });
+                    const batteryCandidates = products.filter(p => {
+                      const nome = (p.nome || '').toLowerCase();
+                      return nome.includes('bateria');
+                    });
+
+                    const pickBest = (arr, predicate) => {
+                      const scored = arr
+                        .map(p => {
+                          const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {};
+                          return { p, score: predicate(specs, p) };
+                        })
+                        .filter(x => Number.isFinite(x.score))
+                        .sort((a, b) => b.score - a.score);
+                      return scored[0]?.p || null;
+                    };
+
+                    const bestPanel = pickBest(panelPool, (specs) => parseFloat(specs.potencia_wp) || 0);
+                    const bestInverter = pickBest(inverterCandidates, (_specs, p) => Number(p.preco) || 0);
+                    const bestBattery = pickBest(batteryCandidates, (_specs, p) => Number(p.preco) || 0);
+
+                    // Quantidade: no configurador vamos criar uma entrada com quantidade=1 por produto.
+                    // A escolha de quantidade em massa para o painel não está pronta no UI.
+                    // Então repetimos o mesmo ID 'panelsNeeded' vezes através de uma lista com IDs repetidos.
+                    const recommendedProductIds = [];
+                    if (bestPanel?.id) {
+                      for (let i = 0; i < panelsNeeded && i < 20; i++) recommendedProductIds.push(bestPanel.id);
+                    }
+                    if (bestInverter?.id && recommendedProductIds.length < 25) recommendedProductIds.push(bestInverter.id);
+                    if (bestBattery?.id && bill > 250 && recommendedProductIds.length < 30) recommendedProductIds.push(bestBattery.id);
+
+                    const navState = {
+                      recommendedProductIds,
+                      quickInput: { monthlyKwh: kwh, monthlyBill: bill }
+                    };
+
+                    // Usar window.location para evitar depender de useNavigate
+                    // (o configurador vai ler location.state via react-router)
+                    window.location.href = `/configurador`;
+                    sessionStorage.setItem('recommendedProductIds', JSON.stringify(navState));
+                  }}
+                >
+                  Quero meu orçamento
+                </button>
+              </div>
+
+              <div className="quick-hint">
+                *Estimativa simplificada. No configurador, calculamos com dados mais completos.
+              </div>
+            </div>
+
+            <div className="quick-results">
+              {quickResult ? (
+                <div className="quick-result-card">
+                  <div className="quick-metric">
+                    <span className="quick-label">Economia mensal (estim.)</span>
+                    <span className="quick-value">R$ {formatBRL(quickResult.monthlySavings)}</span>
+                  </div>
+                  <div className="quick-metric">
+                    <span className="quick-label">Redução na conta (estim.)</span>
+                    <span className="quick-value">{quickResult.reductionPercent.toFixed(0)}%</span>
+                  </div>
+                  <div className="quick-metric">
+                    <span className="quick-label">Retorno (estim.)</span>
+                    <span className="quick-value">{quickResult.paybackYears.toFixed(1)} anos</span>
+                  </div>
+                  <div className="quick-metric">
+                    <span className="quick-label">CO₂/ano (estim.)</span>
+                    <span className="quick-value">{quickResult.co2Reduction.toFixed(1)} t</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="quick-empty">
+                  <div className="quick-empty-title">Preencha os campos</div>
+                  <div className="quick-empty-text">Clique em “Ver estimativa” para ver os resultados aqui.</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
       </main>
+
 
       <SolarQuote isOpen={isQuoteOpen} onClose={() => setIsQuoteOpen(false)} />
 

@@ -267,7 +267,9 @@ const AdminProducts = () => {
       setSuccessMessage('Categoria removida com sucesso!')
       setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
-      // removed alert
+      const msg = error.response?.data || 'Erro ao deletar categoria'
+      setSuccessMessage(typeof msg === 'string' ? msg : 'Erro ao deletar categoria')
+      setTimeout(() => setSuccessMessage(''), 4000)
       setDeletingCategory(null)
     }
   }
