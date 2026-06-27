@@ -303,4 +303,4 @@ const MeusOrcamentos = () => {
   )
 }
 
-export default MeusOrcamentos
+export default MeusOrcamentose

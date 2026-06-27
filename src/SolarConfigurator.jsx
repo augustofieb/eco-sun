@@ -239,7 +239,7 @@ const SolarConfigurator = () => {
                   <span className="user-welcome">Olá, {user.nome || user.name}</span>
                 </li>
                 <li>
-                  <Link to="/meus-orcamentos" className="quote-btn" style={{textDecoration: 'none'}}>📋 Meus Orçamentos</Link>
+                  <Link to="/meus-orcamentos" className="quote-btn" style={{textDecoration: 'none'}}> Meus Orçamentos</Link>
                 </li>
               </>
             ) : (
@@ -279,7 +279,7 @@ const SolarConfigurator = () => {
             <div className="app-banner">
               <div className="app-banner-content">
                 <h4>📱 Baixe nosso App!</h4>
-                <p>Para visualizar seus orçamentos salvos e acompanhar o andamento, baixe nosso aplicativo móvel.</p>
+                <p>Baixe nosso aplicativo e faça uma simulação rápida do seu orçamento solar com base no quanto você gasta por mês!</p>
                 <div className="app-links">
                   <a href="#" className="app-store-btn">App Store</a>
                   <a href="#" className="play-store-btn">Google Play</a>
