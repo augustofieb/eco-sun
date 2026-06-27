@@ -238,6 +238,9 @@ const SolarConfigurator = () => {
                 <li>
                   <span className="user-welcome">Olá, {user.nome || user.name}</span>
                 </li>
+                <li>
+                  <Link to="/meus-orcamentos" className="quote-btn" style={{textDecoration: 'none'}}>📋 Meus Orçamentos</Link>
+                </li>
               </>
             ) : (
               <>

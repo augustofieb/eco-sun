@@ -16,6 +16,12 @@ public class OrcamentoController {
     @Autowired
     private OrcamentoRepository orcamentoRepository;
 
+    @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Orcamento>> getAllOrcamentos() {
+        return ResponseEntity.ok(orcamentoRepository.findAll());
+    }
+
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Orcamento>> getOrcamentosByUsuario(@PathVariable Integer usuarioId) {
         return ResponseEntity.ok(orcamentoRepository.findByUsuarioId(usuarioId));

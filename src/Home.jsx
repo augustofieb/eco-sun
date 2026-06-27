@@ -455,6 +455,9 @@ const Home = () => {
                 <li>
                   <span className="user-welcome">Olá, {user.nome || user.name}</span>
                 </li>
+                <li>
+                  <Link to="/meus-orcamentos" className="quote-btn" style={{textDecoration: 'none'}}> Meus Orçamentos</Link>
+                </li>
               </>
             ) : (
               <>
@@ -468,7 +471,7 @@ const Home = () => {
             )}
             <li>
               <Link to="/configurador" className="quote-btn" style={{textDecoration: 'none', marginRight: user ? '0' : '50px'}}>
-                💡 Orçamento
+                 Orçamento
               </Link>
             </li>
             <li>

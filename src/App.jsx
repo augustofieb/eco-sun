@@ -9,6 +9,7 @@ import AdminProducts from './AdminProducts.jsx'
 import AdminStats from './AdminStats.jsx'
 import AdminDashboard from './AdminDashboard.jsx'
 import AdminOrcamentos from './AdminOrcamentos.jsx'
+import MeusOrcamentos from './MeusOrcamentos.jsx'
 import ProductDetails from './ProductDetails.jsx'
 import SolarConfigurator from './SolarConfigurator.jsx'
 
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword /> } />
         <Route path="/test" element={<TestConnection /> } />
         <Route path="/admin-orcamentos" element={<AdminOrcamentos /> } />
+        <Route path="/meus-orcamentos" element={<MeusOrcamentos /> } />
         <Route path="/admin-dashboard" element={<AdminDashboard /> } />
         <Route path="/admin" element={<Admin /> } />
         <Route path="/admin-products" element={<AdminProducts /> } />
