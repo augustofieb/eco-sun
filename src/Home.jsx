@@ -1,5 +1,5 @@
 import './Home.css'
-import './HomeQuickSimulator.css'
+
 
 import './dark-mode.css'
 import './toggle-switch.css'
