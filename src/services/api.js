@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -28,7 +29,7 @@ export const authAPI = {
 // Products API
 export const productsAPI = {
   getAll: () => api.get('/produtos'),
-  search: (query) => api.get(`/produtos/search?query=${encodeURIComponent(query)}`),
+  search: (query, config) => api.get('/produtos/search', { params: { query }, ...config }),
   getByCategory: (categoriaId) => api.get(`/produtos/categoria/${categoriaId}`),
   getById: (id) => api.get(`/produtos/${id}`),
   create: (produto) => api.post('/produtos', produto),

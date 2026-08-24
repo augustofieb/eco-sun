@@ -210,7 +210,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-image: url('/src/assets/background-casa.png');
+  background-image: url('./assets/background-casa.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;

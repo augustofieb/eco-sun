@@ -81,3 +81,14 @@ BEGIN
     ('renovavel', 'Economia: Reduza até 95% da sua conta de luz\nSustentabilidade: Energia limpa e renovável\nValorização: Aumenta o valor do seu imóvel\nIndependência: Menos dependência da rede elétrica\nDurabilidade: Painéis com vida útil de 25+ anos'),
     ('faq', 'Quanto tempo dura a instalação?|A instalação residencial típica leva de 1 a 3 dias.\nFunciona em dias nublados?|Sim, os painéis geram energia mesmo com pouca luz solar.\nQual a garantia dos equipamentos?|Oferecemos 2 anos de garantia em todos os equipamentos.');
 END
+
+-- Indices usados pelos filtros publicos e consultas de relacionamento.
+IF OBJECT_ID('Produto', 'U') IS NOT NULL
+AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_produtos_status_categoria')
+    CREATE INDEX IX_produtos_status_categoria ON Produto (status_produto, categoria_id);
+IF OBJECT_ID('Avaliacao', 'U') IS NOT NULL
+AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_avaliacoes_produto')
+    CREATE INDEX IX_avaliacoes_produto ON Avaliacao (ProdutoId);
+IF OBJECT_ID('Orcamento', 'U') IS NOT NULL
+AND NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_orcamentos_usuario')
+    CREATE INDEX IX_orcamentos_usuario ON Orcamento (usuario_id);

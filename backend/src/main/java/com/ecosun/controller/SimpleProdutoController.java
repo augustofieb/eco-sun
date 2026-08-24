@@ -43,7 +43,7 @@ public class SimpleProdutoController {
     @GetMapping("/search")
     public ResponseEntity<?> searchProdutos(@RequestParam String query) {
         try {
-            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl FROM Produto WHERE nome LIKE ? OR descricao LIKE ? OR CAST(id AS VARCHAR) LIKE ?";
+            String sql = "SELECT id, nome, descricao, preco, categoria_id, status_produto, fotoUrl FROM Produto WHERE status_produto = 'ATIVO' AND (nome LIKE ? OR descricao LIKE ? OR CAST(id AS VARCHAR) LIKE ?)";
             String searchPattern = "%" + query + "%";
             List<Map<String, Object>> produtos = jdbcTemplate.queryForList(sql, searchPattern, searchPattern, searchPattern);
             return ResponseEntity.ok(produtos);

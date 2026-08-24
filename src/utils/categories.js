@@ -1,9 +1,29 @@
 import { categoriesAPI } from '../services/api';
 
+const CACHE_TTL = 30000;
+let categoriesCache = null;
+let categoriesCacheExpiresAt = 0;
+let categoriesRequest = null;
+
+export const invalidateCategoriesCache = () => {
+  categoriesCache = null;
+  categoriesCacheExpiresAt = 0;
+};
+
 export const getCategories = async () => {
   try {
-    const response = await categoriesAPI.getAll();
-    return response.data;
+    if (categoriesCache && categoriesCacheExpiresAt > Date.now()) return categoriesCache;
+    if (categoriesRequest) return categoriesRequest;
+
+    categoriesRequest = categoriesAPI.getAll().then((response) => {
+      categoriesCache = response.data;
+      categoriesCacheExpiresAt = Date.now() + CACHE_TTL;
+      return categoriesCache;
+    }).finally(() => {
+      categoriesRequest = null;
+    });
+
+    return await categoriesRequest;
   } catch (error) {
     console.error('Error fetching categories:', error);
     // Fallback to hardcoded categories
@@ -19,6 +39,7 @@ export const getCategories = async () => {
 export const addCategory = async (nome, descricao = '', especificacoes = '') => {
   try {
     const response = await categoriesAPI.create({ nome, descricao, especificacoes });
+    invalidateCategoriesCache();
     return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
@@ -39,6 +60,7 @@ export const searchCategories = async (query) => {
 export const updateCategory = async (id, categoria) => {
   try {
     const response = await categoriesAPI.update(id, categoria);
+    invalidateCategoriesCache();
     return response.data;
   } catch (error) {
     console.error('Error updating category:', error);
@@ -49,6 +71,7 @@ export const updateCategory = async (id, categoria) => {
 export const deleteCategory = async (id) => {
   try {
     const response = await categoriesAPI.delete(id);
+    invalidateCategoriesCache();
     return response.data;
   } catch (error) {
     console.error('Error deleting category:', error);

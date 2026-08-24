@@ -4,7 +4,7 @@ import './Home.css'
 import './dark-mode.css'
 import './toggle-switch.css'
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/authAPI'
 
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
@@ -18,7 +18,6 @@ import SolarQuote from './SolarQuote'
 import Logo from './assets/Logo.png'
 import placaSolar from './assets/placa_solar.png'
 import economiaIcon from './assets/porco_economia.png'
-import CasaIcon from './assets/background-casa.png'
 
 import sofa from './assets/sofa.png'
 import reembolso from './assets/reembolso-alternativo.png'
@@ -53,6 +52,7 @@ const Home = () => {
   })
 
   const [quickResult, setQuickResult] = useState(null)
+  const searchAbortRef = useRef(null)
 
   const calcularEstimativa = ({ monthlyKwh, monthlyBill }) => {
     const kwh = parseFloat(monthlyKwh)
@@ -137,6 +137,30 @@ const Home = () => {
     loadProducts()
   }, [])
 
+  useEffect(() => {
+    const query = searchQuery.trim()
+    if (!query) return undefined
+
+    const timer = setTimeout(async () => {
+      searchAbortRef.current?.abort()
+      const controller = new AbortController()
+      searchAbortRef.current = controller
+      setIsLoading(true)
+
+      try {
+        const searchResults = await searchProducts(query, controller.signal)
+        if (!controller.signal.aborted) {
+          setProducts(searchResults)
+          setSelectedCategory('search')
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false)
+      }
+    }, 350)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
   const loadCategories = async () => {
     const categoriesData = await getCategories()
     setCategories(categoriesData)
@@ -170,12 +194,6 @@ const Home = () => {
     if (query.trim() === '') {
       loadProducts()
       setSelectedCategory('all')
-    } else {
-      setIsLoading(true)
-      const searchResults = await searchProducts(query)
-      setProducts(searchResults)
-      setSelectedCategory('search')
-      setIsLoading(false)
     }
   }
 
@@ -528,6 +546,8 @@ const Home = () => {
                 <div key={product.id} className="product-card">
                   <Link to={`/product/${product.id}`} className="product-link">
                     <img 
+                      loading="lazy"
+                      decoding="async"
                       src={product.fotoUrl && product.fotoUrl.startsWith('data:') ? product.fotoUrl : (product.fotoUrl || placaSolar)} 
                       alt={product.nome} 
                       onError={(e) => { e.target.src = placaSolar }}
