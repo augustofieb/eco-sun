@@ -53,6 +53,7 @@ body {
   border: 1px solid #cbd5e0;
   border-radius: 6px;
   font-size: 16px;
+  color: #2d3748;
   background-color: white;
   transition: border-color 0.3s ease;
 }

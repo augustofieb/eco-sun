@@ -114,7 +114,7 @@
   justify-content: center;
 }
 
-.btn-primary {
+.quote-modal .btn-primary {
   background: #2c5530;
   color: white;
   border: none;
@@ -124,7 +124,7 @@
   font-weight: 600;
 }
 
-.btn-secondary {
+.quote-modal .btn-secondary {
   background: #6c757d;
   color: white;
   border: none;
@@ -134,11 +134,11 @@
   font-weight: 600;
 }
 
-.btn-primary:hover {
+.quote-modal .btn-primary:hover {
   background: #1e3a21;
 }
 
-.btn-secondary:hover {
+.quote-modal .btn-secondary:hover {
   background: #545b62;
 }
 

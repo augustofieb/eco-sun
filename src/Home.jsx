@@ -466,7 +466,7 @@ const Home = () => {
                   <>
                     
                     <li>
-                      <Link to="/admin-dashboard" className="admin-link">Admin</Link>
+                      <Link to="/admin-dashboard" className="admin-link">Painel de Admins</Link>
                     </li>
                   </>
                 )}
@@ -488,7 +488,7 @@ const Home = () => {
               </>
             )}
             <li>
-              <Link to="/configurador" className="quote-btn" style={{textDecoration: 'none', marginRight: user ? '0' : '50px'}}>
+              <Link to="/configurador" className="quote-btn" style={{textDecoration: 'none', marginRight: '60px'}}>
                  Orçamento
               </Link>
             </li>
@@ -599,7 +599,6 @@ const Home = () => {
             <button onClick={() => setSettingsView('renovavel')}>Por que usar energia renovável?</button>
             <button onClick={() => setSettingsView('faq')}>Perguntas Frequentes</button>
             <button onClick={() => setSettingsView('tema')}>Tema</button>
-            <button onClick={handleLogout} className="logout-btn">Sair</button>
           </div>
         ) : (
           <div className="settings-nav">
@@ -616,6 +615,11 @@ const Home = () => {
             renderSettingsContent()
           )}
         </div>
+        {user && (
+          <div className="settings-footer">
+            <button onClick={handleLogout} className="logout-btn">Sair</button>
+          </div>
+        )}
       </div>
 
       {isSettingsOpen && <div className="settings-overlay" onClick={() => setIsSettingsOpen(false)}></div>}
