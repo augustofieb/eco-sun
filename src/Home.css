@@ -39,7 +39,7 @@
 }
 
 .Logo {
-  height: 80px;
+  height: 110px;
 }
 
 .topo .menu li {
@@ -370,6 +370,9 @@ body, html {
   cursor: pointer;
   box-shadow: 0 3px 5px rgb(43 108 176 / 0.4);
   transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .btn-secondary:hover {

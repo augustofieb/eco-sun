@@ -1,3 +1,4 @@
+com/ecosun/config/DataInitializer.class
 com/ecosun/controller/StatsController.class
 com/ecosun/service/EmailService.class
 com/ecosun/controller/OrcamentoController.class
