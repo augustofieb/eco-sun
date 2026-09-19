@@ -219,6 +219,15 @@
   color: #cdd6e0;
 }
 
+.dark-mode .selected-product {
+  background-color: #1e2d40;
+  color: #cdd6e0;
+}
+
+.dark-mode .product-name {
+  color: #cdd6e0;
+}
+
 .dark-mode .empty-cart {
   color: #8a9bb0;
 }
