@@ -380,9 +380,9 @@ const SolarConfigurator = () => {
                     <div>
                       <span className="product-name">{product.nome}</span>
                       <div className="quantity-controls">
-                        <button onClick={() => updateQuantity(product.id, product.quantity - 1)}>-</button>
+                        <button onClick={() => updateQuantity(product.id, product.quantity - 1)} style={{fontSize:'16px', fontWeight:'bold'}}>−</button>
                         <span>{product.quantity}</span>
-                        <button onClick={() => updateQuantity(product.id, product.quantity + 1)}>+</button>
+                        <button onClick={() => updateQuantity(product.id, product.quantity + 1)} style={{fontSize:'16px', fontWeight:'bold'}}>+</button>
                       </div>
                       <span className="product-total">
                         R$ {(product.preco * product.quantity).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
@@ -391,7 +391,7 @@ const SolarConfigurator = () => {
                         className="remove-btn"
                         onClick={() => removeProduct(product.id)}
                       >
-                        ×
+                        ✕
                       </button>
                     </div>
                     {Object.keys(specs).length > 0 && (
