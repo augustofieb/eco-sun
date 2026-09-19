@@ -10,6 +10,7 @@ import OrcamentoNomeModal from './components/OrcamentoNomeModal'
 
 import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
+import { initTheme } from './utils/theme'
 
 
 const SolarConfigurator = () => {

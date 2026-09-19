@@ -1,5 +1,6 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import {Routes, Route} from 'react-router-dom'
+import { initTheme } from './utils/theme'
 
 const Home = lazy(() => import('./Home.jsx'))
 const Login = lazy(() => import('./Login.jsx'))
@@ -16,7 +17,9 @@ const ProductDetails = lazy(() => import('./ProductDetails.jsx'))
 const SolarConfigurator = lazy(() => import('./SolarConfigurator.jsx'))
 
 const App = () => {
-  
+  useEffect(() => {
+    initTheme()
+  }, [])
   return (
       <Suspense fallback={<div className="route-loading" aria-live="polite">Carregando...</div>}>
         <Routes>
