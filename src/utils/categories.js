@@ -82,7 +82,7 @@ export const deleteCategory = async (id) => {
 export const getConteudo = async (chave) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`http://localhost:8081/api/conteudo/${chave}`, {
+    const response = await fetch(`https://eco-sun.onrender.com/api/conteudo/${chave}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -99,7 +99,7 @@ export const getConteudo = async (chave) => {
 
 export const updateConteudo = async (chave, conteudo) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/produtos/conteudo/${chave}`, {
+    const response = await fetch(`https://eco-sun.onrender.com/api/produtos/conteudo/${chave}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
