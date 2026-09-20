@@ -105,7 +105,7 @@ const Home = () => {
   useEffect(() => {
     const loadUserData = async () => {
       let currentUser = getCurrentUser()
-      
+
       // Se o usuário está logado, recarregar dados do backend
       if (currentUser) {
         const refreshedUser = await refreshUserData()
@@ -113,11 +113,11 @@ const Home = () => {
           currentUser = refreshedUser
         }
       }
-      
+
       console.log('Current user:', currentUser)
       setUser(currentUser)
       setUserIsAdmin(isAdmin())
-      
+
       if (currentUser) {
         setProfileForm({
           name: currentUser.nome || currentUser.name || '',
@@ -129,11 +129,16 @@ const Home = () => {
         })
       }
     }
-    
+
+    const syncThemeState = async () => {
+      const theme = await getTheme()
+      setIsDarkMode(theme === 'dark')
+      await initTheme()
+    }
+
     loadUserData()
     loadCategories()
-    setIsDarkMode(getTheme() === 'dark')
-    initTheme()
+    syncThemeState()
     loadProducts()
   }, [])
 

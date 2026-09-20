@@ -26,6 +26,21 @@
   background-color: #111e2b;
 }
 
+.dark-mode .search-box {
+  background-color: #1e2d40;
+  border-color: #2a3f57;
+  color: #cdd6e0;
+}
+
+.dark-mode .search-box::placeholder {
+  color: #8a9bb0;
+}
+
+.dark-mode .search-box:focus {
+  outline: 2px solid #5b9bd5;
+  border-color: #5b9bd5;
+}
+
 .dark-mode .topo .menu li a,
 .dark-mode .topo .menu .user-welcome,
 .dark-mode .topo .menu .create-account,
