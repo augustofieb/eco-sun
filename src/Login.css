@@ -35,6 +35,14 @@ body {
   gap: 20px;
 }
 
+.login-form .btn-primary {
+  background-color: #4CAF50;
+}
+
+.login-form .btn-primary:hover {
+  background-color: #45a049;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -50,10 +58,10 @@ body {
 .form-group input {
   height: 45px;
   padding: 0 15px;
-  border: 1px solid #cbd5e0;
+  border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 16px;
-  color: #2d3748;
+  color: #213547;
   background-color: white;
   transition: border-color 0.3s ease;
 }
@@ -74,15 +82,26 @@ body {
 
 .forgot-password,
 .create-account-link {
-  color: #2b6cb0;
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.3s ease;
 }
 
-.forgot-password:hover,
+.forgot-password {
+  color: #4CAF50;
+}
+
+.create-account-link {
+  color: #4CAF50;
+}
+
+.forgot-password:hover {
+  color: #45a049;
+  text-decoration: underline;
+}
+
 .create-account-link:hover {
-  color: #2c5282;
+  color: #45a049;
   text-decoration: underline;
 }
 

@@ -332,12 +332,60 @@
   color: #cdd6e0;
 }
 
+.dark-mode .auth-form {
+  background-color: #1a2535;
+  color: #cdd6e0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.28);
+}
+
+.dark-mode .auth-form h2 {
+  color: #cdd6e0;
+}
+
+.dark-mode .auth-form input {
+  background-color: #1e2d40;
+  color: #cdd6e0;
+  border-color: #2a3f57;
+}
+
+.dark-mode .auth-form input::placeholder {
+  color: #8a9bb0;
+}
+
+.dark-mode .auth-form button:disabled {
+  background-color: #2a3f57;
+  color: #8a9bb0;
+}
+
+.dark-mode .auth-links a {
+  color: #4CAF50;
+}
+
+.dark-mode .auth-links a:hover {
+  color: #45a049;
+}
+
+.dark-mode .login-link {
+  color: #4CAF50;
+}
+
+.dark-mode .login-link:hover {
+  color: #45a049;
+}
+
 .dark-mode .form-group label {
   color: #cdd6e0;
 }
 
 .dark-mode .form-group input {
   background-color: #1e2d40;
+  color: #cdd6e0;
+  border-color: #2a3f57;
+}
+
+.dark-mode .auth-form input,
+.dark-mode .login-form .form-group input {
+  background-color: #1e2d40 !important;
   color: #cdd6e0;
   border-color: #2a3f57;
 }

@@ -23,11 +23,18 @@
 
 .auth-form input {
   width: 100%;
+  box-sizing: border-box;
   padding: 12px;
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
+  background-color: #fff;
+  color: #213547;
+}
+
+.auth-form input::placeholder {
+  color: #718096;
 }
 
 .auth-form button {
