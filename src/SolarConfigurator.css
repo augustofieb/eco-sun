@@ -76,9 +76,15 @@ body {
   padding: 10px 20px;
   border: 2px solid #ddd;
   background: white;
+  color: #333;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s;
+}
+
+.category-tab:hover {
+  background: #f0f0f0;
+  border-color: #aaa;
 }
 
 .category-tab.active {

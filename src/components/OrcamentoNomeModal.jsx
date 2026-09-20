@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import './OrcamentoNomeModal.css'
 
 const OrcamentoNomeModal = ({ open, onClose, onConfirm }) => {
@@ -33,11 +34,13 @@ const OrcamentoNomeModal = ({ open, onClose, onConfirm }) => {
 
   if (!open) return null
 
-  return (
+  const isDark = document.body.classList.contains('dark-mode')
+
+  return createPortal(
     <div className="orcamento-nome-modal__backdrop" onMouseDown={(e) => {
       if (e.target === e.currentTarget) onClose?.()
     }}>
-      <div className="orcamento-nome-modal__card">
+      <div className={`orcamento-nome-modal__card${isDark ? ' dark-mode' : ''}`}>
         <h3>Nome do Orçamento</h3>
         <p>Escolha um nome para este orçamento.</p>
 
@@ -64,7 +67,7 @@ const OrcamentoNomeModal = ({ open, onClose, onConfirm }) => {
         </div>
       </div>
     </div>
-  )
+  , document.body)
 }
 
 export default OrcamentoNomeModal

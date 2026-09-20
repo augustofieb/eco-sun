@@ -33,6 +33,7 @@
 
 .orcamento-nome-modal__field input{
   width: 100%;
+  box-sizing: border-box;
   padding: 10px 12px;
   border: 1px solid #d9d9d9;
   border-radius: 10px;
@@ -60,9 +61,10 @@
 .orcamento-nome-modal__btn{
   border: none;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 10px 20px;
   cursor: pointer;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .orcamento-nome-modal__btn.primary{
@@ -73,5 +75,29 @@
 .orcamento-nome-modal__btn.secondary{
   background: #f1f3f5;
   color: #222;
+}
+
+.orcamento-nome-modal__card.dark-mode{
+  background: #1a2535;
+  color: #cdd6e0;
+}
+
+.orcamento-nome-modal__card.dark-mode p{
+  color: #8a9bb0;
+}
+
+.orcamento-nome-modal__card.dark-mode label{
+  color: #cdd6e0;
+}
+
+.orcamento-nome-modal__card.dark-mode input{
+  background: #1e2d40;
+  color: #cdd6e0;
+  border-color: #2a3f57;
+}
+
+.orcamento-nome-modal__card.dark-mode .orcamento-nome-modal__btn.secondary{
+  background: #2a3f57;
+  color: #cdd6e0;
 }
 

@@ -317,6 +317,11 @@
   border-color: #2a3f57;
 }
 
+.dark-mode .category-tab:hover {
+  background: #2a3f57;
+  border-color: #5b9bd5;
+}
+
 .dark-mode .category-tab.active {
   background: #5b9bd5;
   color: #0f1923;
@@ -351,6 +356,15 @@
 }
 
 .dark-mode .spec-item {
+  color: #cdd6e0;
+}
+
+.dark-mode .selected-specs {
+  color: #cdd6e0;
+}
+
+.dark-mode .selected-specs span {
+  background: #2a3f57;
   color: #cdd6e0;
 }
 
