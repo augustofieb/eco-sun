@@ -35,7 +35,7 @@ const MeusOrcamentos = () => {
         <nav className="topo">
           <ul className="menu">
             <ul>
-              <img className="Logo" src={Logo} alt="Logo" />
+              <Link to="/"><img className="Logo" src={Logo} alt="Logo" /></Link>
             </ul>
 
             <li className="spacer"></li>

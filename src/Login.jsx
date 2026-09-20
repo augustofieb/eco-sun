@@ -41,7 +41,7 @@ const Login = () => {
       <header className="cabecalho">
         <nav className="topo">
           <ul className="menu">
-            <ul><img className='Logo' src={Logo} alt="Logo" /></ul>
+            <ul><Link to="/"><img className='Logo' src={Logo} alt="Logo" /></Link></ul>
             <li className="spacer"> </li>
             <li>
               <Link to="/" className="sign-in" style={{marginRight: '40px'}}>Voltar</Link>

@@ -141,6 +141,13 @@
   border-color: #2a3f57;
 }
 
+.dark-mode .category-filter button:hover,
+.dark-mode .category-filter button.active {
+  background-color: #2b6cb0;
+  color: #fff;
+  border-color: #4299e1;
+}
+
 .dark-mode .no-products {
   color: #8a9bb0;
 }

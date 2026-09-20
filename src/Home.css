@@ -80,6 +80,11 @@
   transform: scale(1.2);
 }
 
+.create-account,
+.sign-in {
+  color: #14532d;
+}
+
 .user-welcome {
   font-size: 16px;
   color: #2c5530;
