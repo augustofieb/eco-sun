@@ -77,6 +77,7 @@ const MeusOrcamentos = () => {
       <div className="division"></div>
 
       <div
+        className="orcamentos-page"
         style={{
           width: '100%',
           boxSizing: 'border-box',
@@ -84,7 +85,7 @@ const MeusOrcamentos = () => {
           textAlign: 'center',
         }}
       >
-        <h1 style={{ marginBottom: '2rem' }}>Meus Orçamentos</h1>
+        <h1 className="orcamentos-page-title" style={{ marginBottom: '2rem' }}>Meus Orçamentos</h1>
 
         {!user ? (
           <div style={{ marginTop: '3rem' }}>
@@ -106,7 +107,7 @@ const MeusOrcamentos = () => {
           <p style={{ color: '#888' }}>Carregando...</p>
         ) : orcamentos.length === 0 ? (
           <div style={{ marginTop: '3rem' }}>
-            <p style={{ color: '#aaa', marginBottom: '1rem' }}>
+            <p className="orcamento-empty-state" style={{ color: '#aaa', marginBottom: '1rem' }}>
               Você ainda não tem orçamentos salvos.
             </p>
 
@@ -140,6 +141,7 @@ const MeusOrcamentos = () => {
               return (
                 <div
                   key={o.id}
+                  className="orcamento-card"
                   style={{
                     width: '300px',
                     border: '1px solid #e5e7eb',
@@ -160,11 +162,11 @@ const MeusOrcamentos = () => {
                     }}
                   >
                     <div>
-                      <h3 style={{ margin: 0, fontSize: '1.1rem' }}>
+                      <h3 className="orcamento-card-title" style={{ margin: 0, fontSize: '1.1rem' }}>
                         {o.nome || `Orçamento #${o.id}`}
                       </h3>
 
-                      <span style={{ fontSize: '0.8rem', color: '#999' }}>
+                      <span className="orcamento-date" style={{ fontSize: '0.8rem', color: '#999' }}>
                         {o.dataCriacao
                           ? new Date(o.dataCriacao).toLocaleDateString('pt-BR')
                           : '—'}
@@ -174,15 +176,18 @@ const MeusOrcamentos = () => {
                     <button
                       onClick={() => handleDelete(o.id)}
                       style={{
-                        background: 'none',
-                        border: 'none',
+                        background: '#dc2626',
+                        border: '1px solid #b91c1c',
+                        borderRadius: '6px',
+                        padding: '0.45rem 0.75rem',
                         cursor: 'pointer',
-                        color: '#f87171',
-                        fontSize: '1.2rem',
+                        color: '#fff',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
                       }}
                       title="Excluir"
                     >
-                      🗑️
+                      Excluir
                     </button>
                   </div>
 
@@ -239,6 +244,7 @@ const MeusOrcamentos = () => {
                     ].map(({ label, value }) => (
                       <div
                         key={label}
+                        className="orcamento-stat"
                         style={{
                           background: '#f9fafb',
                           borderRadius: '8px',
@@ -246,6 +252,7 @@ const MeusOrcamentos = () => {
                         }}
                       >
                         <div
+                          className="orcamento-stat-label"
                           style={{
                             fontSize: '0.75rem',
                             color: '#888',
@@ -255,7 +262,7 @@ const MeusOrcamentos = () => {
                           {label}
                         </div>
 
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                        <div className="orcamento-stat-value" style={{ fontWeight: 600, fontSize: '0.95rem' }}>
                           {value}
                         </div>
                       </div>
@@ -264,7 +271,7 @@ const MeusOrcamentos = () => {
 
                   {produtos.length > 0 && (
                     <div style={{ marginTop: '0.75rem' }}>
-                      <p style={{ fontSize: '0.8rem', color: '#888' }}>
+                      <p className="orcamento-produtos-label" style={{ fontSize: '0.8rem', color: '#888' }}>
                         Produtos:
                       </p>
 
@@ -278,6 +285,7 @@ const MeusOrcamentos = () => {
                         {produtos.map((p, i) => (
                           <span
                             key={i}
+                            className="orcamento-produto-tag"
                             style={{
                               background: '#dbeafe',
                               color: '#1d4ed8',

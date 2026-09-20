@@ -38,6 +38,13 @@
   border: 1px solid #d9d9d9;
   border-radius: 10px;
   outline: none;
+  color: #222;
+  background: #fff;
+}
+
+.orcamento-nome-modal__field input::placeholder{
+  color: #8a8f98;
+  opacity: 1;
 }
 
 .orcamento-nome-modal__field input:focus{
@@ -94,6 +101,11 @@
   background: #1e2d40;
   color: #cdd6e0;
   border-color: #2a3f57;
+}
+
+.orcamento-nome-modal__card.dark-mode input::placeholder{
+  color: #8a9bb0;
+  opacity: 1;
 }
 
 .orcamento-nome-modal__card.dark-mode .orcamento-nome-modal__btn.secondary{

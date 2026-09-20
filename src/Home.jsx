@@ -1,7 +1,4 @@
 import './Home.css'
-
-
-import './dark-mode.css'
 import './toggle-switch.css'
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'

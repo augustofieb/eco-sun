@@ -33,7 +33,7 @@ const AdminDashboard = () => {
               onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
             >
               <span style={{ fontSize: '2.5rem' }}>{icon}</span>
-              <strong style={{ fontSize: '1rem', color: 'var(--text-primary, #222)' }}>{label}</strong>
+              <strong style={{ fontSize: '1rem', color: 'var(--text-color, #222)' }}>{label}</strong>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary, #888)' }}>{desc}</span>
             </button>
           ))}

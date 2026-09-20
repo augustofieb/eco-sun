@@ -143,19 +143,24 @@
 }
 
 /* Dark mode */
+.dark-mode .quote-modal,
 [data-theme="dark"] .quote-modal {
   background: #2d3748;
   color: white;
 }
 
+.dark-mode .quote-header,
 [data-theme="dark"] .quote-header {
   border-bottom-color: #4a5568;
 }
 
+.dark-mode .quote-header h2,
 [data-theme="dark"] .quote-header h2 {
   color: #68d391;
 }
 
+.dark-mode .form-group input,
+.dark-mode .form-group select,
 [data-theme="dark"] .form-group input,
 [data-theme="dark"] .form-group select {
   background: #4a5568;
@@ -169,19 +174,23 @@
   cursor: not-allowed;
 }
 
+.dark-mode .form-group input[readonly],
 [data-theme="dark"] .form-group input[readonly] {
   background-color: #2d3748;
   color: #a0aec0;
 }
 
+.dark-mode .quote-details,
 [data-theme="dark"] .quote-details {
   background: #4a5568;
 }
 
+.dark-mode .quote-item,
 [data-theme="dark"] .quote-item {
   border-bottom-color: #718096;
 }
 
+.dark-mode .quote-item .value,
 [data-theme="dark"] .quote-item .value {
   color: #68d391;
 }

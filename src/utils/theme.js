@@ -14,6 +14,7 @@ const applyThemeToDocument = (theme) => {
   const normalizedTheme = normalizeTheme(theme);
   currentTheme = normalizedTheme;
   document.body.classList.toggle('dark-mode', normalizedTheme === 'dark');
+  document.body.dataset.theme = normalizedTheme;
   localStorage.setItem(THEME_STORAGE_KEY, normalizedTheme);
 };
 

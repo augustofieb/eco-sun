@@ -41,6 +41,47 @@
   border-color: #5b9bd5;
 }
 
+.dark-mode .orcamentos-page,
+.dark-mode .orcamentos-page h1,
+.dark-mode .orcamentos-page p,
+.dark-mode .orcamentos-page span,
+.dark-mode .orcamentos-page h3,
+.dark-mode .orcamento-card,
+.dark-mode .orcamento-card-title,
+.dark-mode .orcamento-date,
+.dark-mode .orcamento-stat,
+.dark-mode .orcamento-stat-label,
+.dark-mode .orcamento-stat-value,
+.dark-mode .orcamento-produtos-label,
+.dark-mode .orcamento-produto-tag {
+  color: #cdd6e0;
+}
+
+.dark-mode .orcamento-card {
+  background: #1a2535 !important;
+  border-color: #2a3f57 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.28) !important;
+}
+
+.dark-mode .orcamento-stat {
+  background: #111e2b !important;
+}
+
+.dark-mode .orcamento-stat-label,
+.dark-mode .orcamento-date,
+.dark-mode .orcamento-produtos-label {
+  color: #8a9bb0 !important;
+}
+
+.dark-mode .orcamento-produto-tag {
+  background: rgba(91, 155, 213, 0.18) !important;
+  color: #dbeafe !important;
+}
+
+.dark-mode .orcamento-empty-state {
+  color: #8a9bb0 !important;
+}
+
 .dark-mode .topo .menu li a,
 .dark-mode .topo .menu .user-welcome,
 .dark-mode .topo .menu .create-account,
@@ -401,6 +442,7 @@
 .dark-mode .users-table h2,
 .dark-mode .products-table h2 {
   color: #cdd6e0;
+  font-weight: 600;
 }
 
 .dark-mode .search-input {
@@ -449,6 +491,7 @@
 /* AdminStats */
 .dark-mode .st-title {
   color: #cdd6e0;
+  font-weight: 600;
 }
 
 .dark-mode .st-card {
@@ -457,10 +500,12 @@
 
 .dark-mode .st-card-value {
   color: #cdd6e0;
+  font-weight: 600;
 }
 
 .dark-mode .st-card-label {
   color: #8a9bb0;
+  font-weight: 500;
 }
 
 .dark-mode .st-panel {
@@ -469,6 +514,7 @@
 
 .dark-mode .st-panel h3 {
   color: #8a9bb0;
+  font-weight: 500;
 }
 
 .dark-mode .st-table th {
