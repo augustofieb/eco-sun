@@ -32,6 +32,16 @@ Para Gmail, use `MAIL_HOST=smtp.gmail.com` e uma senha de aplicativo. Se a conta
 Outlook tiver autenticação em duas etapas, use uma senha de aplicativo quando a
 Microsoft exigir. Sem essas variáveis, o backend não conseguirá enviar o email.
 
+ Se o provedor de hospedagem bloquear conexões SMTP de saída (erro `connect timed out`), use um provedor de API HTTP como o Resend:
+
+ ```bash
+ export EMAIL_PROVIDER=resend
+ export RESEND_API_KEY=re_xxxxxxxxx
+ export RESEND_FROM="ECO SUN <noreply@seu-dominio.com>"
+ ```
+
+ O remetente ou domínio precisa estar verificado no Resend. Com `EMAIL_PROVIDER=smtp` (padrão), as variáveis SMTP acima continuam sendo usadas.
+
 ### Products
 - GET `/api/produtos` - Get all active products
 - GET `/api/produtos/categoria/{id}` - Get products by category
