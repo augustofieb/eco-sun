@@ -19,15 +19,18 @@ The application connects to SQL Server database:
 
 ### Email de recuperação
 
-Configure as credenciais da conta SMTP antes de usar a recuperação de senha:
+Configure as credenciais da conta SMTP antes de usar a recuperação de senha. Para uma conta Outlook/Microsoft 365:
 
 ```bash
-export MAIL_USERNAME=seu-email@gmail.com
-export MAIL_PASSWORD=sua-senha-de-aplicativo-do-gmail
+export MAIL_HOST=smtp.office365.com
+export MAIL_PORT=587
+export MAIL_USERNAME=seu-email@outlook.com
+export MAIL_PASSWORD=sua-senha-do-outlook
 ```
 
-Para contas Gmail, use uma senha de aplicativo, não a senha normal da conta. Sem
-essas variáveis, o backend não conseguirá enviar o email.
+Para Gmail, use `MAIL_HOST=smtp.gmail.com` e uma senha de aplicativo. Se a conta
+Outlook tiver autenticação em duas etapas, use uma senha de aplicativo quando a
+Microsoft exigir. Sem essas variáveis, o backend não conseguirá enviar o email.
 
 ### Products
 - GET `/api/produtos` - Get all active products
