@@ -36,7 +36,7 @@ public class EmailService {
     private String resendFrom;
 
     public void sendPasswordResetEmail(String email, String tempPassword) {
-        if (!"resend".equalsIgnoreCase(emailProvider)
+        if ("smtp".equalsIgnoreCase(emailProvider)
             && (mailUsername == null || mailUsername.trim().isEmpty())) {
             throw new RuntimeException("MAIL_USERNAME não foi configurado no servidor");
         }
@@ -47,6 +47,8 @@ public class EmailService {
 
             if ("resend".equalsIgnoreCase(emailProvider)) {
                 sendWithResend(email, subject, text);
+            } else if ("brevo".equalsIgnoreCase(emailProvider)) {
+                sendWithBrevo(email, subject, text);
             } else {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(email);
@@ -85,6 +87,41 @@ public class EmailService {
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Resend retornou HTTP " + response.getStatusCodeValue());
+        }
+    }
+
+    private void sendWithBrevo(String email, String subject, String text) {
+        String apiKey = System.getenv("BREVO_API_KEY");
+        String from = System.getenv("BREVO_FROM");
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new RuntimeException("BREVO_API_KEY não foi configurada no servidor");
+        }
+        if (from == null || from.trim().isEmpty()) {
+            throw new RuntimeException("BREVO_FROM não foi configurado no servidor");
+        }
+
+        Map<String, Object> sender = new HashMap<>();
+        sender.put("email", from);
+
+        Map<String, Object> recipient = new HashMap<>();
+        recipient.put("email", email);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sender", sender);
+        body.put("to", new Map[]{recipient});
+        body.put("subject", subject);
+        body.put("textContent", text);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("api-key", apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ResponseEntity<String> response = new RestTemplate().postForEntity(
+                "https://api.brevo.com/v3/smtp/email",
+                new HttpEntity<>(body, headers),
+                String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Brevo retornou HTTP " + response.getStatusCodeValue());
         }
     }
 }

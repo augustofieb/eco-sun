@@ -42,6 +42,14 @@ Microsoft exigir. Sem essas variáveis, o backend não conseguirá enviar o emai
 
  O remetente ou domínio precisa estar verificado no Resend. Com `EMAIL_PROVIDER=smtp` (padrão), as variáveis SMTP acima continuam sendo usadas.
 
+Como alternativa sem domínio próprio, use o Brevo. Cadastre e confirme o e-mail do remetente no Brevo e configure:
+
+```bash
+export EMAIL_PROVIDER=brevo
+export BREVO_API_KEY=xkeysib-xxxxxxxx
+export BREVO_FROM=tcc.ecosun@hotmail.com
+```
+
 ### Products
 - GET `/api/produtos` - Get all active products
 - GET `/api/produtos/categoria/{id}` - Get products by category
