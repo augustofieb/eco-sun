@@ -3,10 +3,14 @@ package com.ecosun.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -19,6 +23,7 @@ public class EmailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
+            logger.error("Falha SMTP ao enviar recuperação para {}: {}", email, e.getMessage(), e);
             throw new RuntimeException("Não foi possível enviar o email de recuperação", e);
         }
     }
