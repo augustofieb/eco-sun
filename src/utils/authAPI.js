@@ -81,7 +81,7 @@ export const refreshUserData = async () => {
     const user = getCurrentUser();
     if (!user) return null;
     
-    const response = await usersAPI.getById(user.id);
+    const response = await usersAPI.getCurrent();
     const updatedUser = {
       id: response.data.id,
       name: response.data.nome,

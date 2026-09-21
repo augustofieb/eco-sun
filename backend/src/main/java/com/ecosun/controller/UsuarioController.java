@@ -6,6 +6,7 @@ import com.ecosun.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -53,6 +54,28 @@ public class UsuarioController {
             return ResponseEntity.ok(usuarios);
         } catch (Exception e) {
             return ResponseEntity.ok("[]");
+        }
+    }
+
+    @GetMapping("/me")
+    @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getCurrentUsuario(Authentication authentication) {
+        try {
+            Optional<Usuario> usuario = usuarioRepository.findByEmail(authentication.getName());
+            if (usuario.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Usuario currentUser = usuario.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", currentUser.getId());
+            response.put("nome", currentUser.getNome());
+            response.put("email", currentUser.getEmail());
+            response.put("nivelAcesso", currentUser.getNivelAcesso());
+            response.put("statusUsuario", currentUser.getStatusUsuario());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
         }
     }
 

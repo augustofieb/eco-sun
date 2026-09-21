@@ -15,13 +15,13 @@ com/ecosun/repository/PreferenciasRepository.class
 com/ecosun/service/AuthService.class
 com/ecosun/dto/LoginRequest.class
 com/ecosun/security/JwtUtil.class
-com/ecosun/entity/Conteudo.class
 com/ecosun/repository/UsuarioRepository.class
+com/ecosun/entity/Conteudo.class
 com/ecosun/controller/CategoriaController.class
 com/ecosun/service/ProdutoService.class
 com/ecosun/controller/TestController.class
-com/ecosun/entity/Produto.class
 com/ecosun/entity/Usuario.class
+com/ecosun/entity/Produto.class
 com/ecosun/repository/OrcamentoRepository.class
 com/ecosun/dto/RegisterRequest.class
 com/ecosun/entity/Orcamento.class

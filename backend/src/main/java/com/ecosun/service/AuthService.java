@@ -70,16 +70,19 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public void forgotPassword(String email) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
-        if (usuario.isPresent()) {
-            String tempPassword = UUID.randomUUID().toString().substring(0, 8);
-            usuario.get().setSenha(passwordEncoder.encode(tempPassword));
-            usuario.get().setStatusUsuario("TROCAR_SENHA");
-            usuarioRepository.save(usuario.get());
-
-            emailService.sendPasswordResetEmail(email, tempPassword);
+        if (usuario.isEmpty()) {
+            throw new RuntimeException("Email não encontrado");
         }
+
+        String tempPassword = UUID.randomUUID().toString().substring(0, 8);
+        emailService.sendPasswordResetEmail(email, tempPassword);
+
+        usuario.get().setSenha(passwordEncoder.encode(tempPassword));
+        usuario.get().setStatusUsuario("TROCAR_SENHA");
+        usuarioRepository.save(usuario.get());
     }
 
     public void makeAdmin(Integer userId) {

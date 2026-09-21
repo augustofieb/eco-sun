@@ -19,8 +19,7 @@ public class EmailService {
         try {
             mailSender.send(message);
         } catch (Exception e) {
-            // Log error but don't throw exception
-            System.err.println("Erro ao enviar email: " + e.getMessage());
+            throw new RuntimeException("Não foi possível enviar o email de recuperação", e);
         }
     }
 }

@@ -17,6 +17,18 @@ The application connects to SQL Server database:
 - POST `/api/auth/register` - User registration
 - POST `/api/auth/forgot-password` - Password recovery
 
+### Email de recuperação
+
+Configure as credenciais da conta SMTP antes de usar a recuperação de senha:
+
+```bash
+export MAIL_USERNAME=seu-email@gmail.com
+export MAIL_PASSWORD=sua-senha-de-aplicativo-do-gmail
+```
+
+Para contas Gmail, use uma senha de aplicativo, não a senha normal da conta. Sem
+essas variáveis, o backend não conseguirá enviar o email.
+
 ### Products
 - GET `/api/produtos` - Get all active products
 - GET `/api/produtos/categoria/{id}` - Get products by category

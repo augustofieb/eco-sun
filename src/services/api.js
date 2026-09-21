@@ -23,7 +23,7 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   login: (email, senha) => api.post('/auth/login', { email, senha }),
   register: (nome, email, senha) => api.post('/auth/register', { nome, email, senha }),
-  forgotPassword: (email) => api.post(`/auth/forgot-password?email=${email}`),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
 };
 
 // Products API
@@ -40,6 +40,7 @@ export const productsAPI = {
 // Users API
 export const usersAPI = {
   getAll: () => api.get('/usuarios'),
+  getCurrent: () => api.get('/usuarios/me'),
   search: (query) => api.get(`/usuarios/search?query=${encodeURIComponent(query)}`),
   getById: (id) => api.get(`/usuarios/${id}`),
   update: (id, usuario) => api.put(`/usuarios/${id}`, usuario),

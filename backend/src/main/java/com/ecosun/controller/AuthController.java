@@ -39,7 +39,7 @@ public class AuthController {
             authService.forgotPassword(request.get("email"));
             return ResponseEntity.ok("Email de recuperação enviado");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao enviar email");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

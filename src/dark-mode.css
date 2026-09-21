@@ -123,6 +123,7 @@
 .dark-mode .cart-header,
 .dark-mode .settings-header {
   background-color: #111e2b;
+  border-color: #2a3f57;
 }
 
 .dark-mode .cart-header h2,
@@ -306,6 +307,16 @@
 
 .dark-mode .settings-nav button {
   color: #cdd6e0;
+  border-bottom-color: #2a3f57;
+}
+
+.dark-mode .settings-nav {
+  border-bottom-color: #2a3f57;
+}
+
+.dark-mode .profile-form input,
+.dark-mode .faq-item {
+  border-color: #2a3f57;
 }
 
 .dark-mode .settings-nav button:hover,
