@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+eco-sun.env
+test-results
+backend/target/surefire-reports
+backend/target/test-classes
 
 # Editor directories and files
 .vscode/*
