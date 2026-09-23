@@ -1,5 +1,4 @@
-import { categoriesAPI } from '../services/api';
-import { getToken } from './authAPI';
+import { categoriesAPI, conteudoAPI } from '../services/api';
 
 const CACHE_TTL = 30000;
 let categoriesCache = null;
@@ -82,16 +81,8 @@ export const deleteCategory = async (id) => {
 
 export const getConteudo = async (chave) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`https://eco-sun.onrender.com/api/conteudo/${chave}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    if (response.ok) {
-      return await response.json();
-    }
-    return null;
+    const response = await conteudoAPI.get(chave);
+    return response.data;
   } catch (error) {
     console.error('Error fetching content:', error);
     return null;
@@ -100,16 +91,8 @@ export const getConteudo = async (chave) => {
 
 export const updateConteudo = async (chave, conteudo) => {
   try {
-    const token = getToken();
-    const response = await fetch(`https://eco-sun.onrender.com/api/conteudo/${chave}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ conteudo })
-    });
-    return response.ok;
+    await conteudoAPI.update(chave, conteudo);
+    return true;
   } catch (error) {
     console.error('Error updating content:', error);
     return false;

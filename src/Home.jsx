@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/authAPI'
 
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
-import { getCategories, updateConteudo } from './utils/categories'
+import { getCategories, getConteudo, updateConteudo } from './utils/categories'
 import { updateUser } from './utils/usersAPI'
 
 import RichTextEditor from './components/RichTextEditor'
@@ -18,6 +18,23 @@ import economiaIcon from './assets/porco_economia.png'
 
 import sofa from './assets/sofa.png'
 import reembolso from './assets/reembolso-alternativo.png'
+
+const PRODUCTS_PER_PAGE = 18
+
+const getPaginationItems = (totalPages, currentPage) => {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1)
+
+  const items = [1]
+  const startPage = Math.max(2, currentPage - 1)
+  const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+  if (startPage > 2) items.push('ellipsis-start')
+  for (let page = startPage; page <= endPage; page += 1) items.push(page)
+  if (endPage < totalPages - 1) items.push('ellipsis-end')
+  items.push(totalPages)
+
+  return items
+}
 
 const Home = () => {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
@@ -40,6 +57,7 @@ const Home = () => {
     name: '', email: '', nickname: '', address: '', number: '', password: ''
   })
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const [successMessage, setSuccessMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -135,6 +153,7 @@ const Home = () => {
 
     loadUserData()
     loadCategories()
+    loadEditableContent()
     syncThemeState()
     loadProducts()
   }, [])
@@ -154,6 +173,7 @@ const Home = () => {
         if (!controller.signal.aborted) {
           setProducts(searchResults)
           setSelectedCategory('search')
+          setCurrentPage(1)
         }
       } finally {
         if (!controller.signal.aborted) setIsLoading(false)
@@ -168,16 +188,29 @@ const Home = () => {
     setCategories(categoriesData)
   }
 
+  const loadEditableContent = async () => {
+    const contentEntries = await Promise.all(
+      ['sobre', 'renovavel', 'faq'].map(async (chave) => [chave, await getConteudo(chave)])
+    )
+
+    setEditableContent((currentContent) => contentEntries.reduce((content, [chave, savedContent]) => {
+      if (savedContent?.conteudo) content[chave] = savedContent.conteudo
+      return content
+    }, { ...currentContent }))
+  }
+
   const loadProducts = async () => {
     setIsLoading(true)
     const productsData = await getProducts()
     setProducts(productsData)
+    setCurrentPage(1)
     setIsLoading(false)
   }
 
   const handleCategoryChange = async (category) => {
     setSelectedCategory(category)
     setSearchQuery('')
+    setCurrentPage(1)
     setIsLoading(true)
     const productsData = await getProductsByCategory(category)
     setProducts(productsData)
@@ -193,6 +226,7 @@ const Home = () => {
 
   const handleSearch = async (query) => {
     setSearchQuery(query)
+    setCurrentPage(1)
     if (query.trim() === '') {
       loadProducts()
       setSelectedCategory('all')
@@ -240,6 +274,18 @@ const Home = () => {
     setTheme(newTheme)
     setIsDarkMode(!isDarkMode)
   }
+
+  const showSuccessMessage = () => {
+    setSuccessMessage('Alterações feitas com sucesso.')
+    setTimeout(() => setSuccessMessage(''), 3000)
+  }
+
+  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE)
+  const displayedPage = Math.min(currentPage, Math.max(totalPages, 1))
+  const visibleProducts = products.slice(
+    (displayedPage - 1) * PRODUCTS_PER_PAGE,
+    displayedPage * PRODUCTS_PER_PAGE
+  )
 
 
 
@@ -329,7 +375,7 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('sobre', editableContent.sobre);
                     if (success) {
-                      
+                      showSuccessMessage()
                       setIsEditingContent(false);
                     } 
                   }}
@@ -372,7 +418,7 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('renovavel', editableContent.renovavel);
                     if (success) {
-                      
+                      showSuccessMessage()
                       setIsEditingContent(false);
                     } 
                   }}
@@ -415,7 +461,7 @@ const Home = () => {
                   onClick={async () => {
                     const success = await updateConteudo('faq', editableContent.faq);
                     if (success) {
-                      
+                      showSuccessMessage()
                       setIsEditingContent(false);
                     } 
                   }}
@@ -544,7 +590,7 @@ const Home = () => {
             ) : products.length === 0 ? (
               <p className="no-products">Nenhum produto encontrado nesta categoria.</p>
             ) : (
-              products.map(product => (
+              visibleProducts.map(product => (
                 <div key={product.id} className="product-card">
                   <Link to={`/product/${product.id}`} className="product-link">
                     <img 
@@ -562,6 +608,44 @@ const Home = () => {
               ))
             )}
           </div>
+          {totalPages > 1 && (
+            <nav className="pagination" aria-label="Paginação de produtos">
+              <button
+                type="button"
+                className="pagination-button pagination-arrow"
+                onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+                disabled={displayedPage === 1}
+                aria-label="Página anterior"
+              >
+                ←
+              </button>
+              {getPaginationItems(totalPages, displayedPage).map((item) => (
+                typeof item === 'string' ? (
+                  <span key={item} className="pagination-ellipsis" aria-hidden="true">...</span>
+                ) : (
+                  <button
+                    type="button"
+                    key={item}
+                    className={`pagination-button ${item === displayedPage ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(item)}
+                    aria-current={item === displayedPage ? 'page' : undefined}
+                    aria-label={`Página ${item}`}
+                  >
+                    {item}
+                  </button>
+                )
+              ))}
+              <button
+                type="button"
+                className="pagination-button pagination-arrow"
+                onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
+                disabled={displayedPage === totalPages}
+                aria-label="Próxima página"
+              >
+                →
+              </button>
+            </nav>
+          )}
         </section>
 
    <h1> Por que usar Energia Solar? </h1>
@@ -608,6 +692,18 @@ const Home = () => {
           </div>
         )}
         <div className="settings-content">
+          {successMessage && (
+            <div className="success-message" style={{
+              backgroundColor: '#d4edda',
+              color: '#155724',
+              padding: '10px',
+              borderRadius: '5px',
+              marginBottom: '15px',
+              border: '1px solid #c3e6cb'
+            }}>
+              {successMessage}
+            </div>
+          )}
           {settingsView === 'main' ? (
             <div className="settings-main">
               <h3>Configurações</h3>

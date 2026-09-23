@@ -73,6 +73,12 @@ export const categoriesAPI = {
   delete: (id) => api.delete(`/categorias/${id}`),
 };
 
+// Editable homepage content API
+export const conteudoAPI = {
+  get: (chave) => api.get(`/conteudo/${chave}`),
+  update: (chave, conteudo) => api.put(`/conteudo/${chave}`, { conteudo }),
+};
+
 // Orcamentos API
 export const orcamentosAPI = {
   getAll: () => api.get('/orcamentos'),

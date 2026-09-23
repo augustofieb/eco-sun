@@ -315,6 +315,70 @@ body, html {
   width: 100%;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 8px 0 12px;
+  flex-wrap: wrap;
+}
+
+.pagination-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #2b6cb0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #ebf4ff;
+  border-color: #2b6cb0;
+}
+
+.pagination-button:focus-visible {
+  outline: 3px solid rgb(66 153 225 / 0.4);
+  outline-offset: 2px;
+}
+
+.pagination-button.active {
+  background-color: #2b6cb0;
+  border-color: #2b6cb0;
+  color: #ffffff;
+}
+
+.pagination-button:disabled {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.pagination-arrow {
+  font-size: 1.2rem;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 40px;
+  color: #718096;
+  font-weight: 600;
+}
+
 .product-card {
   background-color: #dbe9f4;
   border-radius: 10px;
@@ -682,4 +746,21 @@ body, html {
 
 .settings-footer .logout-btn {
   width: 100%;
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    gap: 5px;
+  }
+
+  .pagination-button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+  }
+
+  .pagination-ellipsis {
+    min-width: 18px;
+    height: 36px;
+  }
 }

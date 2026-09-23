@@ -153,6 +153,38 @@
   color: #8a9bb0;
 }
 
+.dark-mode .pagination-button {
+  background-color: #1a2535;
+  border-color: #2a3f57;
+  color: #cdd6e0;
+}
+
+.dark-mode .pagination-button:hover:not(:disabled) {
+  background-color: #1e2d40;
+  border-color: #5b9bd5;
+  color: #ffffff;
+}
+
+.dark-mode .pagination-button:focus-visible {
+  outline-color: rgb(91 155 213 / 0.55);
+}
+
+.dark-mode .pagination-button.active {
+  background-color: #5b9bd5;
+  border-color: #5b9bd5;
+  color: #0f1923;
+}
+
+.dark-mode .pagination-button:disabled {
+  background-color: #111e2b;
+  border-color: #2a3f57;
+  color: #66788d;
+}
+
+.dark-mode .pagination-ellipsis {
+  color: #8a9bb0;
+}
+
 .dark-mode .products-table {
   background-color: #1a2535;
 }
@@ -323,6 +355,10 @@
 .dark-mode .settings-nav button.active {
   background-color: #1e2d40;
   color: #5b9bd5;
+}
+
+.dark-mode .settings-footer {
+  border-top-color: #2a3f57;
 }
 
 .dark-mode .settings-footer .logout-btn {
