@@ -31,7 +31,7 @@ const Home = () => {
   const [isEditingContent, setIsEditingContent] = useState(false)
   const [originalContent, setOriginalContent] = useState({})
   const [editableContent, setEditableContent] = useState({
-    sobre: '<p>A <strong>ECO SUN</strong> é uma empresa dedicada a fornecer soluções sustentáveis de energia solar para residências e empresas. Nossa missão é tornar a energia limpa acessível a todos.</p><p>Fundada em 2020, já ajudamos centenas de famílias a reduzirem sua pegada de carbono e economizarem na conta de luz.</p>',
+    sobre: '<p>A <strong>ECO SUN</strong> é uma empresa dedicada a fornecer soluções sustentáveis de energia solar para residências e empresas. Nossa missão é tornar a energia limpa acessível a todos.</p><p>Fundada em 2025, já ajudamos centenas de famílias a reduzirem sua pegada de carbono e economizarem na conta de luz.</p>',
     renovavel: '<ul><li><strong>Economia:</strong> Reduza até 95% da sua conta de luz</li><li><strong>Sustentabilidade:</strong> Energia limpa e renovável</li><li><strong>Valorização:</strong> Aumenta o valor do seu imóvel</li><li><strong>Independência:</strong> Menos dependência da rede elétrica</li><li><strong>Durabilidade:</strong> Painéis com vida útil de 25+ anos</li></ul>',
     faq: '<div><h4>Quanto tempo dura a instalação?</h4><p>A instalação residencial típica leva de 1 a 3 dias.</p></div><div><h4>Funciona em dias nublados?</h4><p>Sim, os painéis geram energia mesmo com pouca luz solar.</p></div><div><h4>Qual a garantia dos equipamentos?</h4><p>Oferecemos 2 anos de garantia em todos os equipamentos.</p></div>'
   })
