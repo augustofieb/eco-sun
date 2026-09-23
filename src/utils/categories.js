@@ -1,4 +1,5 @@
 import { categoriesAPI } from '../services/api';
+import { getToken } from './authAPI';
 
 const CACHE_TTL = 30000;
 let categoriesCache = null;
@@ -99,10 +100,12 @@ export const getConteudo = async (chave) => {
 
 export const updateConteudo = async (chave, conteudo) => {
   try {
+    const token = getToken();
     const response = await fetch(`https://eco-sun.onrender.com/api/conteudo/${chave}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ conteudo })
     });

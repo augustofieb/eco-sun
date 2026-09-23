@@ -57,3 +57,11 @@ CREATE TABLE preferencias (
     tema VARCHAR(20) DEFAULT 'light',
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+-- Conteúdo editável da homepage
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Conteudo' AND xtype='U')
+CREATE TABLE Conteudo (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    chave VARCHAR(100) NOT NULL UNIQUE,
+    conteudo NTEXT NULL
+);
