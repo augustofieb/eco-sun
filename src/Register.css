@@ -93,3 +93,10 @@ body {
   font-size: 0.9rem;
   text-align: center;
 }
+
+.password-hint {
+  margin: -10px 0 0;
+  color: #53635a;
+  font-size: 13px;
+  line-height: 1.4;
+}

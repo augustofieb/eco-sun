@@ -90,3 +90,10 @@
   margin-bottom: 20px;
   text-align: center;
 }
+
+.password-hint {
+  margin: -10px 0 20px;
+  color: #66756c;
+  font-size: 13px;
+  line-height: 1.4;
+}

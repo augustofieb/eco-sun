@@ -6,7 +6,7 @@ import '../Home.css';
 import Logo from '../assets/Logo.png';
 
 const Register = () => {
-  const [formData, setFormData] = useState({ nome: '', email: '', senha: '' });
+  const [formData, setFormData] = useState({ nome: '', email: '', senha: '', confirmacao: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -15,6 +15,18 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    if (formData.senha !== formData.confirmacao) {
+      setError('As senhas não coincidem.');
+      setLoading(false);
+      return;
+    }
+    if (formData.senha.length < 8 || !/[A-Z]/.test(formData.senha)
+      || !/[a-z]/.test(formData.senha) || !/\d/.test(formData.senha)) {
+      setError('A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula e número.');
+      setLoading(false);
+      return;
+    }
 
     const result = await registerUser(formData.nome, formData.email, formData.senha);
     
@@ -72,6 +84,16 @@ const Register = () => {
             onChange={(e) => setFormData({...formData, senha: e.target.value})}
             required
           />
+
+          <input
+            type="password"
+            placeholder="Confirmar senha"
+            value={formData.confirmacao}
+            onChange={(e) => setFormData({...formData, confirmacao: e.target.value})}
+            required
+          />
+
+          <p className="password-hint">Use ao menos 8 caracteres, com maiúscula, minúscula e número.</p>
           
           <button type="submit" disabled={loading}>
             {loading ? 'Criando...' : 'Criar Conta'}

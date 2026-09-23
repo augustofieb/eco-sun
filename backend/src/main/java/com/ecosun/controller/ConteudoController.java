@@ -18,7 +18,7 @@ public class ConteudoController {
         conteudoMap.put("faq", "Quanto tempo dura a instalação?|A instalação residencial típica leva de 1 a 3 dias.\nFunciona em dias nublados?|Sim, os painéis geram energia mesmo com pouca luz solar.\nQual a garantia dos equipamentos?|Oferecemos 2 anos de garantia em todos os equipamentos.");
     }
     
-    @GetMapping("/api/conteudo/{chave}")
+    @GetMapping("/conteudo/{chave}")
     public ResponseEntity<Map<String, String>> getConteudo(@PathVariable String chave) {
         String conteudo = conteudoMap.get(chave);
         if (conteudo != null) {
@@ -29,7 +29,7 @@ public class ConteudoController {
         return ResponseEntity.notFound().build();
     }
     
-    @PutMapping("/api/conteudo/{chave}")
+    @PutMapping("/conteudo/{chave}")
     @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> updateConteudo(@PathVariable String chave, @RequestBody Map<String, String> request) {
         String novoConteudo = request.get("conteudo");

@@ -57,6 +57,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         System.out.println("Tentando registrar usuário: " + request.getEmail());
+        validatePassword(request.getSenha());
         
         try {
             if (usuarioRepository.existsByEmail(request.getEmail())) {

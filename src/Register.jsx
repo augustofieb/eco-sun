@@ -19,8 +19,9 @@ const Register = () => {
       setError('As senhas não coincidem')
       return
     }
-    if (formData.password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres')
+    if (formData.password.length < 8 || !/[A-Z]/.test(formData.password)
+      || !/[a-z]/.test(formData.password) || !/\d/.test(formData.password)) {
+      setError('A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula e número.')
       return
     }
     
@@ -32,7 +33,7 @@ const Register = () => {
       } else {
         setError(result.error)
       }
-    } catch (err) {
+    } catch {
       setError('Erro ao criar conta')
     }
   }
@@ -102,6 +103,7 @@ const Register = () => {
                   onChange={handleChange}
                   required 
                 />
+                <p className="password-hint">Use ao menos 8 caracteres, com maiúscula, minúscula e número.</p>
               </div>
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirmar senha</label>
