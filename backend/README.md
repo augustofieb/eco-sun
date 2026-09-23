@@ -16,6 +16,7 @@ The application connects to SQL Server database:
 - POST `/api/auth/login` - User login
 - POST `/api/auth/register` - User registration
 - POST `/api/auth/forgot-password` - Password recovery
+- POST `/api/auth/reset-password` - Define a new password using the emailed token
 
 ### Email de recuperação
 
@@ -41,6 +42,12 @@ Microsoft exigir. Sem essas variáveis, o backend não conseguirá enviar o emai
  ```
 
  O remetente ou domínio precisa estar verificado no Resend. Com `EMAIL_PROVIDER=smtp` (padrão), as variáveis SMTP acima continuam sendo usadas.
+
+Configure também `FRONTEND_URL` com a URL pública do frontend para que o botão do e-mail aponte para a página correta, por exemplo:
+
+```bash
+export FRONTEND_URL=https://seu-frontend.exemplo.com
+```
 
 Como alternativa sem domínio próprio, use o Brevo. Cadastre e confirme o e-mail do remetente no Brevo e configure:
 

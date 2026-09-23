@@ -29,7 +29,7 @@ class AuthControllerTest {
 
         verify(authService).forgotPassword("cliente@exemplo.com");
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Email de recuperação enviado", response.getBody());
+        assertEquals("Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.", response.getBody());
     }
 
     @Test
@@ -40,7 +40,7 @@ class AuthControllerTest {
         ResponseEntity<String> response = authController.forgotPassword(
                 Map.of("email", "inexistente@exemplo.com"));
 
-        assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Email não encontrado", response.getBody());
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.", response.getBody());
     }
 }

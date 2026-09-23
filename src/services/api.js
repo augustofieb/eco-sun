@@ -26,6 +26,7 @@ export const authAPI = {
   login: (email, senha) => api.post('/auth/login', { email, senha }),
   register: (nome, email, senha) => api.post('/auth/register', { nome, email, senha }),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token, senha) => api.post('/auth/reset-password', { token, senha }),
 };
 
 // Products API

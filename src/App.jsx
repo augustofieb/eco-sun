@@ -6,6 +6,7 @@ const Home = lazy(() => import('./Home.jsx'))
 const Login = lazy(() => import('./Login.jsx'))
 const Register = lazy(() => import('./components/Register.jsx'))
 const ForgotPassword = lazy(() => import('./components/ForgotPassword.jsx'))
+const ResetPassword = lazy(() => import('./components/ResetPassword.jsx'))
 const TestConnection = lazy(() => import('./components/TestConnection.jsx'))
 const Admin = lazy(() => import('./Admin.jsx'))
 const AdminProducts = lazy(() => import('./AdminProducts.jsx'))
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/login" element={<Login /> } />
           <Route path="/create-account" element={<Register /> } />
           <Route path="/forgot-password" element={<ForgotPassword /> } />
+          <Route path="/reset-password" element={<ResetPassword /> } />
           <Route path="/test" element={<TestConnection /> } />
           <Route path="/admin-orcamentos" element={<AdminOrcamentos /> } />
           <Route path="/meus-orcamentos" element={<MeusOrcamentos /> } />

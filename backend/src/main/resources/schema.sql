@@ -12,6 +12,18 @@ CREATE TABLE usuarios (
 );
 
 -- Tabela de produtos
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='PasswordResetToken' AND xtype='U')
+CREATE TABLE PasswordResetToken (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    token_hash VARCHAR(64) NOT NULL UNIQUE,
+    expires_at DATETIME2 NOT NULL,
+    used_at DATETIME2 NULL,
+    created_at DATETIME2 NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES Usuario(id) ON DELETE CASCADE
+);
+
+-- Tabela de produtos
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='produtos' AND xtype='U')
 CREATE TABLE produtos (
     id INT IDENTITY(1,1) PRIMARY KEY,

@@ -17,9 +17,9 @@ const ForgotPassword = () => {
 
     try {
       await authAPI.forgotPassword(email);
-      setMessage('Email de recuperação enviado! Verifique sua caixa de entrada.');
-    } catch (error) {
-      setMessage(error.response?.data || 'Erro ao enviar email. Tente novamente.');
+      setMessage('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.');
+    } catch {
+      setMessage('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.');
     } finally {
       setLoading(false);
     }

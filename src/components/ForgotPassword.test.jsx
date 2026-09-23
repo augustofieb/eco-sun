@@ -22,7 +22,7 @@ describe('ForgotPassword', () => {
   })
 
   it('envia o email correto e exibe confirmação', async () => {
-    authAPI.forgotPassword.mockResolvedValue({ data: 'Email de recuperação enviado' })
+    authAPI.forgotPassword.mockResolvedValue({ data: 'Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.' })
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText('Digite seu email'), {
@@ -31,11 +31,11 @@ describe('ForgotPassword', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enviar' }))
 
     await waitFor(() => expect(authAPI.forgotPassword).toHaveBeenCalledWith('cliente@exemplo.com'))
-    expect(await screen.findByText('Email de recuperação enviado! Verifique sua caixa de entrada.')).toBeInTheDocument()
+    expect(await screen.findByText('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.')).toBeInTheDocument()
   })
 
   it('exibe a mensagem retornada pelo backend quando a recuperação falha', async () => {
-    authAPI.forgotPassword.mockRejectedValue({ response: { data: 'Email não encontrado' } })
+    authAPI.forgotPassword.mockRejectedValue(new Error('request failed'))
     renderPage()
 
     fireEvent.change(screen.getByPlaceholderText('Digite seu email'), {
@@ -43,6 +43,6 @@ describe('ForgotPassword', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: 'Enviar' }))
 
-    expect(await screen.findByText('Email não encontrado')).toBeInTheDocument()
+    expect(await screen.findByText('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.')).toBeInTheDocument()
   })
 })
