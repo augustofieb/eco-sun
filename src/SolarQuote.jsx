@@ -72,16 +72,16 @@ const SolarQuote = ({ isOpen, onClose }) => {
         email: formData.email,
         telefone: formData.phone,
         endereco: formData.address,
-        areaTelhado: formData.roofArea,
-        contaMensalMedia: formData.monthlyBill,
+        areaTelhado: Number(formData.roofArea),
+        contaMensalMedia: Number(formData.monthlyBill),
         tipoTelhado: formData.roofType,
         objetivoEnergia: formData.energyGoal,
-        potenciaSistema: quote.systemPower,
+        potenciaSistema: Number(quote.systemPower),
         numeroPaineis: quote.panelsNeeded,
-        precoTotal: quote.totalCost,
-        economiaMensal: quote.monthlySavings,
+        precoTotal: Number(quote.totalCost),
+        economiaMensal: Number(quote.monthlySavings),
         tempoRetornoMeses: Math.round(parseFloat(quote.paybackTime) * 12),
-        reducaoCo2Anual: quote.co2Reduction
+        reducaoCo2Anual: Number(quote.co2Reduction)
       }
       
       await orcamentosAPI.create(orcamento)

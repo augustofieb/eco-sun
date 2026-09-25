@@ -1,1 +1,2 @@
 /workspaces/eco-sun/backend/src/test/java/com/ecosun/controller/AuthControllerTest.java
+/workspaces/eco-sun/backend/src/test/java/com/ecosun/security/AuthorizationGuardTest.java

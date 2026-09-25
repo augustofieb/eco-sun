@@ -18,6 +18,15 @@ CREATE TABLE Orcamento (
     id INT IDENTITY(1,1) PRIMARY KEY,
     usuario_id INT,
     nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    telefone VARCHAR(20),
+    endereco VARCHAR(255),
+    area_telhado DECIMAL(8,2),
+    conta_mensal_media DECIMAL(8,2),
+    tipo_telhado VARCHAR(50),
+    objetivo_energia VARCHAR(50),
+    potencia_sistema DECIMAL(8,2),
+    numero_paineis INT,
     produtos_selecionados NTEXT,
     preco_total DECIMAL(10,2),
     energia_total_gerada DECIMAL(8,2),
@@ -25,6 +34,7 @@ CREATE TABLE Orcamento (
     tempo_retorno_meses INT,
     reducao_co2_anual DECIMAL(8,2),
     data_criacao DATETIME2 DEFAULT GETDATE(),
+    data_orcamento DATETIME2,
     status NVARCHAR(20) DEFAULT 'RASCUNHO'
 );
 
@@ -36,6 +46,30 @@ IF NOT EXISTS (
 )
 BEGIN
     ALTER TABLE Orcamento ADD nome VARCHAR(100) NOT NULL DEFAULT 'Orçamento';
+END
+
+IF OBJECT_ID('Orcamento', 'U') IS NOT NULL
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'email')
+        ALTER TABLE Orcamento ADD email VARCHAR(100);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'telefone')
+        ALTER TABLE Orcamento ADD telefone VARCHAR(20);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'endereco')
+        ALTER TABLE Orcamento ADD endereco VARCHAR(255);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'area_telhado')
+        ALTER TABLE Orcamento ADD area_telhado DECIMAL(8,2);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'conta_mensal_media')
+        ALTER TABLE Orcamento ADD conta_mensal_media DECIMAL(8,2);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'tipo_telhado')
+        ALTER TABLE Orcamento ADD tipo_telhado VARCHAR(50);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'objetivo_energia')
+        ALTER TABLE Orcamento ADD objetivo_energia VARCHAR(50);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'potencia_sistema')
+        ALTER TABLE Orcamento ADD potencia_sistema DECIMAL(8,2);
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'numero_paineis')
+        ALTER TABLE Orcamento ADD numero_paineis INT;
+    IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Orcamento' AND COLUMN_NAME = 'data_orcamento')
+        ALTER TABLE Orcamento ADD data_orcamento DATETIME2;
 END
 
 -- Adicionar colunas às tabelas existentes se não existirem

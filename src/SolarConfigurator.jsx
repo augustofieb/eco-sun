@@ -12,6 +12,10 @@ import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
 import { initTheme } from './utils/theme'
 
+const getProductImages = (fotoUrl) => {
+  const images = typeof fotoUrl === 'string' ? fotoUrl.split('|').filter(Boolean) : []
+  return images.length > 0 ? images : ['https://via.placeholder.com/200']
+}
 
 const SolarConfigurator = () => {
   const location = useLocation()
@@ -190,10 +194,18 @@ const SolarConfigurator = () => {
 
   const submitOrcamento = async (nome) => {
     try {
+      const produtosSelecionados = selectedProducts.map(({ id, nome: produtoNome, preco, quantity, especificacoes_tecnicas }) => ({
+        id,
+        nome: produtoNome,
+        preco,
+        quantity,
+        especificacoes_tecnicas
+      }))
+
       const orcamentoData = {
         usuarioId: user.id,
         nome,
-        produtosSelecionados: JSON.stringify(selectedProducts),
+        produtosSelecionados: JSON.stringify(produtosSelecionados),
         precoTotal: Number(summary.totalPrice.toFixed(2)) || 0,
         energiaTotalGerada: Number(summary.totalEnergy.toFixed(2)) || 0,
         economiaMensal: Number(summary.monthlyEconomy.toFixed(2)) || 0,
@@ -330,15 +342,16 @@ const SolarConfigurator = () => {
           <div className="products-grid">
             {filteredProducts.map(product => {
               const specs = product.especificacoes_tecnicas ? JSON.parse(product.especificacoes_tecnicas) : {}
+              const productImages = getProductImages(product.fotoUrl)
               
               return (
                 <div key={product.id} className="product-card">
                   <img 
-                    src={product.fotoUrl || 'https://via.placeholder.com/200'} 
+                    src={productImages[0]} 
                     alt={product.nome}
                     className="product-image"
                     onClick={() => setSelectedProductImages({ 
-                      images: [product.fotoUrl || 'https://via.placeholder.com/200'], 
+                      images: productImages, 
                       name: product.nome 
                     })}
                     style={{cursor: 'pointer'}}

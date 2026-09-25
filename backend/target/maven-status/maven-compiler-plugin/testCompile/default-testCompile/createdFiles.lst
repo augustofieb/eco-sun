@@ -1,1 +1,2 @@
 com/ecosun/controller/AuthControllerTest.class
+com/ecosun/security/AuthorizationGuardTest.class
