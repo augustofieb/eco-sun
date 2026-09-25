@@ -27,7 +27,7 @@ public class AvaliacaoController {
     }
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canWriteAvaliacao(#avaliacao)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canWriteAvaliacao(#p0)")
     public ResponseEntity<?> createAvaliacao(@RequestBody Avaliacao avaliacao) {
         try {
             if (avaliacao.getNota() == null || avaliacao.getNota() < 1 || avaliacao.getNota() > 5) {
@@ -45,7 +45,7 @@ public class AvaliacaoController {
     }
 
     @PutMapping("/{id}")
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canUpdateAvaliacao(#id, #avaliacao)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canUpdateAvaliacao(#p0, #p1)")
     public ResponseEntity<?> updateAvaliacao(@PathVariable Integer id, @RequestBody Avaliacao avaliacao) {
         if (!avaliacaoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
@@ -58,7 +58,7 @@ public class AvaliacaoController {
     }
 
     @DeleteMapping("/{id}")
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canDeleteAvaliacao(#id)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canDeleteAvaliacao(#p0)")
     public ResponseEntity<Void> deleteAvaliacao(@PathVariable Integer id) {
         if (avaliacaoRepository.existsById(id)) {
             avaliacaoRepository.deleteById(id);

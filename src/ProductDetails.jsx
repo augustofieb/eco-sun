@@ -81,7 +81,7 @@ const ProductDetails = () => {
 
   if (isLoading) {
     return (
-      <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5', zIndex: 1000}}>
+      <div className="product-loading-screen" style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000}}>
         <div style={{textAlign: 'center'}}>
           <div className="loading-spinner"></div>
           <p>Carregando produto...</p>

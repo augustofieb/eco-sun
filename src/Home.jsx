@@ -603,7 +603,14 @@ const Home = () => {
                     <h3>{product.nome}</h3>
                     <p>R${product.preco ? product.preco.toFixed(2) : '0.00'}</p>
                   </Link>
-                  <Link to="/configurador" className="btn-secondary" style={{textDecoration: 'none', display: 'inline-block'}}>Solicitar orçamento</Link>
+                  <Link
+                    to="/configurador"
+                    state={{ selectedProductId: product.id }}
+                    className="btn-secondary"
+                    style={{textDecoration: 'none', display: 'inline-block'}}
+                  >
+                    Solicitar orçamento
+                  </Link>
                 </div>
               ))
             )}

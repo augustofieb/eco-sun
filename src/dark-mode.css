@@ -640,3 +640,78 @@
 .dark-mode .settings-btn {
   color: #ffffff;
 }
+
+/* Product details page */
+.dark-mode .product-section {
+  background: #0f1923;
+}
+
+.dark-mode .product-main-container,
+.dark-mode .reviews-container {
+  background: #1a2535;
+  color: #cdd6e0;
+}
+
+.dark-mode .product-title,
+.dark-mode .product-specs h3,
+.dark-mode .price-current,
+.dark-mode .seller-info h4,
+.dark-mode .reviews-header h2,
+.dark-mode .average-rating,
+.dark-mode .review-form h3,
+.dark-mode .form-group label,
+.dark-mode .reviewer-name {
+  color: #cdd6e0;
+}
+
+.dark-mode .product-breadcrumb,
+.dark-mode .specs-list li,
+.dark-mode .product-description p,
+.dark-mode .price-installments,
+.dark-mode .review-date,
+.dark-mode .review-text {
+  color: #aab8c8;
+}
+
+.dark-mode .product-sidebar,
+.dark-mode .review-form {
+  background: #111e2b;
+  border-color: #2a3f57;
+}
+
+.dark-mode .specs-list li,
+.dark-mode .seller-info,
+.dark-mode .review-item {
+  border-color: #2a3f57;
+}
+
+.dark-mode .product-description {
+  background: #111e2b;
+  border-left-color: #5b9bd5;
+}
+
+.dark-mode .product-description h3 {
+  color: #8bbcf0;
+}
+
+.dark-mode .form-group select,
+.dark-mode .form-group textarea {
+  background: #1e2d40;
+  color: #cdd6e0;
+  border-color: #2a3f57;
+}
+
+.dark-mode .product-main-image,
+.dark-mode .carousel-thumb {
+  background: #111e2b;
+  border-color: #2a3f57;
+}
+
+.dark-mode .loading-container p {
+  color: #cdd6e0;
+}
+
+.dark-mode .product-loading-screen {
+  background: #0f1923;
+  color: #cdd6e0;
+}

@@ -62,20 +62,38 @@ public class AuthorizationGuard {
     }
 
     public boolean canWriteAvaliacao(Avaliacao avaliacao) {
-        // Ownership para Avaliacao requer cruzar usuarioId do token com usuarioId da entidade.
-        // Nesta base atual, o JWT carrega somente email; precisamos mapear email -> usuarioId.
-        // Para não introduzir brecha, bloqueamos escrita por USER, permitindo apenas ADMIN.
-        // O ADMIN já é coberto via @PreAuthorize("hasRole('ADMIN') ...").
-        return false;
+        if (avaliacao == null || avaliacao.getUsuarioId() == null) return false;
+        String email = authEmail();
+        if (email == null) return false;
+
+        return usuarioRepository.findByEmail(email)
+                .map(usuario -> usuario.getId() != null && usuario.getId().equals(avaliacao.getUsuarioId()))
+                .orElse(false);
     }
 
     public boolean canUpdateAvaliacao(Integer id, Avaliacao avaliacao) {
-        // Mesma regra de canWriteAvaliacao: evitar ownership incorreto sem mapear usuarioId do token.
-        return false;
+        if (id == null || avaliacao == null) return false;
+        String email = authEmail();
+        if (email == null) return false;
+
+        return usuarioRepository.findByEmail(email)
+                .flatMap(usuario -> avaliacaoRepository.findById(id)
+                        .filter(existing -> usuario.getId() != null
+                                && usuario.getId().equals(existing.getUsuarioId())
+                                && usuario.getId().equals(avaliacao.getUsuarioId())))
+                .isPresent();
     }
 
     public boolean canDeleteAvaliacao(Integer id) {
-        return false;
+        if (id == null) return false;
+        String email = authEmail();
+        if (email == null) return false;
+
+        return usuarioRepository.findByEmail(email)
+                .flatMap(usuario -> avaliacaoRepository.findById(id)
+                        .filter(existing -> usuario.getId() != null
+                                && usuario.getId().equals(existing.getUsuarioId())))
+                .isPresent();
     }
 }
 

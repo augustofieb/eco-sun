@@ -66,35 +66,40 @@ const SolarConfigurator = () => {
   }
 
   useEffect(() => {
-    // Aplicar recomendações recebidas do Home (preferencialmente via sessionStorage)
-    const sessionRaw = sessionStorage.getItem('recommendedProductIds')
+    // Pré-selecionar o produto solicitado na Home ou as recomendações existentes.
+    let ids = location.state?.selectedProductId != null
+      ? [location.state.selectedProductId]
+      : null
 
+    if (!ids) {
+      try {
+        const sessionRaw = sessionStorage.getItem('recommendedProductIds')
+        const parsed = sessionRaw ? JSON.parse(sessionRaw) : null
+        ids = parsed?.recommendedProductIds
+      } catch (error) {
+        console.error('Não foi possível ler os produtos recomendados:', error)
+      }
+    }
 
-    const parsed = sessionRaw ? JSON.parse(sessionRaw) : null
-
-
-    const ids = parsed?.recommendedProductIds
     if (!Array.isArray(ids) || ids.length === 0) return
     if (!Array.isArray(products) || products.length === 0) return
 
-    const byId = new Map(products.map(p => [p.id, p]))
+    const byId = new Map(products.map(p => [String(p.id), p]))
 
     // Agrupar quantidades por ID
     const counts = ids.reduce((acc, id) => {
-      if (byId.has(id)) acc[id] = (acc[id] || 0) + 1
+      const normalizedId = String(id)
+      if (byId.has(normalizedId)) acc[normalizedId] = (acc[normalizedId] || 0) + 1
       return acc
     }, {})
 
     const nextSelected = Object.entries(counts)
       .map(([id, quantity]) => ({
-        ...byId.get(id),
+        ...byId.get(String(id)),
         quantity
       }))
 
     setSelectedProducts(nextSelected)
-
-    // Opcional: limpar para evitar reaplicar em refresh/back
-      // sessionStorage.removeItem('recommendedProductIds')
   }, [location, products])
 
 
