@@ -4,33 +4,40 @@ import com.ecosun.entity.Avaliacao;
 import com.ecosun.entity.Orcamento;
 import com.ecosun.repository.AvaliacaoRepository;
 import com.ecosun.repository.OrcamentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ecosun.repository.UsuarioRepository;
 import org.springframework.stereotype.Component;
 
 @Component("com.ecosun.security.AuthorizationGuard")
 public class AuthorizationGuard {
 
-    @Autowired
-    private OrcamentoRepository orcamentoRepository;
+    private final OrcamentoRepository orcamentoRepository;
+    private final AvaliacaoRepository avaliacaoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private AvaliacaoRepository avaliacaoRepository;
+    public AuthorizationGuard(OrcamentoRepository orcamentoRepository,
+                              AvaliacaoRepository avaliacaoRepository,
+                              UsuarioRepository usuarioRepository) {
+        this.orcamentoRepository = orcamentoRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     private String authEmail() {
         return AuthorizationUtils.getAuthenticatedEmail();
     }
 
-    // Na model atual, o token não traz usuarioId, apenas email.
-    // Ownership será aproximada por comparação do email com o campo email do recurso.
-    // (Se no futuro retornar usuarioId/claims no token, ajustar.)
+    // O JWT identifica o usuário pelo email. Resolva seu ID no banco e compare-o
+    // ao usuarioId do orçamento, que é o vínculo persistido do recurso.
 
     public boolean canWriteOrcamento(Orcamento orcamento) {
         if (orcamento == null) return false;
         String email = authEmail();
         if (email == null) return false;
 
-        // Orcamento possui campo email no entity
-        return email.equalsIgnoreCase(orcamento.getEmail());
+        if (orcamento.getUsuarioId() == null) return false;
+        return usuarioRepository.findByEmail(email)
+                .map(usuario -> usuario.getId().equals(orcamento.getUsuarioId()))
+                .orElse(false);
     }
 
     public boolean canUpdateOrcamento(Integer id, Orcamento orcamento) {
