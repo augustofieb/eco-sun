@@ -7,7 +7,7 @@ import com.ecosun.repository.OrcamentoRepository;
 import com.ecosun.repository.UsuarioRepository;
 import org.springframework.stereotype.Component;
 
-@Component("com.ecosun.security.AuthorizationGuard")
+@Component("authorizationGuard")
 public class AuthorizationGuard {
 
     private final OrcamentoRepository orcamentoRepository;

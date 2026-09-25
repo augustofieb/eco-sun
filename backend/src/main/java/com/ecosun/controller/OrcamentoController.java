@@ -35,7 +35,7 @@ public class OrcamentoController {
     }
 
     @PostMapping
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canWriteOrcamento(#orcamento)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canWriteOrcamento(#p0)")
     public ResponseEntity<?> createOrcamento(@RequestBody Orcamento orcamento) {
         try {
             System.out.println("Recebendo orçamento: " + orcamento.toString());
@@ -90,7 +90,7 @@ public class OrcamentoController {
     }
 
     @PutMapping("/{id}")
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canUpdateOrcamento(#id, #orcamento)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canUpdateOrcamento(#p0, #p1)")
     public ResponseEntity<Orcamento> updateOrcamento(@PathVariable Integer id, @RequestBody Orcamento orcamento) {
         if (orcamentoRepository.existsById(id)) {
             orcamento.setId(id);
@@ -100,7 +100,7 @@ public class OrcamentoController {
     }
 
     @DeleteMapping("/{id}")
-    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @com.ecosun.security.AuthorizationGuard.canDeleteOrcamento(#id)")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or @authorizationGuard.canDeleteOrcamento(#p0)")
     public ResponseEntity<Void> deleteOrcamento(@PathVariable Integer id) {
         if (orcamentoRepository.existsById(id)) {
             orcamentoRepository.deleteById(id);
