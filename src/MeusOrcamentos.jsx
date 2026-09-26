@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getCurrentUser } from './utils/authAPI'
 import { orcamentosAPI } from './services/api'
+import { calculateLegacyQuoteSummary, calculateSolarSummary } from './utils/solarCalculations'
 import Logo from './assets/Logo.png'
 
 const MeusOrcamentos = () => {
@@ -20,7 +21,7 @@ const MeusOrcamentos = () => {
       .then((r) => setOrcamentos(r.data))
       .catch(() => setOrcamentos([]))
       .finally(() => setLoading(false))
-  }, [])
+  }, [user?.id])
 
   const handleDelete = async (id) => {
     if (!window.confirm('Excluir este orçamento?')) return
@@ -135,8 +136,16 @@ const MeusOrcamentos = () => {
               let produtos = []
 
               try {
-                produtos = JSON.parse(o.produtosSelecionados || '[]')
-              } catch {}
+                produtos = JSON.parse(o.produtosSelecionados ?? o.produtos_selecionados ?? '[]')
+              } catch {
+                produtos = []
+              }
+              if (!Array.isArray(produtos)) produtos = []
+
+              const calculatedSummary = calculateSolarSummary(produtos)
+              const summary = produtos.length > 0
+                ? calculatedSummary
+                : calculateLegacyQuoteSummary(o)
 
               return (
                 <div
@@ -204,8 +213,8 @@ const MeusOrcamentos = () => {
                       {
                         label: 'Investimento Total',
                         value:
-                          o.precoTotal != null
-                            ? `R$ ${Number(o.precoTotal).toLocaleString(
+                          summary.totalPrice != null
+                            ? `R$ ${Number(summary.totalPrice).toLocaleString(
                                 'pt-BR',
                                 { minimumFractionDigits: 2 }
                               )}`
@@ -214,8 +223,8 @@ const MeusOrcamentos = () => {
                       {
                         label: 'Energia Gerada',
                         value:
-                          o.energiaTotalGerada != null
-                            ? `${Number(o.energiaTotalGerada).toFixed(
+                          summary.totalEnergy != null
+                            ? `${Number(summary.totalEnergy).toFixed(
                                 2
                               )} kWh/mês`
                             : '—',
@@ -223,22 +232,22 @@ const MeusOrcamentos = () => {
                       {
                         label: 'Economia Mensal',
                         value:
-                          o.economiaMensal != null
-                            ? `R$ ${Number(o.economiaMensal).toFixed(2)}`
+                          summary.monthlyEconomy != null
+                            ? `R$ ${Number(summary.monthlyEconomy).toFixed(2)}`
                             : '—',
                       },
                       {
                         label: 'Retorno',
                         value:
-                          o.tempoRetornoMeses != null
-                            ? `${o.tempoRetornoMeses} meses`
+                          summary.paybackTime != null
+                            ? `${summary.paybackTime} meses`
                             : '—',
                       },
                       {
                         label: 'Redução CO₂/ano',
                         value:
-                          o.reducaoCo2Anual != null
-                            ? `${Number(o.reducaoCo2Anual).toFixed(2)} kg`
+                          summary.co2Reduction != null
+                            ? `${Number(summary.co2Reduction).toFixed(2)} kg`
                             : '—',
                       },
                     ].map(({ label, value }) => (

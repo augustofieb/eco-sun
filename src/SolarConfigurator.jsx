@@ -5,12 +5,12 @@ import { getCategories } from './utils/categories'
 import { getCurrentUser, isAdmin } from './utils/authAPI'
 
 import { createOrcamento } from './utils/orcamentosAPI'
+import { calculateSolarSummary } from './utils/solarCalculations'
 import ImageCarousel from './components/ImageCarousel'
 import OrcamentoNomeModal from './components/OrcamentoNomeModal'
 
 import Logo from './assets/Logo.png'
 import './SolarConfigurator.css'
-import { initTheme } from './utils/theme'
 
 const getProductImages = (fotoUrl) => {
   const images = typeof fotoUrl === 'string' ? fotoUrl.split('|').filter(Boolean) : []
@@ -49,8 +49,8 @@ const SolarConfigurator = () => {
   }, [])
 
   useEffect(() => {
-    calculateSummary()
-  }, [selectedProducts])
+    setSummary(calculateSolarSummary(selectedProducts, categories))
+  }, [selectedProducts, categories])
 
   const loadCategories = async () => {
     const categoriesData = await getCategories()
@@ -140,58 +140,6 @@ const SolarConfigurator = () => {
     return names[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   }
 
-  const calculateSummary = () => {
-    const totalPrice = selectedProducts.reduce((sum, p) => sum + (p.preco * p.quantity), 0)
-    
-    let totalEnergy = 0
-    let totalMonthlyEconomy = 0
-    let totalCo2Reduction = 0
-    
-    selectedProducts.forEach(p => {
-      const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {}
-      const isPlacaSolar = categories.find(cat => cat.id === p.categoria_id)?.nome?.toLowerCase().includes('placa')
-      
-      if (isPlacaSolar) {
-        // Usar especificações do produto se disponíveis
-        const energiaMensal = parseFloat(specs.energia_mensal_kwh) || 0
-        const economiaMensal = parseFloat(specs.economia_mensal_rs) || 0
-        const co2Anual = parseFloat(specs.reducao_co2_kg_ano) || 0
-        
-        totalEnergy += energiaMensal * p.quantity
-        totalMonthlyEconomy += economiaMensal * p.quantity
-        totalCo2Reduction += co2Anual * p.quantity
-      }
-    })
-    
-    // Se não houver especificações, usar cálculos padrão
-    if (totalEnergy === 0) {
-      totalEnergy = selectedProducts.reduce((sum, p) => {
-        const specs = p.especificacoes_tecnicas ? JSON.parse(p.especificacoes_tecnicas) : {}
-        const potencia = parseFloat(specs.potencia_wp) || 0
-        const energiaEstimada = (potencia * 5 * 30) / 1000 // 5h sol/dia * 30 dias
-        return sum + (energiaEstimada * p.quantity)
-      }, 0)
-    }
-    
-    if (totalMonthlyEconomy === 0) {
-      totalMonthlyEconomy = totalEnergy * 0.65 // R$ 0,65 por kWh
-    }
-    
-    if (totalCo2Reduction === 0) {
-      totalCo2Reduction = totalEnergy * 0.084 * 12 // kg CO2 por ano
-    }
-    
-    const paybackTime = (totalPrice > 0 && totalMonthlyEconomy > 0) ? Math.ceil(totalPrice / totalMonthlyEconomy) : 0
-
-    setSummary({
-      totalPrice,
-      totalEnergy,
-      monthlyEconomy: totalMonthlyEconomy,
-      paybackTime,
-      co2Reduction: totalCo2Reduction
-    })
-  }
-
   const handleSaveOrcamento = async () => {
     if (!user || !user.id) return
     setShowOrcamentoNomeModal(true)
@@ -199,12 +147,13 @@ const SolarConfigurator = () => {
 
   const submitOrcamento = async (nome) => {
     try {
-      const produtosSelecionados = selectedProducts.map(({ id, nome: produtoNome, preco, quantity, especificacoes_tecnicas }) => ({
-        id,
-        nome: produtoNome,
-        preco,
-        quantity,
-        especificacoes_tecnicas
+      const produtosSelecionados = selectedProducts.map((product) => ({
+        id: product.id,
+        nome: product.nome,
+        preco: product.preco,
+        quantity: product.quantity,
+        categoriaNome: categories.find((category) => String(category.id) === String(product.categoria_id))?.nome,
+        especificacoes_tecnicas: product.especificacoes_tecnicas,
       }))
 
       const orcamentoData = {
@@ -223,7 +172,7 @@ const SolarConfigurator = () => {
       setSuccessMessage('Orçamento salvo com sucesso!')
       setShowAppBanner(true)
       setTimeout(() => setSuccessMessage(''), 3000)
-    } catch { // eslint-disable-line no-empty
+    } catch {
       setSuccessMessage('Erro ao salvar orçamento')
       setTimeout(() => setSuccessMessage(''), 3000)
     }

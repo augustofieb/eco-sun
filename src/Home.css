@@ -597,6 +597,18 @@ body, html {
   line-height: 1.6;
 }
 
+.info-content .btn-edit {
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.info-content .btn-edit:hover {
+  background-color: #2c5282;
+}
+
 .info-content h3 {
   color: #2c5530;
   margin-bottom: 15px;

@@ -82,6 +82,15 @@
   color: #8a9bb0 !important;
 }
 
+.dark-mode .info-content .btn-edit {
+  background-color: #5b9bd5;
+  color: #0f1923;
+}
+
+.dark-mode .info-content .btn-edit:hover {
+  background-color: #4a86c0;
+}
+
 .dark-mode .topo .menu li a,
 .dark-mode .topo .menu .user-welcome,
 .dark-mode .topo .menu .create-account,
