@@ -11,6 +11,7 @@
 
 /* Dark Mode - Paleta harmonizada em tons de azul escuro */
 .dark-mode {
+  color-scheme: dark;
   background-color: #0f1923;
   color: #cdd6e0;
   --primary-color: #5b9bd5;
