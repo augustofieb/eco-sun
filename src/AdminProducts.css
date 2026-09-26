@@ -88,6 +88,22 @@
   color: #333;
 }
 
+.dark-mode .product-form input::placeholder,
+.dark-mode .product-form textarea::placeholder {
+  color: #fff;
+  opacity: 1;
+}
+
+.product-form .btn-save {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.product-form .btn-cancel {
+  background-color: #6c757d;
+  color: #fff;
+}
+
 .tabs {
   display: flex;
   margin-bottom: 2rem;
@@ -324,6 +340,31 @@ th {
   text-align: center;
   font-weight: 500;
   animation: fadeIn 0.3s ease-in;
+}
+
+.product-message {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.product-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.product-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
 }
 
 @keyframes fadeIn {

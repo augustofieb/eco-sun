@@ -27,6 +27,7 @@ const AdminProducts = () => {
 
   const [newSpec, setNewSpec] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [productMessage, setProductMessage] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -106,10 +107,22 @@ const AdminProducts = () => {
     return JSON.stringify(especificacoesTecnicas)
   }
 
+  const getProductErrorMessage = (error, fallback) => {
+    const responseData = error.response?.data
+    if (typeof responseData === 'string' && responseData.trim()) return responseData
+    if (responseData?.message) return responseData.message
+    if (error.response?.status === 403) return 'Sua sessão não tem permissão de administrador. Entre novamente.'
+    return error.message || fallback
+  }
+
   const handleAdd = async (e) => {
     e.preventDefault()
     const price = parseFloat(formData.price)
-    if (price > 999999.99) return
+    if (price > 999999.99) {
+      setProductMessage({ type: 'error', text: 'O preço máximo permitido é R$ 999.999,99.' })
+      return
+    }
+    setProductMessage(null)
     try {
       const base64Images = await filesToBase64(selectedFiles.map(e => e.file))
       await createProduct({
@@ -124,14 +137,18 @@ const AdminProducts = () => {
       clearFiles()
       setShowAddForm(false)
       loadProducts()
+      setProductMessage({ type: 'success', text: 'Produto cadastrado com sucesso.' })
     } catch (error) {
       console.error('Erro ao adicionar produto:', error.response?.data || error.message)
+      setProductMessage({ type: 'error', text: getProductErrorMessage(error, 'Não foi possível cadastrar o produto.') })
     }
   }
 
   const handleEdit = (product) => {
     setEditingProduct(product.id)
     setShowAddForm(true)
+    setProductMessage(null)
+    const categoryId = product.categoriaId ?? product.categoria_id
 
     // Carregar especificações existentes do produto
     let existingSpecs = {}
@@ -147,13 +164,13 @@ const AdminProducts = () => {
     const formDataWithSpecs = {
       name: product.nome,
       price: product.preco,
-      category: product.categoriaId,
+      category: categoryId,
       description: product.descricao || '',
       categorySpecs: {}
     }
 
     // Carregar especificações da categoria
-    const selectedCategory = categories.find(cat => cat.id === product.categoriaId)
+    const selectedCategory = categories.find(cat => cat.id === categoryId)
     if (selectedCategory?.especificacoes_obrigatorias) {
       try {
         const categorySpecs = JSON.parse(selectedCategory.especificacoes_obrigatorias)
@@ -180,6 +197,7 @@ const AdminProducts = () => {
   }
 
   const handleUpdate = async (productId) => {
+    setProductMessage(null)
     try {
       const product = products.find(p => p.id === productId)
       let fotoUrl = product?.fotoUrl || ''
@@ -200,19 +218,23 @@ const AdminProducts = () => {
       setFormData({ name: '', price: '', category: '', description: '', categorySpecs: {} })
       clearFiles()
       loadProducts()
+      setProductMessage({ type: 'success', text: 'Produto atualizado com sucesso.' })
     } catch (error) {
-      // removed alert
+      console.error('Erro ao atualizar produto:', error.response?.data || error.message)
+      setProductMessage({ type: 'error', text: getProductErrorMessage(error, 'Não foi possível atualizar o produto.') })
     }
   }
 
   const handleDelete = async (productId) => {
+    setProductMessage(null)
     try {
       await deleteProduct(productId)
       setDeletingProduct(null)
       loadProducts()
+      setProductMessage({ type: 'success', text: 'Produto removido com sucesso.' })
     } catch (error) {
-      // removed alert
-      setDeletingProduct(null)
+      console.error('Erro ao deletar produto:', error.response?.data || error.message)
+      setProductMessage({ type: 'error', text: getProductErrorMessage(error, 'Não foi possível remover o produto.') })
     }
   }
 
@@ -328,6 +350,11 @@ const AdminProducts = () => {
           {successMessage && (
             <div className="success-message">
               {successMessage}
+            </div>
+          )}
+          {productMessage && (
+            <div className={`product-message ${productMessage.type}`} role={productMessage.type === 'error' ? 'alert' : 'status'}>
+              {productMessage.text}
             </div>
           )}
         
@@ -565,7 +592,7 @@ const AdminProducts = () => {
                   <tr key={product.id}>
                     <td>{product.nome}</td>
                     <td>`R$${(product.preco || 0).toFixed(2)}`</td>
-                    <td>{categories.find(cat => cat.id === product.categoriaId)?.nome || 'N/A'}</td>
+                    <td>{categories.find(cat => cat.id === (product.categoriaId ?? product.categoria_id))?.nome || 'N/A'}</td>
                     <td>{product.descricao ? product.descricao.substring(0, 50) + '...' : 'Sem descrição'}</td>
                     <td className="actions">
                       <button onClick={() => handleEdit(product)} className="btn-edit">Editar</button>

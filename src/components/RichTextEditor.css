@@ -22,6 +22,7 @@
   padding: 6px 10px;
   border: 1px solid #ccc;
   background: white;
+  color: #213547;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -83,6 +84,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   background: white;
+  color: #213547;
   font-size: 14px;
 }
 
@@ -99,6 +101,10 @@
   content: attr(data-placeholder);
   color: #999;
   font-style: italic;
+}
+
+.dark-mode .editor-content:empty:before {
+  color: #fff;
 }
 
 /* Dark mode support */

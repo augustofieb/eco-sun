@@ -1,0 +1,72 @@
+.admin-dashboard {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+.admin-dashboard h1 {
+  margin: 0 0 0.5rem;
+}
+
+.admin-dashboard-description {
+  color: var(--text-secondary, #666);
+  margin: 0 0 2rem;
+}
+
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.admin-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 180px;
+  padding: 2rem 1rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  background: var(--card-bg, #fff);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  text-align: center;
+}
+
+.admin-dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.admin-dashboard-card:focus-visible {
+  outline: 2px solid var(--primary-color, #2b6cb0);
+  outline-offset: 2px;
+}
+
+.admin-dashboard-card-icon {
+  font-size: 2.5rem;
+}
+
+.admin-dashboard-card strong {
+  color: var(--text-color, #222);
+  font-size: 1rem;
+}
+
+.admin-dashboard-card > span:last-child {
+  color: var(--text-secondary, #888);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+
+  .admin-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
