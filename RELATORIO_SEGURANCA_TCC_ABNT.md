@@ -112,6 +112,7 @@ Durante a inspeção foram identificadas as seguintes falhas e aplicadas as resp
 6. Campos de produto, categoria e orçamento tinham validações inconsistentes. Foram adicionados limites e verificações antes das operações de escrita.
 7. Conteúdo editável e descrição de produto eram inseridos no HTML sem sanitização. A interface passou a sanitizar o conteúdo com DOMPurify antes da renderização e da edição.
 8. A auditoria npm identificou vulnerabilidades em dependências de produção. As dependências foram atualizadas sem uso da opção `--force`; o audit de produção passou a reportar zero vulnerabilidades conhecidas.
+9. O acesso local podia falhar com `Invalid CORS request` quando o frontend era aberto por uma origem/porta encaminhada diferente da origem CORS configurada. O Vite passou a encaminhar `/api` por proxy same-origin ao backend, sem liberar origens adicionais no Spring. O destino do proxy usa host e porta do backend, sem duplicar o prefixo `/api`.
 
 ## 5 RESULTADOS GERAIS E LIMITAÇÕES
 
@@ -121,7 +122,7 @@ A auditoria das dependências de produção, executada por `npm audit --omit=dev
 
 A execução de `npm run lint` não foi aprovada: foram observados 17 erros e 2 avisos em arquivos da aplicação. Os apontamentos presentes no helper de autenticação e no teste E2E modificados durante esta atividade foram corrigidos; os demais apontamentos permanecem fora do escopo desta correção de segurança.
 
-Os testes de integração utilizaram H2 em memória. Não foi validado o banco SQL Server de produção, a configuração implantada de HTTPS e CORS, os backups, os controles de infraestrutura ou o serviço real de envio de e-mails. Também não foram executados uma análise SCA das dependências Java nem um teste de penetração externo. A sanitização protege os pontos de renderização da interface atual; consumidores externos da API devem sanitizar HTML recebido. Não foi implementado rate limiting distribuído para tentativas de login.
+Os testes de integração utilizaram H2 em memória. Foi validado o proxy CORS do ambiente local por meio do Playwright, mas não a política CORS implantada em produção, HTTPS, backups, controles de infraestrutura ou o serviço real de envio de e-mails. Também não foram executados uma análise SCA das dependências Java nem um teste de penetração externo. A sanitização protege os pontos de renderização da interface atual; consumidores externos da API devem sanitizar HTML recebido. Não foi implementado rate limiting distribuído para tentativas de login.
 
 ## 6 CONSIDERAÇÕES FINAIS
 
