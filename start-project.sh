@@ -3,6 +3,13 @@
 echo "🚀 Iniciando ECO SUN..."
 echo ""
 
+if [[ -z "${JWT_SECRET:-}" || ${#JWT_SECRET} -lt 32 ]]; then
+    echo "JWT_SECRET precisa estar definido e ter pelo menos 32 caracteres."
+    exit 1
+fi
+
+export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-local}"
+
 # Verificar se Maven está instalado
 if ! command -v mvn &> /dev/null; then
     echo "📦 Maven não encontrado. Instalando..."
@@ -61,7 +68,7 @@ echo ""
 echo "🌐 Iniciando frontend (porta 5173)..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📱 Acesse: http://localhost:5173"
-echo "🔑 Login de teste: admin@ecosun.com / admin123"
+echo "🔐 Configure BOOTSTRAP_ADMIN_EMAIL e BOOTSTRAP_ADMIN_PASSWORD (mínimo de 16 caracteres) para criar o primeiro administrador."
 echo "📋 Logs do backend: tail -f backend.log"
 echo "🛑 Para parar: Ctrl+C"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

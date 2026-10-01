@@ -9,11 +9,6 @@ INSERT INTO Categoria (nome, descricao) VALUES
 ('Controladores', 'Controladores de carga e descarga');
 GO
 
--- Inserir usuário admin
-INSERT INTO Usuario (nome, email, senha, nivelAcesso, dataCadastro, statusUsuario) VALUES 
-('Admin', 'admin@ecosun.com', '$2a$10$8K1p/wgDKRoYBk7YQBXAve7rUzHFCxCqAU8W2Y.Glr9AiWYf.yvAW', 'ADMIN', GETDATE(), 'ATIVO');
-GO
-
 -- Inserir produtos
 INSERT INTO Produto (nome, descricao, preco, categoria_id, status_produto) VALUES 
 ('Painel Solar 400W', 'Painel solar monocristalino de alta eficiência', 899.99, 1, 'ATIVO'),

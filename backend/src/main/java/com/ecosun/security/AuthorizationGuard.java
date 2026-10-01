@@ -40,25 +40,30 @@ public class AuthorizationGuard {
                 .orElse(false);
     }
 
-    public boolean canUpdateOrcamento(Integer id, Orcamento orcamento) {
-        if (id == null || orcamento == null) return false;
+    public boolean canReadOrcamentos(Integer usuarioId) {
+        if (usuarioId == null) return false;
         String email = authEmail();
         if (email == null) return false;
 
-        // Busca o registro existente e compara o email
-        return orcamentoRepository.findById(id)
-                .map(o -> email.equalsIgnoreCase(o.getEmail()))
+        return usuarioRepository.findByEmail(email)
+                .map(usuario -> usuario.getId() != null && usuario.getId().equals(usuarioId))
                 .orElse(false);
     }
 
-    public boolean canDeleteOrcamento(Integer id) {
+    public boolean canReadOrcamento(Integer id) {
         if (id == null) return false;
-        String email = authEmail();
-        if (email == null) return false;
-
         return orcamentoRepository.findById(id)
-                .map(o -> email.equalsIgnoreCase(o.getEmail()))
+                .map(orcamento -> canReadOrcamentos(orcamento.getUsuarioId()))
                 .orElse(false);
+    }
+
+    public boolean canUpdateOrcamento(Integer id, Orcamento orcamento) {
+        if (id == null || orcamento == null) return false;
+        return canReadOrcamento(id);
+    }
+
+    public boolean canDeleteOrcamento(Integer id) {
+        return canReadOrcamento(id);
     }
 
     public boolean canWriteAvaliacao(Avaliacao avaliacao) {

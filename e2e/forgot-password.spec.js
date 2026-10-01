@@ -8,7 +8,7 @@ test('envia email e exibe confirmação de recuperação', async ({ page }) => {
     await route.fulfill({
       status: 200,
       contentType: 'text/plain',
-      body: 'Email de recuperação enviado',
+      body: 'Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.',
     })
   })
 
@@ -16,14 +16,14 @@ test('envia email e exibe confirmação de recuperação', async ({ page }) => {
   await page.getByPlaceholder('Digite seu email').fill('cliente@exemplo.com')
   await page.getByRole('button', { name: 'Enviar' }).click()
 
-  await expect(page.getByText('Email de recuperação enviado! Verifique sua caixa de entrada.')).toBeVisible()
+  await expect(page.getByText('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.')).toBeVisible()
   expect(requestBody).toEqual({ email: 'cliente@exemplo.com' })
 })
 
 test('exibe o erro retornado pelo backend', async ({ page }) => {
   await page.route('**/api/auth/forgot-password', async (route) => {
     await route.fulfill({
-      status: 400,
+      status: 500,
       contentType: 'text/plain',
       body: 'Email não encontrado',
     })
@@ -33,5 +33,5 @@ test('exibe o erro retornado pelo backend', async ({ page }) => {
   await page.getByPlaceholder('Digite seu email').fill('inexistente@exemplo.com')
   await page.getByRole('button', { name: 'Enviar' }).click()
 
-  await expect(page.getByText('Email não encontrado')).toBeVisible()
+  await expect(page.getByText('Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.')).toBeVisible()
 })

@@ -25,6 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
+    @Autowired
+    private TokenRevocationService tokenRevocationService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -36,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authorizationHeader.substring("Bearer ".length()).trim();
-        if (token.isEmpty() || !jwtUtil.validateToken(token)) {
+        if (token.isEmpty() || !jwtUtil.validateToken(token) || tokenRevocationService.isRevoked(token)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,7 +53,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = jwtUserDetailsService.loadUserByEmail(email);
+            UserDetails userDetails;
+            try {
+                userDetails = jwtUserDetailsService.loadUserByEmail(email);
+            } catch (RuntimeException e) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (!userDetails.isEnabled() || !userDetails.isAccountNonLocked()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,

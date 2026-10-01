@@ -1,2 +1,6 @@
-com/ecosun/controller/AuthControllerTest.class
+com/ecosun/controller/ImageUploadValidatorTest.class
+com/ecosun/integration/AuthBudgetIntegrationTest.class
+com/ecosun/integration/AuthBudgetIntegrationTest$1.class
 com/ecosun/security/AuthorizationGuardTest.class
+com/ecosun/controller/AuthControllerTest.class
+com/ecosun/integration/AuthBudgetIntegrationTest$UserSession.class

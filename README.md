@@ -36,7 +36,9 @@ O script irá:
 2. Iniciar o backend em background
 3. Aguardar o backend estar pronto
 4. Iniciar o frontend
-5. **Login de teste**: `admin@ecosun.com` / `admin123`
+5. Iniciar o perfil local com banco H2 em memória.
+
+Antes de iniciar, defina `JWT_SECRET` com pelo menos 32 caracteres aleatórios. Para criar o primeiro administrador, defina também `BOOTSTRAP_ADMIN_EMAIL` e `BOOTSTRAP_ADMIN_PASSWORD` (mínimo de 16 caracteres). Não reutilize credenciais de teste em produção.
 
 ### Método Manual - Terminais Separados
 
@@ -55,7 +57,7 @@ npm run dev
 ### Acesso
 - Frontend: `http://localhost:5173`
 - Backend API: `http://localhost:8081/api`
-- Login: `admin@ecosun.com` / `admin123`
+- O administrador inicial só é criado quando as duas variáveis de bootstrap acima estão configuradas.
 
 ## Estrutura do Projeto
 

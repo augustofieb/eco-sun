@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { getProductById } from './utils/productsAPI'
 import { getCurrentUser } from './utils/authAPI'
 import { getReviewsByProduct, createReview } from './utils/reviewsAPI'
+import { sanitizeHtml } from './utils/sanitizeHtml'
 import './ProductDetails.css'
 import Logo from './assets/Logo.png'
 import SolarQuote from './SolarQuote'
@@ -195,7 +196,7 @@ const ProductDetails = () => {
               {product.descricao && (
                 <div className="product-description">
                   <h3>Descrição</h3>
-                  <div dangerouslySetInnerHTML={{ __html: product.descricao }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.descricao) }} />
                 </div>
               )}
             </div>

@@ -16,6 +16,7 @@ public class StatsController {
     private JdbcTemplate jdbcTemplate;
 
     @GetMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getEstatisticas() {
         try {
             Map<String, Object> stats = new HashMap<>();

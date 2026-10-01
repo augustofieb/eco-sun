@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import './RichTextEditor.css'
 
 const RichTextEditor = ({ value, onChange, placeholder }) => {
@@ -8,7 +9,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
 
   useEffect(() => {
     if (editorRef.current && !isUpdating) {
-      editorRef.current.innerHTML = value
+      editorRef.current.innerHTML = sanitizeHtml(value)
     }
   }, [value])
 
@@ -21,9 +22,20 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
   const updateContent = () => {
     if (editorRef.current && !isUpdating) {
       setIsUpdating(true)
-      onChange(editorRef.current.innerHTML)
+      onChange(sanitizeHtml(editorRef.current.innerHTML))
       setTimeout(() => setIsUpdating(false), 0)
     }
+  }
+
+  const handlePaste = (event) => {
+    event.preventDefault()
+    const pastedHtml = event.clipboardData.getData('text/html')
+    if (pastedHtml) {
+      document.execCommand('insertHTML', false, sanitizeHtml(pastedHtml))
+    } else {
+      document.execCommand('insertText', false, event.clipboardData.getData('text/plain'))
+    }
+    updateContent()
   }
 
   const handleColorChange = (color) => {
@@ -109,6 +121,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
         ref={editorRef}
         className="editor-content"
         contentEditable
+        onPaste={handlePaste}
         onInput={updateContent}
         onBlur={updateContent}
         style={{ minHeight: '200px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}

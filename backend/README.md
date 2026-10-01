@@ -4,11 +4,14 @@ Spring Boot backend for the ECO SUN solar energy system.
 
 ## Database Configuration
 
-The application connects to SQL Server database:
-- Server: Eco_Sun.mssql.somee.com
-- Database: Eco_Sun
-- Username: ecosun_SQLLogin_2
-- Password: v4qnn3ktfu
+Configure `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` and
+`SPRING_DATASOURCE_PASSWORD` outside of the repository. Configure `JWT_SECRET`
+with at least 32 random bytes. The backend has no default database credentials
+or JWT signing key. Rotate any credentials that were previously committed.
+
+To provision the first administrator, set `BOOTSTRAP_ADMIN_EMAIL` and
+`BOOTSTRAP_ADMIN_PASSWORD` (at least 16 characters). No known administrator
+account is seeded by default.
 
 ## API Endpoints
 

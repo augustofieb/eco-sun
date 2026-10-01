@@ -7,6 +7,7 @@ import { isAdmin, getCurrentUser, logoutUser, refreshUserData } from './utils/au
 import { getProducts, getProductsByCategory, searchProducts } from './utils/productsAPI'
 import { getCategories, getConteudo, updateConteudo } from './utils/categories'
 import { updateUser } from './utils/usersAPI'
+import { sanitizeHtml } from './utils/sanitizeHtml'
 
 import RichTextEditor from './components/RichTextEditor'
 import { getTheme, setTheme, initTheme } from './utils/theme'
@@ -382,7 +383,7 @@ const Home = () => {
                 >Salvar</button>
               </div>
             ) : (
-              <div dangerouslySetInnerHTML={{ __html: editableContent.sobre }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(editableContent.sobre) }} />
             )}
           </div>
         )
@@ -425,7 +426,7 @@ const Home = () => {
                 >Salvar</button>
               </div>
             ) : (
-              <div dangerouslySetInnerHTML={{ __html: editableContent.renovavel }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(editableContent.renovavel) }} />
             )}
           </div>
         )
@@ -468,7 +469,7 @@ const Home = () => {
                 >Salvar</button>
               </div>
             ) : (
-              <div dangerouslySetInnerHTML={{ __html: editableContent.faq }} />
+              <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(editableContent.faq) }} />
             )}
           </div>
         )

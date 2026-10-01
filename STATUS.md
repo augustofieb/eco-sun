@@ -90,12 +90,6 @@
 - `GET /api/usuarios/preferencias`
 - `PUT /api/usuarios/preferencias`
 
-### Credenciais de Teste
-
-- **Email:** admin@ecosun.com
-- **Senha:** admin123
-- **Nível:** ADMIN
-
 ### Status: 🟢 PRODUÇÃO
 
 O sistema está completamente funcional com todas as funcionalidades migradas para API REST e banco de dados SQL Server remoto.

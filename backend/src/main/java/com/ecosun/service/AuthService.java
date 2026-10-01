@@ -19,6 +19,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 @Service
 public class AuthService {
@@ -41,9 +42,14 @@ public class AuthService {
     private final Map<String, LocalDateTime> passwordResetRequests = new ConcurrentHashMap<>();
     private static final int RESET_TOKEN_MINUTES = 30;
     private static final int RESET_REQUEST_COOLDOWN_SECONDS = 60;
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     public AuthResponse login(LoginRequest request) {
-        Optional<Usuario> usuario = usuarioRepository.findByEmail(request.getEmail());
+        if (request == null || request.getEmail() == null || request.getSenha() == null) {
+            throw new RuntimeException("Credenciais inválidas");
+        }
+        String email = request.getEmail().trim().toLowerCase();
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
         if (usuario.isPresent() && passwordEncoder.matches(request.getSenha(), usuario.get().getSenha())) {
             if ("INATIVO".equals(usuario.get().getStatusUsuario())) {
                 throw new RuntimeException("Conta desativada. Entre em contato com o administrador.");
@@ -56,20 +62,17 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        System.out.println("Tentando registrar usuário: " + request.getEmail());
-        validatePassword(request.getSenha());
-        
-        try {
-            if (usuarioRepository.existsByEmail(request.getEmail())) {
-                throw new RuntimeException("Email já cadastrado");
-            }
-        } catch (Exception e) {
-            System.out.println("Erro ao verificar email: " + e.getMessage());
+        if (request == null || request.getNome() == null || request.getNome().trim().isEmpty()
+                || request.getNome().trim().length() > 100) {
+            throw new RuntimeException("Nome inválido");
         }
+        String email = normalizeEmail(request.getEmail());
+        validatePassword(request.getSenha());
+        if (usuarioRepository.existsByEmail(email)) throw new RuntimeException("Email já cadastrado");
 
         Usuario usuario = new Usuario();
-        usuario.setNome(request.getNome());
-        usuario.setEmail(request.getEmail());
+        usuario.setNome(request.getNome().trim());
+        usuario.setEmail(email);
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setNivelAcesso("CLIENTE");
         usuario.setDataCadastro(LocalDateTime.now());
@@ -77,13 +80,10 @@ public class AuthService {
 
         try {
             Usuario savedUser = usuarioRepository.save(usuario);
-            System.out.println("Usuário salvo com ID: " + savedUser.getId());
-            String token = jwtUtil.generateToken(usuario.getEmail());
-            return new AuthResponse(token, savedUser.getId(), usuario.getNome(), usuario.getEmail(), usuario.getNivelAcesso(), usuario.getStatusUsuario());
+            String token = jwtUtil.generateToken(savedUser.getEmail());
+            return new AuthResponse(token, savedUser.getId(), savedUser.getNome(), savedUser.getEmail(), savedUser.getNivelAcesso(), savedUser.getStatusUsuario());
         } catch (Exception e) {
-            System.out.println("Erro ao salvar usuário: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Erro ao criar conta: " + e.getMessage());
+            throw new RuntimeException("Não foi possível criar a conta");
         }
     }
 
@@ -141,11 +141,20 @@ public class AuthService {
 
     private void validatePassword(String senha) {
         if (senha == null || senha.length() < 8
+                || senha.getBytes(StandardCharsets.UTF_8).length > 72
                 || !senha.matches(".*[A-Z].*")
                 || !senha.matches(".*[a-z].*")
                 || !senha.matches(".*\\d.*")) {
             throw new RuntimeException("A senha deve ter pelo menos 8 caracteres, incluindo maiúscula, minúscula e número");
         }
+    }
+
+    private String normalizeEmail(String email) {
+        String normalized = email == null ? "" : email.trim().toLowerCase();
+        if (normalized.length() > 100 || !EMAIL_PATTERN.matcher(normalized).matches()) {
+            throw new RuntimeException("Email inválido");
+        }
+        return normalized;
     }
 
     private String hashToken(String token) {

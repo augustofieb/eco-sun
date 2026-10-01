@@ -82,11 +82,6 @@ ALTER TABLE Produto ADD especificacoes_tecnicas NTEXT;
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Produto' AND COLUMN_NAME = 'produtos_compativeis')
 ALTER TABLE Produto ADD produtos_compativeis NTEXT;
 
--- Inserir usuário admin se não existir
-IF NOT EXISTS (SELECT * FROM Usuario WHERE email = 'admin@ecosun.com')
-INSERT INTO Usuario (nome, email, senha, nivelAcesso, dataCadastro, statusUsuario) VALUES 
-('Admin', 'admin@ecosun.com', '$2a$10$8K1p/wgDKRoYBk7YQBXAve7rUzHFCxCqAU8W2Y.Glr9AiWYf.yvAW', 'ADMIN', GETDATE(), 'ATIVO');
-
 -- Inserir categorias se não existirem
 IF NOT EXISTS (SELECT * FROM Categoria)
 BEGIN

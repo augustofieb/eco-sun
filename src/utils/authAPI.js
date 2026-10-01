@@ -30,7 +30,7 @@ export const registerUser = async (name, email, password) => {
     sessionStorage.setItem('user', JSON.stringify(currentUser));
     
     return { success: true, user: currentUser };
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Erro ao criar conta' };
   }
 };
@@ -52,7 +52,7 @@ export const getCurrentUser = () => {
     try {
       currentUser = JSON.parse(userData);
       return currentUser;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -66,6 +66,8 @@ export const isAdmin = () => {
 };
 
 export const logoutUser = () => {
+  const token = getToken();
+  if (token) authAPI.logout(token).catch(() => {});
   authToken = null;
   currentUser = null;
   sessionStorage.removeItem('token');
