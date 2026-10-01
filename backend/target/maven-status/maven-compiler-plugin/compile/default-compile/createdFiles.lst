@@ -1,5 +1,6 @@
 com/ecosun/config/DataInitializer.class
 com/ecosun/controller/OrcamentoController.class
+com/ecosun/config/LocalCatalogInitializer.class
 com/ecosun/controller/UsuarioController.class
 com/ecosun/controller/AvaliacaoController.class
 com/ecosun/controller/SimpleProdutoController$ProductInput.class

@@ -3,10 +3,34 @@
 echo "🚀 Iniciando ECO SUN..."
 echo ""
 
-if [[ -z "${JWT_SECRET:-}" || ${#JWT_SECRET} -lt 32 ]]; then
-    echo "JWT_SECRET precisa estar definido e ter pelo menos 32 caracteres."
+LOCAL_ENV_FILE=".env.local"
+if [[ -f "$LOCAL_ENV_FILE" ]]; then
+    set -a
+    source "$LOCAL_ENV_FILE"
+    set +a
+fi
+
+if ! command -v openssl &> /dev/null; then
+    echo "OpenSSL é necessário para gerar segredos locais seguros."
     exit 1
 fi
+
+export JWT_SECRET="${JWT_SECRET:-$(openssl rand -base64 48 | tr -d '\n')}"
+export BOOTSTRAP_ADMIN_EMAIL="${BOOTSTRAP_ADMIN_EMAIL:-admin-local@ecosun.test}"
+export BOOTSTRAP_ADMIN_PASSWORD="${BOOTSTRAP_ADMIN_PASSWORD:-$(openssl rand -base64 24 | tr -d '\n')}"
+
+if [[ ${#JWT_SECRET} -lt 32 || ${#BOOTSTRAP_ADMIN_PASSWORD} -lt 16 ]]; then
+    echo "JWT_SECRET deve ter ao menos 32 caracteres e a senha bootstrap ao menos 16."
+    exit 1
+fi
+
+umask 077
+{
+    printf 'JWT_SECRET=%q\n' "$JWT_SECRET"
+    printf 'BOOTSTRAP_ADMIN_EMAIL=%q\n' "$BOOTSTRAP_ADMIN_EMAIL"
+    printf 'BOOTSTRAP_ADMIN_PASSWORD=%q\n' "$BOOTSTRAP_ADMIN_PASSWORD"
+} > "$LOCAL_ENV_FILE"
+chmod 600 "$LOCAL_ENV_FILE"
 
 export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-local}"
 
@@ -68,7 +92,8 @@ echo ""
 echo "🌐 Iniciando frontend (porta 5173)..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📱 Acesse: http://localhost:5173"
-echo "🔐 Configure BOOTSTRAP_ADMIN_EMAIL e BOOTSTRAP_ADMIN_PASSWORD (mínimo de 16 caracteres) para criar o primeiro administrador."
+echo "🔐 Administrador local: $BOOTSTRAP_ADMIN_EMAIL"
+echo "🔑 Credenciais locais salvas em .env.local (arquivo ignorado pelo Git)."
 echo "📋 Logs do backend: tail -f backend.log"
 echo "🛑 Para parar: Ctrl+C"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

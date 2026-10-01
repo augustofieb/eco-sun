@@ -40,6 +40,7 @@
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/config/DataInitializer.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/TestController.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/EcoSunApplication.java
+/workspaces/eco-sun/backend/src/main/java/com/ecosun/config/LocalCatalogInitializer.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/repository/ProdutoRepository.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/entity/Usuario.java
 /workspaces/eco-sun/backend/src/main/java/com/ecosun/controller/OrcamentoController.java
